@@ -23,7 +23,6 @@ class Deck():
     def shuffle(self):
         # Copy the starting deck and save it in the playing deck list
         self.playingDeckList = self.startingDeckList.copy()
-        print(len(self.playingDeckList))
         # Conceal all cards before you shuffle
         for oCard in self.playingDeckList:
             oCard.conceal()
