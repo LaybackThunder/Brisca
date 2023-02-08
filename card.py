@@ -3,16 +3,16 @@ import pygwidgets
 
 class Card():
 
-    BACK_OF_CARD_IMAGE = pygame.image.load('images/back-side.jpeg')
+    BACK_OF_CARD_IMAGE = pygame.image.load('images/back-side.jpg')
     
     def __init__(self, window, suit, rank, value, trickValue):
         self.window = window
         self.suit = suit
         self.rank = rank
-        self.cardName = f"{rank} of {suit}"
+        self.cardName = rank + " of " + suit
         self.value = value
         self.trickValue = trickValue
-        fileName = f"images/{self.cardName}.png"
+        fileName = "images/" + self.cardName + ".jpg"
         # Set some starting location; use setLoc below to change
         self.images = pygwidgets.ImageCollection(window, (0, 0),
                                                 {'front': fileName,
@@ -25,7 +25,7 @@ class Card():
         self.images.replace('front')
     
     def getName(self):
-        return self.getName
+        return self.cardName
     
     def getValue(self):
         return self.value
