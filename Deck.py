@@ -43,7 +43,6 @@ if __name__ == "__main__":
 
     pygame.init()
     window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-    print('screen ws created')
 
     oDeck = Deck(window)
 
