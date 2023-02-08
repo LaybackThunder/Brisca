@@ -31,11 +31,14 @@ class Deck():
         
     
     def getCard(self):
+        # Checks to see if there are any cards
         if len(self.playingDeckList) == 0:
             raise IndexError('Ha! No more cards, go and get a life!')
+    
         oCard = self.playingDeckList.pop()
         return oCard
 
+# Test deck
 if __name__ == "__main__":
 
     WINDOW_WIDTH = 100
