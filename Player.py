@@ -16,14 +16,23 @@ class Player():
         """Player puts card in their hand."""
         self.hand.append(oCard)
     
-    def getHand(self):
+    def removeCard(self, index):
+        """Removes card from hand"""
+        card = self.hand.pop(index)
+        return card
+    
+    def showHand(self):
+        """Returns a list format of the hand."""
         return self.hand
     
     def setPot(self, oCard):
+        """Add the spoils of battle in your pot pile."""
         self.pot.append(oCard)
 
     def getPot(self):
+        """Returns a list format of the pot."""
         return self.pot
+
 
 
 # Test player
@@ -41,7 +50,7 @@ if __name__ == "__main__":
     oPlayer2 = Player()
 
     # Each player draws one card before the other player continues to draw
-    for oCard in range(3): 
+    for i in range(3): 
         oCard = oPlayer.drawCard(oDeck)
         oPlayer.setHand(oCard)
 
@@ -49,49 +58,60 @@ if __name__ == "__main__":
         oPlayer2.setHand(oCard)
 
     # Obtain Hand info 
-    ply1HandList = oPlayer.getHand()
-    ply2HandList = oPlayer2.getHand()
+    ply1HandList = oPlayer.showHand()
+    ply2HandList = oPlayer2.showHand()
 
-    # Pront to verify players have cards on hand
+    # Print to verify players have cards on hand
     print("\nPlayer's hands\n")
+
     print("Player 1:")
     for oCard in ply1HandList:
         print(oCard.getName())
 
-    print("\n-------")
+    print("\n-------\n")
 
-    print("\nPlayer 2:")
+    print("Player 2:")
     for oCard in ply2HandList:
         print(oCard.getName())
-    print()
 
-    # Compare player cards
-    for oCard in range(3): # Trick will loop 3 times
+    print("\n|||||||||||||||||||||||||||||||||||\n")
+
+    # Compare player cards --------------------------
+    for i in range(3): # Trick will loop 3 times
 
         # Compares player's hands; the higest value card wins
         if oPlayer.hand[0].getTrickValue() > oPlayer2.hand[0].getTrickValue():
-            # Player 1 gets to add cards in pot
-            potCards = [oPlayer.hand.pop(0), oPlayer2.hand.pop(0)]
-            for oCard in potCards: # one item or the whole list?
+            print("-------Player 1 wins")
+
+            # Remove the 1st card from each player's hand
+            potCards = [oPlayer.removeCard(0), oPlayer2.removeCard(0)]
+            # Add cards into pot
+            for oCard in potCards.copy():
+                oCard = potCards.pop(0)
                 oPlayer.setPot(oCard)
 
-        else:
-            # Player 2 gets to add cards in pot
-            potCards = [oPlayer.hand.pop(0), oPlayer2.hand.pop(0)]
-            for oCard in potCards: # one item or the whole list?
+        elif oPlayer.hand[0].getTrickValue() < oPlayer2.hand[0].getTrickValue():
+            print("-------Player 2 wins")
+
+            # Remove the 1st card from each player's hand
+            potCards = [oPlayer.removeCard(0), oPlayer2.removeCard(0)]
+            # Add cards into pot
+            for oCard in potCards.copy():
+                oCard = potCards.pop(0)
                 oPlayer2.setPot(oCard)
-    
+            
     ply1Pot = oPlayer.getPot()
     ply2Pot = oPlayer2.getPot()
 
     print("\nPlayer's pots\n")
+
     print("Player 1:")
     for oCard in ply1Pot:
         print(oCard.getName())
 
-    print("\n-------")
+    print("\n-------\n")
 
-    print("\nPlayer 2:")
+    print("Player 2:")
     for oCard in ply2Pot:
         print(oCard.getName())
     print()
@@ -100,11 +120,9 @@ if __name__ == "__main__":
 
 """Error Notes
 1) Issue: Could not call setHand method, error would say missing 'self' when calling drawCard().
-1) Resolve: Added deck as a parameter to drawCard() 
+1) Resolution: Added deck as a parameter to drawCard() 
 
-"""
+2) Issue: Make sure pot distribution is based on who has the highest value card.
+2) Resolution: potCards list iteration was not working until I was using a copy of itself.
 
-"""Errors to fix
-1) Make sure pot distribution is based on who has the highest value card.
-    Make sure that if trick ends in a tie to disregard the cards into a discard pile list. 
 """
