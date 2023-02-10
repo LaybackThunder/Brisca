@@ -17,11 +17,11 @@ class Player():
         self.hand.append(oCard)
     
     def removeCard(self, index):
-        """Removes card from hand"""
+        """Remove card from hand."""
         card = self.hand.pop(index)
         return card
     
-    def showHand(self):
+    def getHand(self):
         """Returns a list format of the hand."""
         return self.hand
     
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     oPlayer2 = Player()
 
     # Each player draws one card before the other player continues to draw
-    for i in range(3): 
+    for trick in range(3): 
         oCard = oPlayer.drawCard(oDeck)
         oPlayer.setHand(oCard)
 
@@ -58,8 +58,8 @@ if __name__ == "__main__":
         oPlayer2.setHand(oCard)
 
     # Obtain Hand info 
-    ply1HandList = oPlayer.showHand()
-    ply2HandList = oPlayer2.showHand()
+    ply1HandList = oPlayer.getHand()
+    ply2HandList = oPlayer2.getHand()
 
     # Print to verify players have cards on hand
     print("\nPlayer's hands\n")
