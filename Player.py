@@ -8,7 +8,7 @@ class Player():
         self.hand = []
         self.pot = []
     
-    def drawCard(self, oDeck): # Should I call this getCard so that it matches the deck's method name?
+    def drawCard(self, oDeck):
         oCard = oDeck.getCard()
         return oCard
 
@@ -38,8 +38,8 @@ class Player():
 # Test player
 if __name__ == "__main__":
 
-    WINDOW_WIDTH = 100
-    WINDOW_HEIGHT = 100
+    WINDOW_WIDTH = 1000
+    WINDOW_HEIGHT = 600
 
     pygame.init()
     window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
