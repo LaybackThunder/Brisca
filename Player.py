@@ -1,4 +1,5 @@
 from Deck import *
+from Card import *
 
 class Player():
 
@@ -7,8 +8,10 @@ class Player():
     def __init__(self):
         self.hand = []
         self.pot = []
+        self.playerId = None
     
     def drawCard(self, oDeck):
+        """This gets a card from the top of the deck."""
         oCard = oDeck.getCard()
         return oCard
 
@@ -24,7 +27,7 @@ class Player():
     def getHand(self):
         """Returns a list format of the hand."""
         return self.hand
-    
+       
     def setPot(self, oCard):
         """Add the spoils of battle in your pot pile."""
         self.pot.append(oCard)
@@ -32,8 +35,12 @@ class Player():
     def getPot(self):
         """Returns a list format of the pot."""
         return self.pot
+    
+    def setPlayerId(self, iD):
+        self.playerId = iD
 
-
+    def getPlayerId(self):
+        return self.playerId
 
 # Test player
 if __name__ == "__main__":
