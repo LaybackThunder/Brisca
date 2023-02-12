@@ -25,13 +25,15 @@ class Game():
                                         fontSize=36, textColor=(255, 255, 255))
         
         self.messageText = pygwidgets.DisplayText(window, (50, 460),
-                                        f'', width=900, justified='center'
+                                        f'', width=900, justified='center',
                                         fontSize=36, textColor=(255, 255, 255))
         
-        # Sounds go here
-            # Card shuffle
-            # Win sound
-            # Lost sound
+        # Card shuffle sound
+        self.cardShuffleSound = pygame.mixer.Sound("sounds/cardShuffle.wav")
+        # Win sound
+        self.winnerSound = pygame.mixer.Sound("sounds/ding.wav")
+        # Lost sound
+        self.loserSound = pygame.mixer.Sound("sounds/loser.wav")
         
         # Calculating Players card positions within the player's hand
         self.cardXPositionList = []
@@ -40,7 +42,7 @@ class Game():
         # Calculate the x positions of all cards, once 
         for cardNum in range(Game.DISPLAY_STARTING_HANDS): # 3 cards
             self.cardXPositionList.append(thisLeft)
-            thisLeft += Game.HAND_CARD_OFFSET 
+            thisLeft += Game.HAND_CARD_OFFSET # Space between cards
         # Both players can share X position
         self.player1CardXPositionList = self.cardXPositionList.copy()
         self.player2CardXPositionList = self.cardXPositionList.copy()
@@ -65,6 +67,7 @@ class Game():
                 if oPlayer.getPlayerId() == 0: # Set card coordinates for oPlayer1
                     cardLocX = self.player1CardXPositionList.pop(0)
                     oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM)
+                    oCard.reveal() # show player card running the software
                 else:                          # Set card coordinates for oPlayer2
                     cardLocX = self.player2CardXPositionList.pop(0)
                     oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
@@ -73,12 +76,11 @@ class Game():
                 if oPlayer.getPlayerId() == 0:
                     cardLocX = self.player1CardXPositionList.pop(0)
                     oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM)
+                    oCard.reveal() # show player card running the software
                 else:
                     cardLocX = self.player2CardXPositionList.pop(0)
                     oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
 
-        # show player card
-        # hide player2 cards
     
     def highestCardWinds(self):
         # highestCardWins method
