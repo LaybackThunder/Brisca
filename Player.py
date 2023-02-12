@@ -9,6 +9,7 @@ class Player():
         self.hand = []
         self.pot = []
         self.playerId = None
+        self.turnPlayer = False
     
     def drawCard(self, oDeck):
         """This gets a card from the top of the deck."""
@@ -41,6 +42,16 @@ class Player():
 
     def getPlayerId(self):
         return self.playerId
+
+    def setTurnPlayer(self):
+        """Checks if turnPlayer shold be True or False"""
+        if self.turnPlayer:
+            self.turnPlayer = False
+        else:
+            self.turnPlayer = True
+    
+    def getTurnPlayer(self):
+        """Returns True or False if current player is turn player."""
 
 # Test player
 if __name__ == "__main__":

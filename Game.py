@@ -54,10 +54,8 @@ class Game():
     def reset(self):
         """This method is called when a new round starts"""
         # play shuffle sound
-
-        # shuffle deck
-        oDeck.shuffle()
-
+        oDeck.shuffle() # shuffle deck
+        
         # deal cards to players
         for oPlayer in self.playerList: # LEFT OFF ----> Check how cards are delt toplayers
 
@@ -87,26 +85,34 @@ class Game():
         # hide player2 cards
     
     def highestCardWinds(self):
-        print()
         # highestCardWins method
             # Loop player list
                 # player draws
-            # Does players have a card?
+            # Do all players have a card?
                 # False:
-                    # Loop till all players have cards
+                    # Loop till all players have one card each
                 # True:
                     # Players compare cards
                         # If one is greater than the other
-                            # Greater player is ID is set to 1
+                            # Greater player is turnPlayer
+                            # Card returns to deck
 
                         # else: its a tie, tie is set to True
+                        # Card returns to deck
+                        # Shuffle deck
                     # While tie
-                        # Winning player plays first
-                        # Break
-                        # if tie:
-                            # tie is set to false
+                        # Loop player list
+                            # player draws
+                        # Do all players have a card?
+                            # False:
+                                # Loop till all players have one card each
+                            # True:
+                                # Players compare cards
+                                    # If one is greater than the other
+                                        # Greater player is turnPlayer
+                                        # tie is set to false
+                        # if tie == False:
                             # break 
-                    # Cards are returned to deck
-        print()
+                    # Cards return to deck
         self.reset()# start a round of the game
         pass
