@@ -12,13 +12,12 @@ class Game():
     DISPLAY_STARTING_HANDS = 3
     MAX_HAND = 3
     
-
     def __init__(self, window):
         """Initisialize attributes."""
         self.window = window
         self.oDeck = Deck(self.window)
-        self.oPlayer1 = Player()
-        self.oPlayer2 = Player()
+        self.oPlayer1 = Player(1)
+        self.oPlayer2 = Player(0)
         self.playerList = [self.oPlayer1, self.oPlayer2]
         self.potScore = 0
         self.potScoreText = pygwidgets.DisplayText(window, (450, 164),
@@ -49,8 +48,6 @@ class Game():
         # Game decides who goes first at random before game starts
         self.highestCardWinds()
         
-        
-    
     def reset(self):
         """This method is called when a new round starts"""
         # play shuffle sound
@@ -62,25 +59,24 @@ class Game():
             # take one card from deck
             oCard = self.oDeck.getCard()
 
-            # set card coordinates where player is ...
-            if oPlayer.getPlayerId == 1:
-                oPlayer.setHand(oCard)
-                if oPlayer == oPlayer1:
+            # set card coordinates per player hand location is...
+            if oPlayer.getTurnPlayer:  # If player is turnPlayer do or die!
+                oPlayer.setHand(oCard) # Set card in oPlayer's hand
+                if oPlayer.getPlayerId() == 0: # Set card coordinates for oPlayer1
                     cardLocX = self.player1CardXPositionList.pop(0)
                     oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM)
-                else:
+                else:                          # Set card coordinates for oPlayer2
                     cardLocX = self.player2CardXPositionList.pop(0)
                     oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
-            else:
+            else:                      # If player is not turnPlayer you be gug2go!
                 oPlayer.setHand(oCard)
-                if oPlayer == oPlayer1:
+                if oPlayer.getPlayerId() == 0:
                     cardLocX = self.player1CardXPositionList.pop(0)
                     oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM)
                 else:
                     cardLocX = self.player2CardXPositionList.pop(0)
                     oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
 
-        
         # show player card
         # hide player2 cards
     

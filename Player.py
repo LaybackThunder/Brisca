@@ -5,10 +5,10 @@ class Player():
 
     BEGINNING_HAND = 3
 
-    def __init__(self):
+    def __init__(self, iD):
         self.hand = []
         self.pot = []
-        self.playerId = None
+        self.playerId = iD # Identify if its player 1(int=0) or 2(int=1)
         self.turnPlayer = False
     
     def drawCard(self, oDeck):
