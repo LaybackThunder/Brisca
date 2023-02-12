@@ -16,14 +16,14 @@ class Player():
         oCard = oDeck.getCard()
         return oCard
 
-    def setHand(self, oCard):
-        """Player puts card in their hand."""
-        self.hand.append(oCard)
-    
-    def removeCard(self, index):
+    def removeCard(self, index):    
         """Remove card from hand."""
         card = self.hand.pop(index)
         return card
+
+    def setHand(self, oCard):
+        """Player puts card in their hand."""
+        self.hand.append(oCard)
     
     def getHand(self):
         """Returns a list format of the hand."""
@@ -43,12 +43,9 @@ class Player():
     def getPlayerId(self):
         return self.playerId
 
-    def setTurnPlayer(self):
-        """Checks if turnPlayer shold be True or False"""
-        if self.turnPlayer:
-            self.turnPlayer = False
-        else:
-            self.turnPlayer = True
+    def setTurnPlayer(self, bool):
+        """Sets player's right to be turnPlayer or not."""
+        self.turnPlayer = bool
     
     def getTurnPlayer(self):
         """Returns True or False if current player is turn player."""
@@ -68,7 +65,7 @@ if __name__ == "__main__":
     oPlayer2 = Player()
 
     # Each player draws one card before the other player continues to draw
-    for trick in range(3): 
+    for i in range(3): 
         oCard = oPlayer.drawCard(oDeck)
         oPlayer.setHand(oCard)
 
@@ -95,7 +92,7 @@ if __name__ == "__main__":
     print("\n|||||||||||||||||||||||||||||||||||\n")
 
     # Compare player cards --------------------------
-    for i in range(3): # Trick will loop 3 times
+    for trick in range(3): # Trick will loop 3 times
 
         # Compares player's hands; the higest value card wins
         if oPlayer.hand[0].getTrickValue() > oPlayer2.hand[0].getTrickValue():

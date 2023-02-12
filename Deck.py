@@ -28,7 +28,6 @@ class Deck():
             oCard.conceal()
         # shuffle using the random module
         random.shuffle(self.playingDeckList)
-        
     
     def getCard(self):
         # Checks to see if there are any cards
@@ -37,6 +36,10 @@ class Deck():
         # Returns one card from the top of the deck
         oCard = self.playingDeckList.pop()
         return oCard
+    
+    def returnCardToDeck(self, oCard):
+        # Put a card back into the deck
+        self.playingDeckList.append(0, oCard)
 
 # Test deck
 if __name__ == "__main__":
