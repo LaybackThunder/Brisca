@@ -56,30 +56,24 @@ class Game():
         oDeck.shuffle() # shuffle deck
         
         # deal cards to players
-        for oPlayer in self.playerList: # LEFT OFF ----> Check how cards are delt toplayers
+        for i in range(Game.MAX_HAND): # Players draw up to 3 cards
+            for oPlayer in self.playerList:
 
-            # take one card from deck
-            oCard = self.oDeck.getCard()
+                # take one card from deck
+                oCard = self.oDeck.getCard()
 
-            # set card coordinates per player hand location is...
-            if oPlayer.getTurnPlayer:  # If player is turnPlayer do or die!
-                oPlayer.setHand(oCard) # Set card in oPlayer's hand
-                if oPlayer.getPlayerId() == 0: # Set card coordinates for oPlayer1
-                    cardLocX = self.player1CardXPositionList.pop(0)
-                    oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM)
-                    oCard.reveal() # show player card running the software
-                else:                          # Set card coordinates for oPlayer2
-                    cardLocX = self.player2CardXPositionList.pop(0)
-                    oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
-            else:                      # If player is not turnPlayer you be gug2go!
-                oPlayer.setHand(oCard)
-                if oPlayer.getPlayerId() == 0:
-                    cardLocX = self.player1CardXPositionList.pop(0)
-                    oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM)
-                    oCard.reveal() # show player card running the software
-                else:
-                    cardLocX = self.player2CardXPositionList.pop(0)
-                    oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
+                # set card coordinates per player hand location is...
+                if oPlayer.getTurnPlayer:  # If player is turnPlayer do or die!
+                    oPlayer.setHand(oCard) # Set card in oPlayer's hand
+
+                    if oPlayer.getPlayerId() == 0: # Set card coordinates for oPlayer1
+                        cardLocX = self.player1CardXPositionList.pop(0)
+                        oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM)
+                        oCard.reveal() # show player card running the software
+
+                    else:                          # Set card coordinates for oPlayer2
+                        cardLocX = self.player2CardXPositionList.pop(0)
+                        oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
 
     def highestCardWinds(self):
         """Player with the highest card value wins to be turnPlayer."""
@@ -92,6 +86,7 @@ class Game():
         if self.oPlayer1.hand[0].getTrickValue() > self.oPlayer2.hand[0].getTrickValue(): # If player 1 wins and set as turn player
                 print("-------Player 1 wins")
                 self.oPlayer1.setTurnPlayer(True) # Player1 is turnPlayer, player 2 is false by defult
+                self.playerList = [self.oPlayer1, self.oPlayer2]
                 # Remove the 1st card from each player's hand
                 for oPlayer in self.playerList:
                     oCard = oPlayer.removeCard(0) # Remove card from player's hand
@@ -100,6 +95,7 @@ class Game():
         elif oPlayer.hand[0].getTrickValue() < oPlayer2.hand[0].getTrickValue():  # if player 2 wins and set as turn player
                 print("-------Player 2 wins")
                 self.oPlayer2.setTurnPlayer(True) # Player2 is turnPlayer, player 1 is false by defult
+                self.playerList = [self.oPlayer2, self.oPlayer1]
                 # Remove the 1st card from each player's hand
                 for oPlayer in self.playerList:
                     oCard = oPlayer.removeCard(0) # Remove card from player's hand
@@ -122,6 +118,7 @@ class Game():
                 if self.oPlayer1.hand[0].getTrickValue() > self.oPlayer2.hand[0].getTrickValue(): # If player 1 wins and set as turn player
                     print("-------Player 1 wins")
                     self.oPlayer1.setTurnPlayer(True) # Player1 is turnPlayer, player 2 is false by defult
+                    self.playerList = [self.oPlayer1, self.oPlayer2]
                     tie = False # Exit loop
                     # Remove the 1st card from each player's hand
                     for oPlayer in self.playerList:
@@ -131,6 +128,7 @@ class Game():
                 elif oPlayer.hand[0].getTrickValue() < oPlayer2.hand[0].getTrickValue():  # if player 2 wins and set as turn player
                     print("-------Player 2 wins")
                     self.oPlayer2.setTurnPlayer(True) # Player2 is turnPlayer, player 1 is false by defult
+                    self.playerList = [self.oPlayer2, self.oPlayer1]
                     tie = False # Exit loop
                     # Remove the 1st card from each player's hand
                     for oPlayer in self.playerList:
