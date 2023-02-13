@@ -16,6 +16,8 @@ class Game():
         """Initisialize attributes."""
         self.window = window
         self.oDeck = Deck(self.window)
+        self.trumpCard = None
+        self.dealerPot = []
         self.oPlayer1 = Player(1)
         self.oPlayer2 = Player(0)
         self.playerList = [self.oPlayer1, self.oPlayer2]
@@ -54,6 +56,10 @@ class Game():
         """This method is called when a new round starts"""
         # play shuffle sound
         oDeck.shuffle() # shuffle deck
+
+        # Pick a Trump card
+        oCard = oDeck.getCard()
+        self.trumpCard = oCard
         
         # deal cards to players
         for i in range(Game.MAX_HAND): # Players draw up to 3 cards
@@ -67,8 +73,8 @@ class Game():
                     oPlayer.setHand(oCard) # Set card in oPlayer's hand
 
                     if oPlayer.getPlayerId() == 0: # Set card coordinates for oPlayer1
-                        cardLocX = self.player1CardXPositionList.pop(0)
-                        oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM)
+                        cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
+                        oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
                         oCard.reveal() # show player card running the software
 
                     else:                          # Set card coordinates for oPlayer2
@@ -82,11 +88,11 @@ class Game():
             oCard = self.oDeck.getCard() # player draws
             oPlayer.setHand(oCard) # player puts card in their hand
 
-        # Players compare cards    
+        # Players compare cards and decide who will be turn player   
         if self.oPlayer1.hand[0].getTrickValue() > self.oPlayer2.hand[0].getTrickValue(): # If player 1 wins and set as turn player
                 print("-------Player 1 wins")
                 self.oPlayer1.setTurnPlayer(True) # Player1 is turnPlayer, player 2 is false by defult
-                self.playerList = [self.oPlayer1, self.oPlayer2]
+                self.playerList = [self.oPlayer1, self.oPlayer2] # Player arrangement decides who draws first
                 # Remove the 1st card from each player's hand
                 for oPlayer in self.playerList:
                     oCard = oPlayer.removeCard(0) # Remove card from player's hand
@@ -95,7 +101,7 @@ class Game():
         elif oPlayer.hand[0].getTrickValue() < oPlayer2.hand[0].getTrickValue():  # if player 2 wins and set as turn player
                 print("-------Player 2 wins")
                 self.oPlayer2.setTurnPlayer(True) # Player2 is turnPlayer, player 1 is false by defult
-                self.playerList = [self.oPlayer2, self.oPlayer1]
+                self.playerList = [self.oPlayer2, self.oPlayer1] # Player arrangement decides who draws first
                 # Remove the 1st card from each player's hand
                 for oPlayer in self.playerList:
                     oCard = oPlayer.removeCard(0) # Remove card from player's hand
@@ -118,7 +124,7 @@ class Game():
                 if self.oPlayer1.hand[0].getTrickValue() > self.oPlayer2.hand[0].getTrickValue(): # If player 1 wins and set as turn player
                     print("-------Player 1 wins")
                     self.oPlayer1.setTurnPlayer(True) # Player1 is turnPlayer, player 2 is false by defult
-                    self.playerList = [self.oPlayer1, self.oPlayer2]
+                    self.playerList = [self.oPlayer1, self.oPlayer2] # Player arrangement decides who draws first
                     tie = False # Exit loop
                     # Remove the 1st card from each player's hand
                     for oPlayer in self.playerList:
@@ -128,7 +134,7 @@ class Game():
                 elif oPlayer.hand[0].getTrickValue() < oPlayer2.hand[0].getTrickValue():  # if player 2 wins and set as turn player
                     print("-------Player 2 wins")
                     self.oPlayer2.setTurnPlayer(True) # Player2 is turnPlayer, player 1 is false by defult
-                    self.playerList = [self.oPlayer2, self.oPlayer1]
+                    self.playerList = [self.oPlayer2, self.oPlayer1] # Player arrangement decides who draws first
                     tie = False # Exit loop
                     # Remove the 1st card from each player's hand
                     for oPlayer in self.playerList:
@@ -146,3 +152,61 @@ class Game():
         """
         Which sections of the method can be their own little methods?
         """
+
+    def trick(self, playerAndCards):
+        """Players battle for supremacy, but mostly points."""
+        # playerAndCards is a dictionary with the player's iD and corresponding cards
+
+        # Compare player's trump cards to the main trump card
+        isPlayer1Trump = playerAndCards[0].getSuit() == self.trumpCard.getSuit()
+        isPlayer2Trump = playerAndCards[1].getSuit() == self.trumpCard.getSuit()
+
+        if isPlayer1Trump and isPlayer2Trump: # Both players have a trump card
+            # Compares player's cards; the higest value card wins
+            if (playerAndCards[0].getTrickValue() > playerAndCards[1].getTrickValue()):
+                print("-------Player 1 wins")
+                # Place the cards in a list
+                potCards = [playerAndCards[0], playerAndCards[1]]
+                # Add cards into player pot
+                for card in potCards.copy():
+                    card = potCards.pop(0)
+                    self.oPlayer1.setPot(card)
+            
+            elif playerAndCards[0].getTrickValue() < playerAndCards[1].getTrickValue():
+                print("-------Player 2 wins")
+                # Place the cards in a list
+                potCards = [playerAndCards[0], playerAndCards[1]]
+                # Add cards into player pot
+                for card in potCards.copy():
+                    card = potCards.pop(0)
+                    self.oPlayer2.setPot(card)
+            
+            else: # Tie ----> LEFT OFF (May have to add a dealerPot above <----
+                # (checks to see if their is a dealerPot to add to player pot))
+                # Trick cards are placed on the dealerPot 
+                # - dealerPot is a pile of cards accumulated in a tie; winner gets the pile  
+                # - dealerPot is where potCards go before give to player 
+                #  -dealerPot is the middle between when players trick and their pots
+                # Players exit trick to be able to draw and play again
+                # Winner gets tiePot cards
+                # If there are no more cards both in hand or deck or trump and the last trick is a tie
+                # Players flip a coin, winner takes card
+                pass
+        
+        elif isPlayer1Trump or isPlayer2Trump: # A player has a trump card
+            if isPlayer1Trump:
+                print("-------Player 1 wins")
+                # Place the cards in a list
+                potCards = [playerAndCards[0], playerAndCards[1]]
+                # Add cards into player pot
+                for card in potCards.copy():
+                    card = potCards.pop(0)
+                    self.oPlayer1.setPot(card)
+            else:
+                print("-------Player 2 wins")
+                # Place the cards in a list
+                potCards = [playerAndCards[0], playerAndCards[1]]
+                # Add cards into player pot
+                for card in potCards.copy():
+                    card = potCards.pop(0)
+                    self.oPlayer2.setPot(card)
