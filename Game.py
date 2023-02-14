@@ -152,61 +152,89 @@ class Game():
         """
         Which sections of the method can be their own little methods?
         """
+    
+    def setDealerPot(self, oCards):
+        """Appends object Cards to dealerPot list after a trick tie."""
+        for oCard in oCards.copy():
+            self.dealerPot.append(oCard)
+    
+    def getDealerPot(self):
+        """This method is used by setPot Transfer """
+        return self.dealerPot
+    
+    def setDealerPotTransfer(self, player):
+        """The dealerPot gives all it's cards to a player's pot."""
+        dealerPot = self.getDealerPot.copy() # Itterate using a copy of the list
+        for card in dealerPot:
+            card = self.dealerPot.pop(0) # Remove items using real list
+            player.setPot(card)  
 
-    def trick(self, playerAndCards):
-        """Players battle for supremacy, but mostly points."""
-        # playerAndCards is a dictionary with the player's iD and corresponding cards
+    def trick(self, playersAndCards):
+        """
+        Players have chosen their cards for battle; now they fight for supremacy, but mostly points.
+        If tie, cards are placed with the dealer pot; after a tie, which ever player wins the following trick
+        gains all the dealer pot cards, uuh nice!
+        """
+        # playersAndCards is a dictionary with the player's iD and corresponding cards
+        # Create local variables to identify players (playeriDs) and their cards (oCards)????
 
         # Compare player's trump cards to the main trump card
-        isPlayer1Trump = playerAndCards[0].getSuit() == self.trumpCard.getSuit()
-        isPlayer2Trump = playerAndCards[1].getSuit() == self.trumpCard.getSuit()
+        isPlayer1Trump = playersAndCards[0].getSuit() == self.trumpCard.getSuit()
+        isPlayer2Trump = playersAndCards[1].getSuit() == self.trumpCard.getSuit()
 
         if isPlayer1Trump and isPlayer2Trump: # Both players have a trump card
-            # Compares player's cards; the higest value card wins
-            if (playerAndCards[0].getTrickValue() > playerAndCards[1].getTrickValue()):
+            # Compares player's cards; the higest value card wins and gets the spoils of war!
+            if (playersAndCards[0].getTrickValue() > playersAndCards[1].getTrickValue()):
                 print("-------Player 1 wins")
                 # Place the cards in a list
-                potCards = [playerAndCards[0], playerAndCards[1]]
+                potCards = [playersAndCards[0], playersAndCards[1]]
                 # Add cards into player pot
                 for card in potCards.copy():
                     card = potCards.pop(0)
                     self.oPlayer1.setPot(card)
+
+                if self.dealerPot: # If there are cards in the dealer list, give them all to player1
+                    self.setDealerPotTransfer(self.oPlayer1) # Player1 has all the dealer cards in their pot
             
-            elif playerAndCards[0].getTrickValue() < playerAndCards[1].getTrickValue():
+            elif playersAndCards[0].getTrickValue() < playersAndCards[1].getTrickValue():
                 print("-------Player 2 wins")
                 # Place the cards in a list
-                potCards = [playerAndCards[0], playerAndCards[1]]
+                potCards = [playersAndCards[0], playersAndCards[1]]
                 # Add cards into player pot
                 for card in potCards.copy():
                     card = potCards.pop(0)
                     self.oPlayer2.setPot(card)
+                
+                if self.dealerPot: # If there are cards in the dealer list, give them all to player2
+                        self.setDealerPotTransfer(self.oPlayer2) # Player2 has all the dealer cards in their pot         
             
-            else: # Tie ----> LEFT OFF (May have to add a dealerPot above <----
-                # (checks to see if their is a dealerPot to add to player pot))
-                # Trick cards are placed on the dealerPot 
-                # - dealerPot is a pile of cards accumulated in a tie; winner gets the pile  
-                # - dealerPot is where potCards go before give to player 
-                #  -dealerPot is the middle between when players trick and their pots
-                # Players exit trick to be able to draw and play again
-                # Winner gets tiePot cards
-                # If there are no more cards both in hand or deck or trump and the last trick is a tie
-                # Players flip a coin, winner takes card
-                pass
+            else: # Tie
+                print("-------ITS A TIE! T.T")
+                potCards = [playersAndCards[0], playersAndCards[1]]
+                self.setDealerPot(potCards) # Trick cards are set to dealerPot  
         
         elif isPlayer1Trump or isPlayer2Trump: # A player has a trump card
             if isPlayer1Trump:
                 print("-------Player 1 wins")
                 # Place the cards in a list
-                potCards = [playerAndCards[0], playerAndCards[1]]
+                potCards = [playersAndCards[0], playersAndCards[1]]
                 # Add cards into player pot
                 for card in potCards.copy():
                     card = potCards.pop(0)
                     self.oPlayer1.setPot(card)
+
+                if self.dealerPot: # If there are cards in the dealer list, give them all to player1
+                    self.setDealerPotTransfer(self.oPlayer1)
             else:
                 print("-------Player 2 wins")
                 # Place the cards in a list
-                potCards = [playerAndCards[0], playerAndCards[1]]
+                potCards = [playersAndCards[0], playersAndCards[1]]
                 # Add cards into player pot
                 for card in potCards.copy():
                     card = potCards.pop(0)
                     self.oPlayer2.setPot(card)
+
+                if self.dealerPot: # If there are cards in the dealer list, give them all to player2
+                    self.setDealerPotTransfer(self.oPlayer2)
+        
+        # Are there any cards left in the deck?
