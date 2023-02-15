@@ -45,6 +45,10 @@ class Card():
     def getLoc(self): # get the location from the ImageCollection
         loc = self.images.getLoc()
         return loc
+    
+    def setRotation(self, degrees):
+        """Positive numbers are clockwise, negative numbers are counter-clockwise."""
+        self.images.rotate(degrees)
 
     def draw(self):
         self.images.draw()

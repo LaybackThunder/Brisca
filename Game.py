@@ -18,9 +18,9 @@ class Game():
         self.oDeck = Deck(self.window)
         self.trumpCard = None
         self.dealerPot = []
-        self.oPlayer1 = Player(1)
-        self.oPlayer2 = Player(0)
-        self.playerList = [self.oPlayer1, self.oPlayer2]
+        self.oPlayer1 = Player(1) # Instantiate only one player
+        self.oPlayer2 = Player(0) # When testing the class I'll create more players
+        self.playerList = [self.oPlayer1, self.oPlayer2] # Leave this list empty
         self.potScore = 0
         self.potScoreText = pygwidgets.DisplayText(window, (450, 164),
                                         f'Pot Score: {self.potScore}',
@@ -55,11 +55,19 @@ class Game():
     def reset(self):
         """This method is called when a new round starts"""
         # play shuffle sound
-        oDeck.shuffle() # shuffle deck
+        self.oDeck.shuffle() # shuffle deck
 
         # Pick a Trump card
-        oCard = oDeck.getCard()
-        self.trumpCard = oCard
+        oCard = oDeck.getCard() 
+        self.setTrump(oCard)
+        # Trump location
+        self.trumpCard.setLoc((600, 500))
+        self.trumpCard.setRotate(90) # 90 degrees rotation
+        # Reveal trump card
+        self.showTrumpCard(self.trumpCard)  
+
+        # Deck's location in pixles
+        self.oDeck.setLoc((600, 500))
         
         # deal cards to players
         for i in range(Game.MAX_HAND): # Players draw up to 3 cards
@@ -77,12 +85,16 @@ class Game():
                         oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
                         oCard.reveal() # show player card running the software
 
-                    else:                          # Set card coordinates for oPlayer2
+                    else: # Set card coordinates for oPlayer2
                         cardLocX = self.player2CardXPositionList.pop(0)
                         oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
 
     def highestCardWinds(self):
-        """Player with the highest card value wins to be turnPlayer."""
+        """
+        When players enter the game room the dealer gives each player a card.
+        Player with the highest card value wins to be turnPlayer.
+        Player's turnPlayer var is set to True or keps False.
+        """
         
         for oPlayer in self.playerList: # Players draw one card each
             oCard = self.oDeck.getCard() # player draws
@@ -148,10 +160,6 @@ class Game():
                     oDeck.shuffle()
 
         self.reset()# start a round of the game
-
-        """
-        Which sections of the method can be their own little methods?
-        """
     
     def setDealerPot(self, oCards):
         """Appends object Cards to dealerPot list after a trick tie."""
@@ -168,6 +176,22 @@ class Game():
         for card in dealerPot:
             card = self.dealerPot.pop(0) # Remove items using real list
             player.setPot(card)  
+
+    def showTrumpCard(self, oCard):
+        oCard.reveal()
+
+    def setTrump(self, oCard):
+        self.trumpCard = oCard
+
+    def selectCard(self):
+        """
+        Players can select to enter a trick session or if applicable, a trump swap
+        """
+        pass
+
+    def trumpHandSwap(self):
+        """Swap one card in the player's hand for the trump card."""
+        pass
 
     def trick(self, playersAndCards):
         """
@@ -238,3 +262,11 @@ class Game():
                     self.setDealerPotTransfer(self.oPlayer2)
         
         # Are there any cards left in the deck?
+
+    def draw(self):
+        # Tell each card to draw itself
+        for oCard in self.cardList:
+            oCard.draw()
+
+        self.potScoreText.draw()
+        self.messageText.draw()

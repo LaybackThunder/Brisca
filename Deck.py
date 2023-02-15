@@ -41,6 +41,17 @@ class Deck():
         # Put a card back into the deck
         self.playingDeckList.append(0, oCard)
 
+    def setLoc(self, loc):
+        for oCard in self.playingDeckList:
+            oCard.setLoc(loc) # call the oCard's setLoc method
+    
+    def getLoc(self): # get the location from the oCard
+        loc = []
+        for oCard in self.playingDeckList:
+            locXY = self.oCard.getLoc()
+            loc.append(f"{oCard.getName()} is loc at {locXY}")
+        return loc
+
 # Test deck
 if __name__ == "__main__":
 
