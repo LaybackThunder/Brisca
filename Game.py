@@ -50,8 +50,16 @@ class Game():
         self.player2CardXPositionList = self.cardXPositionList.copy()
         
         # Game decides who goes first at random before game starts
-        self.highestCardWinds()
+        self.highestCardWins()
         
+    def draw(self):
+        # Tell each card to draw itself
+        for oCard in self.cardList:
+            oCard.draw()
+
+        self.potScoreText.draw()
+        self.messageText.draw()
+
     def setDealerPot(self, oCards):
         """Appends object Cards to dealerPot list after a trick tie."""
         for oCard in oCards.copy():
@@ -61,7 +69,7 @@ class Game():
         """This method is used by setPot Transfer """
         return self.dealerPot
     
-    def setDealerPotTransfer(self, player):
+    def setDealerPotTransfer(self, player): # Change the name to "DealerPotTransfer" or whatever lol
         """The dealerPot gives all it's cards to tie breaker, player's pot."""
         dealerPot = self.getDealerPot.copy() # Itterate using a copy of the list
         for card in dealerPot:
@@ -74,7 +82,7 @@ class Game():
     def setTrump(self, oCard):
         self.trumpCard = oCard
 
-    def highestCardWinds(self):
+    def highestCardWins(self):
         """
         When players enter the game room the dealer gives each player a card.
         Player with the highest card value wins to be turnPlayer.
@@ -143,48 +151,89 @@ class Game():
                         oCard = oPlayer.removeCard(0) # Remove card from player's hand
                         oDeck.returnCardToDeck(oCard) # Card returns to deck
                     oDeck.shuffle()
-
         self.reset()# start a round of the game
 
     def reset(self):
-        """This method is called when a new round starts"""
-        # play shuffle sound
+        """This method is called when a new round starts. 
+        Resets; deck, pots, points
+        """
+        # Reset Player's pot points
+
+        # Remove any cards in any player's pot
+
+        self.cardShuffleSound.play() # play shuffle sound
         self.oDeck.shuffle() # shuffle deck
 
         # Pick a Trump card
         oCard = oDeck.getCard() 
         self.setTrump(oCard)
-        # Trump location
+        # Trump location under the deck
         self.trumpCard.setLoc((600, 500))
         self.trumpCard.setRotate(90) # 90 degrees rotation
         # Reveal trump card
         self.showTrumpCard(self.trumpCard)  
 
-        # Deck's location in pixles
+        # Deck's location
         self.oDeck.setLoc((600, 500))
-        
-        # deal cards to players
+                
+        # Deal cards to players
         for i in range(Game.MAX_HAND): # Players draw up to 3 cards
-            for oPlayer in self.playerList:
+                
+            didTurnPlayerDraw = False # Tells none turn player to avoid drawing till turn player has drawn
+            keepDrawing = True # Keep drawing till all players have drawn
+            while keepDrawing:
+                
+                for player in self.playerList: 
 
-                # take one card from deck
-                oCard = self.oDeck.getCard()
+                    # set card coordinates per player hand location is...
+                    if player.getTurnPlayer and not didTurnPlayerDraw:  # If player is turnPlayer draw!
+                        oCard = self.oDeck.getCard() # take one card from the top of the deck
+                        player.setHand(oCard) # Set card in oPlayer's hand
 
-                # set card coordinates per player hand location is...
-                if oPlayer.getTurnPlayer:  # If player is turnPlayer do or die!
-                    oPlayer.setHand(oCard) # Set card in oPlayer's hand
+                        # Set card coordinates for oPlayer1
+                        if player.getPlayerId() == 0: 
+                            cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
+                            oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
+                            oCard.reveal() # show player card running the software
+                            didTurnPlayerDraw = True
 
-                    if oPlayer.getPlayerId() == 0: # Set card coordinates for oPlayer1
-                        cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
-                        oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
-                        oCard.reveal() # show player card running the software
+                        # Set card coordinates for oPlayer2 -------------CHECK HERE
+                        else: 
+                            """PLACE HOLDERS ARE EMPTY CARDS? with a back image?"""
+                            cardLocX = self.player2CardXPositionList.pop(0)
+                            oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
+                            didTurnPlayerDraw = True
+                    
+                    elif didTurnPlayerDraw: # player draw if turnPlayer drew first!
+                        oCard = self.oDeck.getCard() # take one card from the top of the deck
+                        player.setHand(oCard) # Set card in oPlayer's hand
 
-                    else: # Set card coordinates for oPlayer2
-                        """PLACE HOLDERS ARE EMPTY CARDS? with a back image?"""
-                        cardLocX = self.player2CardXPositionList.pop(0)
-                        oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
+                        # Set card coordinates for oPlayer1
+                        if player.getPlayerId() == 0: 
+                            cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
+                            oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
+                            oCard.reveal() # show player card running the software
+                            keepDrawing = False # Exit while loop
 
-    def playerDrawCard(self):
+                        # Set card coordinates for oPlayer2 -------------CHECK HERE
+                        else: 
+                            """PLACE HOLDERS ARE EMPTY CARDS? with a back image?"""
+                            cardLocX = self.player2CardXPositionList.pop(0)
+                            oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
+                            keepDrawing = False # Exit while loop
+
+
+
+
+        self._briscaGame()
+
+    def playersDrawACard(self):
+        """Players draw a card."""
+        # Can you draw a card?
+        # yes?
+        if self.oDeck
+        # no?
+
         pass
 
     def selectCard(self):
@@ -267,13 +316,5 @@ class Game():
         
         # Are there any cards left in the deck?
 
-    def briscaGame(self):
+    def _briscaGame(self):
         """The logic of the game loop"""
-
-    def draw(self):
-        # Tell each card to draw itself
-        for oCard in self.cardList:
-            oCard.draw()
-
-        self.potScoreText.draw()
-        self.messageText.draw()
