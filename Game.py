@@ -52,7 +52,7 @@ class Game():
         # Game decides who goes first at random before game starts
         self.highestCardWins()
         
-    def draw(self):
+    def draw(self): # draw image to screen.
         """Tell each card to draw an image of itself"""
         for oCard in self.cardList:
             oCard.draw()
@@ -69,7 +69,7 @@ class Game():
         """This method is used by setPot Transfer """
         return self.dealerPot
     
-    def setDealerPotTransfer(self, player): # Change the name to "DealerPotTransfer" or whatever lol
+    def DealerPotTransfer(self, player): # Change the name to "DealerPotTransfer" or whatever lol
         """The dealerPot gives all it's cards to tie breaker, player's pot."""
         dealerPot = self.getDealerPot.copy() # Itterate using a copy of the list
         for card in dealerPot:
@@ -116,7 +116,7 @@ class Game():
         if not tie: 
             # Add cards to player's hand
             for player in self.playerList: # Players draw one card each
-                oCard = self.oDeck.getCard() # player draws
+                oCard = self.oDeck.getCard() # draw a card
                 player.setHand(oCard) # player puts card in their hand
 
             # Players compare cards and decide who will be turn player   
@@ -145,18 +145,18 @@ class Game():
             if tie:
                 self.oDeck.shuffle() 
 
-        self.reset()# start a round of the game
-
     def reset(self):
         """This method is called when a new round starts. 
         Resets and sets; deck, pots, points
         """
-        # Reset Player's pot points
+        # Reset every Player's pot points
 
-        # Remove any cards in any player's pot
+        # Remove any cards in every player's pot
+
+        # Remove any cards in dealer's pot
 
         self.cardShuffleSound.play() # play shuffle sound
-        self.oDeck.shuffle() # shuffle deck a new deck
+        self.oDeck.shuffle() # shuffle new deck
 
         # Pick a Trump card
         oCard = oDeck.getCard() 
@@ -169,6 +169,9 @@ class Game():
 
         # Deck's location
         self.oDeck.setLoc((600, 500))
+
+        # Decide which player becomes turnPlayer
+        self.highestCardWins()
                 
         # Deal cards to players before the game starts
         for i in range(Game.MAX_HAND): # Players draw up to 3 cards
@@ -261,7 +264,7 @@ class Game():
                     self.oPlayer1.setPot(card)
 
                 if self.dealerPot: # If there are cards in the dealer list, give them all to player1
-                    self.setDealerPotTransfer(self.oPlayer1) # Player1 has all the dealer cards in their pot
+                    self.DealerPotTransfer(self.oPlayer1) # Player1 has all the dealer cards in their pot
             
             elif playersAndCards[0].getTrickValue() < playersAndCards[1].getTrickValue():
                 print("-------Player 2 wins")
@@ -273,7 +276,7 @@ class Game():
                     self.oPlayer2.setPot(card)
                 
                 if self.dealerPot: # If there are cards in the dealer list, give them all to player2
-                        self.setDealerPotTransfer(self.oPlayer2) # Player2 has all the dealer cards in their pot         
+                        self.DealerPotTransfer(self.oPlayer2) # Player2 has all the dealer cards in their pot         
             
             else: # Tie
                 print("-------ITS A TIE! T.T")
@@ -291,7 +294,7 @@ class Game():
                     self.oPlayer1.setPot(card)
 
                 if self.dealerPot: # If there are cards in the dealer list, give them all to player1
-                    self.setDealerPotTransfer(self.oPlayer1)
+                    self.DealerPotTransfer(self.oPlayer1)
             else:
                 print("-------Player 2 wins")
                 # Place the cards in a list
@@ -302,7 +305,7 @@ class Game():
                     self.oPlayer2.setPot(card)
 
                 if self.dealerPot: # If there are cards in the dealer list, give them all to player2
-                    self.setDealerPotTransfer(self.oPlayer2)
+                    self.DealerPotTransfer(self.oPlayer2)
         
         # Are there any cards left in the deck?
 
@@ -313,6 +316,8 @@ class Game():
 """
 Todo list: 
 2) Re-check writen methods one more time for logoc consistency.
+    - Modified highestCardWins, creat compareCards method
+    - Add and arrange comments
 3) Work on the players drawn a card method
 4) Check to see if players draw a card method can be used across the class to sub stitudes other code. 
 5) Create place holders for client's opponent. 
