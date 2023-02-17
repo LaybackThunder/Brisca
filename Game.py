@@ -53,7 +53,7 @@ class Game():
         self.highestCardWins()
         
     def draw(self):
-        # Tell each card to draw itself
+        """Tell each card to draw an image of itself"""
         for oCard in self.cardList:
             oCard.draw()
 
@@ -155,14 +155,14 @@ class Game():
 
     def reset(self):
         """This method is called when a new round starts. 
-        Resets; deck, pots, points
+        Resets and sets; deck, pots, points
         """
         # Reset Player's pot points
 
         # Remove any cards in any player's pot
 
         self.cardShuffleSound.play() # play shuffle sound
-        self.oDeck.shuffle() # shuffle deck
+        self.oDeck.shuffle() # shuffle deck a new deck
 
         # Pick a Trump card
         oCard = oDeck.getCard() 
@@ -176,7 +176,7 @@ class Game():
         # Deck's location
         self.oDeck.setLoc((600, 500))
                 
-        # Deal cards to players
+        # Deal cards to players before the game starts
         for i in range(Game.MAX_HAND): # Players draw up to 3 cards
                 
             didTurnPlayerDraw = False # Tells none turn player to avoid drawing till turn player has drawn
@@ -222,18 +222,14 @@ class Game():
                             oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
                             keepDrawing = False # Exit while loop
 
-
-
-
+        # Start game
         self._briscaGame()
 
     def playersDrawACard(self):
         """Players draw a card."""
         # Can you draw a card?
         # yes?
-        if self.oDeck
         # no?
-
         pass
 
     def selectCard(self):
@@ -318,3 +314,15 @@ class Game():
 
     def _briscaGame(self):
         """The logic of the game loop"""
+        pass
+
+"""
+Todo list: 
+1) Check local variables that are named 'oPlayer' and change them to 'player'.
+2) Re-check writen methods one more time for logoc consistency.
+3) Work on the players drawn a card method
+4) Check to see if players draw a card method can be used across the class to sub stitudes other code. 
+5) Create place holders for client's opponent. 
+6) Figure the other empty methods out.
+7) Whatever needs to happen next lol!
+"""
