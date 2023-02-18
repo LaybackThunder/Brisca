@@ -202,37 +202,26 @@ class Game():
                         oCard = self.oDeck.getCard() # take one card from the top of the deck
                         player.setHand(oCard) # Set card in player's hand
 
-                        # Set card coordinates for oPlayer1
-                        if player.getPlayerId() == 0: 
-                            cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
-                            oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
-                            oCard.reveal() # show player card running the software
-                            didTurnPlayerDraw = True
-
-                        # Set card coordinates for oPlayer2
-                        else: 
-                            """PLACE HOLDERS ARE EMPTY CARDS? with a back image?"""
-                            cardLocX = self.player2CardXPositionList.pop(0)
-                            oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
-                            didTurnPlayerDraw = True
+                        # Set card coordinates for oPlayer1 
+                        cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
+                        oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
+                        oCard.reveal() # show player card running the software
+                        didTurnPlayerDraw = True
                     
                     elif didTurnPlayerDraw: # player draw if turnPlayer drew first!
                         oCard = self.oDeck.getCard() # take one card from the top of the deck
                         player.setHand(oCard) # Set card in player's hand
 
-                        # Set card coordinates for oPlayer1
-                        if player.getPlayerId() == 0: 
-                            cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
-                            oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
-                            oCard.reveal() # show player card running the software
-                            keepDrawing = False # Exit while loop
+                        # Set card coordinates for oPlayer1 
+                        cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
+                        oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
+                        oCard.reveal() # show player card running the software
+                        keepDrawing = False # Exit while loop
 
-                        # Set card coordinates for oPlayer2 -------------CHECK HERE
-                        else: 
-                            """PLACE HOLDERS ARE EMPTY CARDS? with a back image?"""
-                            cardLocX = self.player2CardXPositionList.pop(0)
-                            oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
-                            keepDrawing = False # Exit while loop
+                    # Set card coordinates for oPlayer2 -------------CHECK HERE 
+                    """PLACE HOLDERS ARE EMPTY CARDS? with a back image?"""
+                    cardLocX = self.player2CardXPositionList.pop(0)
+                    oCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
 
         # Start game
         self._briscaGame()
@@ -338,5 +327,6 @@ Todo list:
 4) Check to see if players draw a card method can be used across the class to sub stitudes other code. 
 5) Create place holders for client's opponent. 
 6) Figure the other empty methods out.
-7) Whatever needs to happen next lol!
+7) If there is no deck, draw trump card.
+8) Whatever needs to happen next lol!
 """
