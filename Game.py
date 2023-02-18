@@ -69,12 +69,19 @@ class Game():
         """This method is used by setPot Transfer """
         return self.dealerPot
     
-    def DealerPotTransfer(self, player): # Change the name to "DealerPotTransfer" or whatever lol
-        """The dealerPot gives all it's cards to tie breaker, player's pot."""
-        dealerPot = self.getDealerPot.copy() # Itterate using a copy of the list
-        for card in dealerPot:
-            card = self.dealerPot.pop(0) # Remove items using real list
-            player.setPot(card)  
+    def DealerPotTransfer(self, player=None): # Change the name to "DealerPotTransfer" or whatever lol
+        """The dealerPot gives all it's cards to the player's pot or to the deck."""
+        if player != None: # Give cards to player
+            dealerPot = self.getDealerPot.copy() # Itterate using a copy of the list
+            for card in dealerPot:
+                card = self.dealerPot.pop(0) # Remove items using real list
+                player.setPot(card)
+
+        else: # Return cards to deck
+            dealerPot = self.getDealerPot.copy() # Itterate using a copy of the list
+            for card in dealerPot:
+                card = self.dealerPot.pop(0) # Remove items using real list
+                self.oDeck.returnCardToDeck(card)
 
     def showTrumpCard(self, oCard):
         oCard.reveal()
@@ -124,7 +131,7 @@ class Game():
 
             # Remove the 1st card from each player's hand
             for player in self.playerList:
-                oCard = player.removeCard(0) # Remove card from player's hand
+                oCard = player.removeCardFromHand(0) # Remove card from player's hand
                 self.oDeck.returnCardToDeck(oCard) # Card returns to deck
 
         while tie:
@@ -138,7 +145,7 @@ class Game():
 
             # Remove the 1st card from each player's hand
             for player in self.playerList:
-                oCard = player.removeCard(0) # Remove card from player's hand
+                oCard = player.removeCardFromHand(0) # Remove card from player's hand
                 self.oDeck.returnCardToDeck(oCard) # Card returns to deck
 
             # If true shuffle deck after cards return deck after
@@ -151,9 +158,17 @@ class Game():
         """
         # Reset every Player's pot points
 
-        # Remove any cards in every player's pot
+        # Remove any cards in every player's pot and put it back int the deck
+        for player in self.playerList:
+            for card in range(len(player.getPot().copy())): # Number iteration
+                  discard = player.removeCardFromPot(card) # Pop using the index
+                  self.oDeck.returnCardToDeck(discard) # The resturned value is placed back in the deck
 
         # Remove any cards in dealer's pot
+        if self.getDealerPot(): # is it true that there are cards?
+            for card in range(len(self.getDealerPot.copy())): # Number iteration
+                discard = player.removeCardFromPot(card) # Pop using the index
+                self.oDeck.returnCardToDeck(discard) # The resturned value is placed back at the bottom of the deck
 
         self.cardShuffleSound.play() # play shuffle sound
         self.oDeck.shuffle() # shuffle new deck
@@ -194,7 +209,7 @@ class Game():
                             oCard.reveal() # show player card running the software
                             didTurnPlayerDraw = True
 
-                        # Set card coordinates for oPlayer2 -------------CHECK HERE
+                        # Set card coordinates for oPlayer2
                         else: 
                             """PLACE HOLDERS ARE EMPTY CARDS? with a back image?"""
                             cardLocX = self.player2CardXPositionList.pop(0)
@@ -317,7 +332,8 @@ class Game():
 Todo list: 
 2) Re-check writen methods one more time for logoc consistency.
     - Modified highestCardWins, creat compareCards method
-    - Add and arrange comments
+    - Add comments in the reset() and arrange highestCardWins() in the reset method
+    - Left OFF --> Cehck Reset method
 3) Work on the players drawn a card method
 4) Check to see if players draw a card method can be used across the class to sub stitudes other code. 
 5) Create place holders for client's opponent. 

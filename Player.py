@@ -16,10 +16,10 @@ class Player():
         oCard = oDeck.getCard()
         return oCard
 
-    def removeCard(self, index):    
+    def removeCardFromHand(self, index):    
         """Remove card from hand."""
-        card = self.hand.pop(index)
-        return card
+        discard = self.hand.pop(index)
+        return discard
 
     def setHand(self, oCard):
         """Player puts card in their hand."""
@@ -37,6 +37,11 @@ class Player():
         """Returns a list format of the pot."""
         return self.pot
     
+    def removeCardFromPot(self, oCard=-1):
+        """Removes the last card in the player's pot by defult."""
+        discard = self.pot.pop(oCard)
+        return discard
+
     def setPlayerId(self, iD):
         self.playerId = iD
 
