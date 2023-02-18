@@ -32,7 +32,8 @@ class Deck():
     def getCard(self):
         # Checks to see if there are any cards
         if len(self.playingDeckList) == 0:
-            raise IndexError('Ha! No more cards, go and get a life!')
+            print('Ha! No more cards, go and get a life!')
+            return False
         # Returns one card from the top of the deck
         oCard = self.playingDeckList.pop()
         return oCard

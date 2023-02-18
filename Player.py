@@ -5,7 +5,7 @@ class Player():
 
     BEGINNING_HAND = 3
 
-    def __init__(self, iD):
+    def __init__(self, iD=None):
         self.hand = []
         self.pot = []
         self.playerId = iD # Identify if its player 1(int=0) or 2(int=1)
