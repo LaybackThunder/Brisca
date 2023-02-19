@@ -70,8 +70,9 @@ class Game():
         """This method is used by setPot Transfer """
         return self.dealerPot
     
-    def dealerPotTransfer(self, player=None): # Change the name to "dealerPotTransfer" or whatever lol
+    def dealerPotTransfer(self, player=None):
         """The dealerPot gives all it's cards to the player's pot or to the deck."""
+        
         if player != None: # Give cards to player
             dealerPot = self.getDealerPot.copy() # Itterate using a copy of the list
             for card in dealerPot:
@@ -79,9 +80,9 @@ class Game():
                 player.setPot(card)
 
         else: # Return cards to deck
-            dealerPot = self.getDealerPot.copy() # Itterate using a copy of the list
+            dealerPot = self.getDealerPot.copy()
             for card in dealerPot:
-                card = self.dealerPot.pop(0) # Remove items using real list
+                card = self.dealerPot.pop(0)
                 self.oDeck.returnCardToDeck(card)
 
     def showTrumpCard(self, oCard):
@@ -93,12 +94,11 @@ class Game():
     def compareCards(self, playersAndCards):
         """
         Sets a turnPlayer by comparing the highest value card.
+        Arrange player list; winner is first item on playerList.
         Returns True or False for tie.
         """
         # playersAndCards is a list nesing a dictionary with the player's iD and corresponding cards
-        # E.g. playersAndCards = [
-        #                           {'player: oPlayer, 'card': oCard}, 
-        #                           {'player: oPlayer, 'card': oCard}
+        # E.g. playersAndCards = [{'player: oPlayer, 'card': oCard}]
 
         player1CardValue = playersAndCards[0]['card'].getTrickValue()
         player2CardValue = playersAndCards[1]['card'].getTrickValue()
@@ -106,13 +106,13 @@ class Game():
         if player1CardValue > player2CardValue:
             print("-------You WIN!")
             playersAndCards[0]['player'].setTurnPlayer(True) # Player1 is turnPlayer, player 2 is false by defult
-            self.playerList = [playersAndCards[0], playersAndCards[1]] # Player arrangement decides who draws first
+            self.playerList = [playersAndCards[0]['player'], playersAndCards[1]['player']] # Player arrangement decides who draws first
             tie = False
         
         elif player1CardValue < player2CardValue:
             print("-------You LOSE!")
             playersAndCards[1]['player'].setTurnPlayer(True) # Player1 is turnPlayer, player 2 is false by defult
-            self.playerList = [playersAndCards[1], playersAndCards[0]] # Player arrangement decides who draws first
+            self.playerList = [playersAndCards[1]['player'], playersAndCards[0]['player']] # Player arrangement decides who draws first
             tie = False
 
         else: # If players end in a tie: cards return to deck
@@ -256,13 +256,28 @@ class Game():
     def selectCard(self):
         """
         Players can select to enter a trick session or if applicable, a trump swap
-        Returns the card
+        Returns the card. If players can't select a card from their hands, 
+        let them draw a card from the deck and place it in their hand.
         """
         pass
 
     def trumpHandSwap(self):
         """Swap one card in the player's hand for the trump card."""
         pass
+
+    def trickWinner(self, playersAndCards):
+        """Give trick winner the pot cards."""
+
+        # Place the cards in a list
+        potCards = [playersAndCards[0]['card'], playersAndCards[1]['card']]
+        # Add cards into winning player's pot
+        for card in potCards.copy():
+            card = potCards.pop(0)
+            # The trick winner is rearranged in the player list as 1st item
+            self.playerList[0].setPot(card)
+        
+        if self.dealerPot: # If there are cards in the dealer list, give them all to player1
+                self.dealerPotTransfer(self.playerList[0]) # Player has all the dealer cards in their pot
 
     def trick(self, playersAndCards):
         """
@@ -271,61 +286,46 @@ class Game():
         gains all the dealer pot cards, uuh nice!
         """
         # playersAndCards is a list nesing a dictionary with the players and their corresponding cards
-        # E.g. playersAndCards = [
-        #                           {'player: oPlayer, 'card': oCard}, 
-        #                           {'player: oPlayer, 'card': oCard}
+        # E.g. playersAndCards = [{'player': oPlayer, 'card': oCard}]
 
         # Compare player's trump cards to the main trump card
         isPlayer1Trump = playersAndCards[0]['card'].getSuit() == self.trumpCard.getSuit()
         isPlayer2Trump = playersAndCards[1]['card'].getSuit() == self.trumpCard.getSuit()
 
-        tie = False
+        # LEFT OOOOOOOOOFFFFF! CHECK THE LOGIC BELOW!!!!!!!!!!!!!!!!!!!!!!
 
         if isPlayer1Trump and isPlayer2Trump: # Both players have a trump card | No tie can HAPPEN!
-            
             # Compares player's cards; the higest value card wins and gets the spoils of war!
-            tie = self.compareCards(playersAndCards) # Does it return --> False or True for tie?
-
-            if not tie:
-                # Place the cards in a list
-                potCards = [playersAndCards[0]['card'], playersAndCards[1]['card']]
-                # Add cards into winning player's pot
-                for card in potCards.copy():
-                    card = potCards.pop(0)
-                    playersAndCards[0]['player'].setPot(card)
-
-                if self.dealerPot: # If there are cards in the dealer list, give them all to player1
-                    self.dealerPotTransfer(playersAndCards[0]['player']) # Player has all the dealer cards in their pot    
+            self.compareCards(playersAndCards) # playerList is rearranged
+            #self.trickWinner(playersAndCards) # Pot cards are given to trick winner    
 
         elif isPlayer1Trump or isPlayer2Trump: # A player has a trump card | No tie can HAPPEN!
             if isPlayer1Trump:
-                print("-------Player 1 wins")
-                # Place the cards in a list
-                potCards = [playersAndCards[0], playersAndCards[1]]
-                # Add cards into player pot
-                for card in potCards.copy():
-                    card = potCards.pop(0)
-                    self.oPlayer.setPot(card)
+                print("-------You win!")
 
-                if self.dealerPot: # If there are cards in the dealer list, give them all to player1
-                    self.dealerPotTransfer(self.oPlayer)
+                # Player1 is turnPlayer, player 2 is false by defult
+                playersAndCards[0]['player'].setTurnPlayer(True) 
+                # Player arrangement decides who draws first
+                self.playerList = [playersAndCards[0]['player'], playersAndCards[1]['player']] 
+                # Player arrangement also decides who gets the cards after a trcik
+                # self.trickWinner(playersAndCards)
+
             else:
                 print("-------Player 2 wins")
-                # Place the cards in a list
-                potCards = [playersAndCards[0], playersAndCards[1]]
-                # Add cards into player pot
-                for card in potCards.copy():
-                    card = potCards.pop(0)
-                    self.oPlayer2.setPot(card)
+                # Player2 is turnPlayer, player 1 is false by defult
+                playersAndCards[1]['player'].setTurnPlayer(True) 
+                # Player arrangement decides who draws first
+                self.playerList = [playersAndCards[1]['player'], playersAndCards[0]['player']] 
+                # Player arrangement also decides who gets the cards after a trcik
+                #self.trickWinner(playersAndCards)
 
-                if self.dealerPot: # If there are cards in the dealer list, give them all to player2
-                    self.dealerPotTransfer(self.oPlayer2)
+        else: # No player has a trump card, a tie can happen using trickValues.
+            tie = self.compareCards(playersAndCards)
 
-        else: # No player has a trump card, a tie can happen.
             if tie: # Tie
                 # Give dealer your pot cards till tie is resolved
                 potCards = [playersAndCards[0]['card'], playersAndCards[1]['card']]
-                self.setDealerPot(potCards) # Trick cards are set to dealerPot  
+                self.setDealerPot(potCards) # Trick cards are in dealer's possetion 
 
                 while tie:
                     playersAndCards = [] # player and their cards go here, prep for battle
@@ -341,17 +341,15 @@ class Game():
                         potCards = [playersAndCards[0]['card'], playersAndCards[1]['card']]
                         self.setDealerPot(potCards) # Trick cards are set to dealerPot
                     
-                    else:
-                        # Place the cards in a list
-                        potCards = [playersAndCards[0]['card'], playersAndCards[1]['card']]
-                        # Add cards into winning player's pot
-                        for card in potCards.copy():
-                            card = potCards.pop(0)
-                            playersAndCards[0]['player'].setPot(card)
+                    else: # Not tie
+                        print('Tie is False insde the while loop!')
 
-                        if self.dealerPot: # If there are cards in the dealer list, give them all to player1
-                            self.dealerPotTransfer(playersAndCards[0]['player']) # Player has all the dealer cards in their pot
-
+            else: # Not tie
+                print('Not a tie out side the while loop.')
+                #self.trickWinner(playersAndCards)
+        
+        # After one logic gate has a been checked the Winner gets the chicken dinner. 
+        self.trickWinner(playersAndCards) 
 
     def _briscaGame(self):
         """The logic of the game loop"""
@@ -363,7 +361,7 @@ Todo list:
     - Modified highestCardWins, creat compareCards method
     - Add comments in the reset() and arrange highestCardWins() in the reset method
     - Modify a lot of shit in the Game class between highestCardWins(), compareCards() and trick().
-    
+
     - Left OFF --> Clean trick() and fix logic................LEFT OFF!!!!!!
 
 3) Work on the players drawn a card method
