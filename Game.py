@@ -194,12 +194,12 @@ class Game():
             keepDrawing = True # Keep drawing till all players have drawn
             while keepDrawing:
                 
-                for player in self.playerList: 
+                for i in range(len(self.playerList.copy())): 
 
                     # set card coordinates per player hand location is...
-                    if player.getTurnPlayer and not didTurnPlayerDraw:  # If player is turnPlayer draw!
+                    if self.playerList[i].getTurnPlayer and not didTurnPlayerDraw:  # If player is turnPlayer draw!
                         oCard = self.oDeck.getCard() # take one card from the top of the deck
-                        player.setHand(oCard) # Set card in player's hand
+                        self.playerList[i].setHand(oCard) # Set card in player's hand
 
                         # Set card coordinates for oPlayer 
                         cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
@@ -209,7 +209,7 @@ class Game():
                     
                     elif didTurnPlayerDraw: # player draw if turnPlayer drew first!
                         oCard = self.oDeck.getCard() # take one card from the top of the deck
-                        player.setHand(oCard) # Set card in player's hand
+                        self.playerList[i].setHand(oCard) # Set card in player's hand
 
                         # Set card coordinates for oPlayer 
                         cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
