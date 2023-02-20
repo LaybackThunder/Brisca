@@ -7,6 +7,7 @@ class Player():
 
     def __init__(self, iD=None):
         self.hand = []
+        self.playerHandPosX = []
         self.pot = []
         self.playerId = iD # Identify if its player 1(int=0) or 2(int=1)
         self.turnPlayer = False
@@ -28,7 +29,15 @@ class Player():
     def getHand(self):
         """Returns a list format of the hand."""
         return self.hand
-       
+    
+    def setHandPosX(self, PosX):
+        """Player puts card in their hand."""
+        self.playerHandPosX.append(PosX)
+    
+    def getHandPosX(self):
+        """Returns a list format of the hand."""
+        return self.playerHandPosX
+
     def setPot(self, oCard):
         """Add the spoils of battle in your pot pile."""
         self.pot.append(oCard)

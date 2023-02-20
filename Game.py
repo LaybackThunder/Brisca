@@ -13,14 +13,14 @@ class Game():
     MAX_HAND = 3
     CARD_BACK_IMAGE = Card()
     
-    def __init__(self, window):
+    def __init__(self, window, playerList):
         """Initisialize attributes."""
         self.window = window
         self.oDeck = Deck(self.window)
         self.trumpCard = None
         self.dealerPot = []
-        self.oPlayer = Player() # Instantiate for testing
-        self.playerList = [] # Leave this list empty when test run good
+        self.oPlayer = Player()
+        self.playerList = playerList # LIST is given by client
         # When to create player and iterate to give it a player id???????????????????
         self.potScore = 0
         self.potScoreText = pygwidgets.DisplayText(window, (450, 164),
@@ -41,15 +41,11 @@ class Game():
         # Calculating Players card positions within the player's hand
         self.cardXPositionList = []
         thisLeft = Game.CARDS_LEFT # Starting card to the left of the player's hand
-
         # Calculate the x positions of all cards, once 
         for i in range(Game.DISPLAY_STARTING_HANDS): # 3 cards
             self.cardXPositionList.append(thisLeft)
-            thisLeft += Game.HAND_CARD_OFFSET # Space between cards in the player's hand
-        # Both players share X position
-        self.player1CardXPositionList = self.cardXPositionList.copy()
-        self.player2CardXPositionList = self.cardXPositionList.copy()
-        
+            thisLeft += Game.HAND_CARD_OFFSET # Space between cards in the player's hand     
+
         # Game decides who goes first at random before game starts
         self.reset()
         
@@ -198,18 +194,16 @@ class Game():
 
                     # set card coordinates per player hand location is...
                     if self.playerList[i].getTurnPlayer and not didTurnPlayerDraw:  # If player is turnPlayer draw!
-                        oCard = self.oDeck.getCard() # take one card from the top of the deck
-                        self.playerList[i].setHand(oCard) # Set card in player's hand
+                        self.playerDrawsACard(i)
 
-                        # Set card coordinates for oPlayer 
+                        # Set card coordinates for oPlayer ---- leeeeeft ooooff
                         cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
                         oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
                         oCard.reveal() # show player card running the software
                         didTurnPlayerDraw = True
                     
                     elif didTurnPlayerDraw: # player draw if turnPlayer drew first!
-                        oCard = self.oDeck.getCard() # take one card from the top of the deck
-                        self.playerList[i].setHand(oCard) # Set card in player's hand
+                        self.playerDrawsACard(i)
 
                         # Set card coordinates for oPlayer 
                         cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
@@ -219,18 +213,32 @@ class Game():
 
                     # Set card coordinates for place holder 'player'
                     """PLACE HOLDERS ARE EMPTY CARDS with a back image"""
-                    cardLocX = self.player2CardXPositionList.pop(0)
+                    cardLocX = self.cardXPositionList.copy().pop(0)
                     Game.CARD_BACK_IMAGE.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
 
         # Start game
         self._briscaGame()
 
-    def playersDrawACard(self):
-        """Players draw a card."""
-        # Can you draw a card?
-        # yes?
-        # no?
-        pass
+    def playerDrawsACard(self, playerIndex):
+        """Players draw a card and remembers card's posX."""
+        # Player draws one card
+        oCard = self.oDeck.getCard() # Take one card from the top of the deck
+        self.playerList[playerIndex].setHand(oCard) # Set card in player's hand
+        
+        # Player remembers card's posX
+        currentPlayerHand = self.playerList[playerIndex].getHand() # Get list
+        cardIndex = len(currentPlayerHand) # How long is the list?
+        cardLocX = self.cardXPositionList[cardIndex] # Get x-coordinates
+        self.playerList[playerIndex].setHandPosX(cardLocX) # Set player's card's posX to the end of list
+
+        # Tell card its posX and show it to client
+        oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates to player's card
+        oCard.reveal() # Show client running the sofware their cards a.k.a. the player's card 
+        
+
+
+
+
 
     def selectCard(self):
         """
