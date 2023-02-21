@@ -57,6 +57,7 @@ class Game():
         self.potScoreText.draw()
         self.messageText.draw()
 
+    # Dealer 
     def setDealerPot(self, playersAndCards):
         """
         Appends object Cards to dealerPot list after a trick tie.
@@ -90,66 +91,28 @@ class Game():
                 card = self.dealerPot.pop(0)
                 self.oDeck.returnCardToDeck(card)
 
+    def trickWinner(self, playersAndCards):
+        """Give trick winner the pot cards."""
+
+        # Place the cards in a list
+        potCards = [playersAndCards[0]['card'], playersAndCards[1]['card']]
+        # Add cards into winning player's pot
+        for card in potCards.copy():
+            card = potCards.pop(0)
+            # The trick winner is rearranged in the player list as 1st item
+            self.playerList[0].setPot(card)
+        
+        if self.dealerPot: # If there are cards in the dealer list, give them all to player1
+                self.dealerPotTransfer(self.playerList[0]) # Player has all the dealer cards in their pot
+
+    # Trump
     def showTrumpCard(self, oCard):
         oCard.reveal()
 
     def setTrump(self, oCard):
         self.trumpCard = oCard
 
-    def highestCardWins(self):
-        """
-        When players enter the game room the dealer gives each player a card.
-        Player with the highest card value wins to be turnPlayer=True.
-        Player's var turnPlayer is False by defult.
-        """
-        print('highestCardWin - Enter method')
-        
-        tie = False
-    
-        if not tie: 
-            # Place holder to identify to whom the card belongs too
-            playersAndCards = []
-
-            # Each player draws one card each
-            for playerIndex in range(len(self.playerList.copy())): # Pick player index
-                self.playerDrawsACard(playerIndex)
-                playersAndCards.append(
-                    {'player': self.playerList[index], 'card': self.playerList[index].getHand()}
-                    )
-
-            # Players compare the card's trickValue and decide who will be turn player   
-            tie = self.compareCards(playersAndCards) # Returns and checks for tie
-
-            # Remove the 1st card from each player's hand and pass back to deck
-            for index in range(len(self.playerList.copy())):
-                oCard = self.playerList[index].removeCardFromHand(0) # Remove card from player's hand
-                self.oDeck.returnCardToDeck(oCard) # Card returns to deck
-
-        while tie:
-            # Place holder to identify to whom the card belongs too
-            playersAndCards = []
-
-            # Each player draws one card each
-            for playerIndex in range(len(self.playerList.copy())): # Pick player index
-                self.playerDrawsACard(playerIndex)
-                playersAndCards.append(
-                    {'player': self.playerList[index], 'card': self.playerList[index].getHand()}
-                    )
-
-            # Players compare the card's trickValue and decide who will be turn player   
-            tie = self.compareCards(playersAndCards) # Returns and checks for tie
-
-            # Remove the 1st card from each player's hand and pass back to deck
-            for index in range(len(self.playerList.copy())):
-                oCard = self.playerList[index].removeCardFromHand(0) # Remove card from player's hand
-                self.oDeck.returnCardToDeck(oCard) # Card returns to deck
-
-            # If true shuffle deck after cards return deck after
-            if tie:
-                self.oDeck.shuffle() 
-
-        print('highestCardWin - exit method')
-
+    # Pre-game
     def reset(self):
         """
         This method is called when a new round starts. 
@@ -213,6 +176,65 @@ class Game():
         # Start game
         self._briscaGame()
 
+    def highestCardWins(self):
+        """
+        When players enter the game room the dealer gives each player a card.
+        Player with the highest card value wins to be turnPlayer=True.
+        Player's var turnPlayer is False by defult.
+        """
+        print('highestCardWin - Enter method')
+        
+        tie = False
+    
+        if not tie: 
+            # Place holder to identify to whom the card belongs too
+            playersAndCards = []
+
+            # Each player draws one card each
+            for playerIndex in range(len(self.playerList.copy())): # Pick player index
+                self.playerDrawsACard(playerIndex)
+                playersAndCards.append(
+                    {'player': self.playerList[index], 'card': self.playerList[index].getHand()}
+                    )
+
+            # Players compare the card's trickValue and decide who will be turn player   
+            tie = self.compareCards(playersAndCards) # Returns and checks for tie
+
+            # Remove the 1st card from each player's hand and pass back to deck
+            for index in range(len(self.playerList.copy())):
+                oCard = self.playerList[index].removeCardFromHand(0) # Remove card from player's hand
+                self.oDeck.returnCardToDeck(oCard) # Card returns to deck
+
+        while tie:
+            # Place holder to identify to whom the card belongs too
+            playersAndCards = []
+
+            # Each player draws one card each
+            for playerIndex in range(len(self.playerList.copy())): # Pick player index
+                self.playerDrawsACard(playerIndex)
+                playersAndCards.append(
+                    {'player': self.playerList[index], 'card': self.playerList[index].getHand()}
+                    )
+
+            # Players compare the card's trickValue and decide who will be turn player   
+            tie = self.compareCards(playersAndCards) # Returns and checks for tie
+
+            # Remove the 1st card from each player's hand and pass back to deck
+            for index in range(len(self.playerList.copy())):
+                oCard = self.playerList[index].removeCardFromHand(0) # Remove card from player's hand
+                self.oDeck.returnCardToDeck(oCard) # Card returns to deck
+
+            # If true shuffle deck after cards return deck after
+            if tie:
+                self.oDeck.shuffle() 
+
+        print('highestCardWin - exit method')
+
+    # Current Game
+    def _briscaGame(self):
+        """The logic of the game loop"""
+        pass
+
     def playerDrawsACard(self, playerIndex):
         """Players draw a card and remembers card's posX."""
         # Player draws one card
@@ -240,6 +262,66 @@ class Game():
     def trumpHandSwap(self):
         """Swap one card in the player's hand for the trump card."""
         pass
+
+    def trick(self, playersAndCards):
+            """
+            Players have chosen their cards for battle; now they fight for supremacy, but mostly points.
+            If tie, cards are placed with the dealer pot; after a tie, which ever player wins the following trick
+            obtains all the dealer pot cards, uuh nice!
+            """
+            # playersAndCards is a list nesing a dictionary with the players and their corresponding cards
+            # E.g. playersAndCards = [{'player': oPlayer, 'card': oCard}]
+
+            # Compare player's trump cards to the main trump card
+            isPlayer1Trump = playersAndCards[0]['card'].getSuit() == self.trumpCard.getSuit()
+            isPlayer2Trump = playersAndCards[1]['card'].getSuit() == self.trumpCard.getSuit()
+
+            if isPlayer1Trump and isPlayer2Trump: # Both players have a trump card | No tie can HAPPEN!
+                # Compares player's cards: the higest value card wins; turn player is selected and 
+                self.compareCards(playersAndCards) # turn player is rearranged as 1st iteam in the playerList   
+
+            elif isPlayer1Trump or isPlayer2Trump: # A player has a trump card | No tie can HAPPEN!
+                if isPlayer1Trump:
+                    print("-------You win!")
+                    # Player1 is turnPlayer, player 2 is false by defult
+                    playersAndCards[0]['player'].setTurnPlayer(True) 
+                    # Player arrangement decides who draws first
+                    self.playerList = [playersAndCards[0]['player'], playersAndCards[1]['player']] 
+                else:
+                    print("-------You Lose!")
+                    # Player2 is turnPlayer, player 1 is false by defult
+                    playersAndCards[1]['player'].setTurnPlayer(True) 
+                    # Player arrangement decides who draws first
+                    self.playerList = [playersAndCards[1]['player'], playersAndCards[0]['player']] 
+
+            else: # No player has a trump card, a tie can happen using trickValues.
+                tie = self.compareCards(playersAndCards)
+
+                if tie: # Tie
+                    # Give dealer your pot cards till tie is resolved
+                    self.setDealerPot(playersAndCards) # Trick cards are in dealer's possetion 
+
+                    while tie:
+                        playersAndCards = [] # Parameter var is empty
+                        # Players select another card from their hands
+                        for player in self.playerList:
+                            card = self.selectCard(player) 
+                            playersAndCards.append({'player': player, 'card': card})
+
+                        # Players compare cards and decide who will be turn player   
+                        tie = self.compareCards(playersAndCards) # Check for tie
+
+                        if tie: # Give dealer your pot cards till tie is resolved
+                            self.setDealerPot(playersAndCards)
+                        
+                        else: # Not tie
+                            print('Tie is False insde the while loop!')
+
+                else: # Not tie
+                    print('Not a tie out side the while loop.')
+            
+            # After one logic gate has a been checked the Winner gets the chicken dinner. 
+            self.trickWinner(playersAndCards) 
 
     def compareCards(self, playersAndCards):
             """
@@ -271,83 +353,7 @@ class Game():
 
             return tie # Return the value of Tie
 
-    def trickWinner(self, playersAndCards):
-        """Give trick winner the pot cards."""
-
-        # Place the cards in a list
-        potCards = [playersAndCards[0]['card'], playersAndCards[1]['card']]
-        # Add cards into winning player's pot
-        for card in potCards.copy():
-            card = potCards.pop(0)
-            # The trick winner is rearranged in the player list as 1st item
-            self.playerList[0].setPot(card)
-        
-        if self.dealerPot: # If there are cards in the dealer list, give them all to player1
-                self.dealerPotTransfer(self.playerList[0]) # Player has all the dealer cards in their pot
-
-    def trick(self, playersAndCards):
-        """
-        Players have chosen their cards for battle; now they fight for supremacy, but mostly points.
-        If tie, cards are placed with the dealer pot; after a tie, which ever player wins the following trick
-        obtains all the dealer pot cards, uuh nice!
-        """
-        # playersAndCards is a list nesing a dictionary with the players and their corresponding cards
-        # E.g. playersAndCards = [{'player': oPlayer, 'card': oCard}]
-
-        # Compare player's trump cards to the main trump card
-        isPlayer1Trump = playersAndCards[0]['card'].getSuit() == self.trumpCard.getSuit()
-        isPlayer2Trump = playersAndCards[1]['card'].getSuit() == self.trumpCard.getSuit()
-
-        if isPlayer1Trump and isPlayer2Trump: # Both players have a trump card | No tie can HAPPEN!
-            # Compares player's cards: the higest value card wins; turn player is selected and 
-            self.compareCards(playersAndCards) # turn player is rearranged as 1st iteam in the playerList   
-
-        elif isPlayer1Trump or isPlayer2Trump: # A player has a trump card | No tie can HAPPEN!
-            if isPlayer1Trump:
-                print("-------You win!")
-                # Player1 is turnPlayer, player 2 is false by defult
-                playersAndCards[0]['player'].setTurnPlayer(True) 
-                # Player arrangement decides who draws first
-                self.playerList = [playersAndCards[0]['player'], playersAndCards[1]['player']] 
-            else:
-                print("-------You Lose!")
-                # Player2 is turnPlayer, player 1 is false by defult
-                playersAndCards[1]['player'].setTurnPlayer(True) 
-                # Player arrangement decides who draws first
-                self.playerList = [playersAndCards[1]['player'], playersAndCards[0]['player']] 
-
-        else: # No player has a trump card, a tie can happen using trickValues.
-            tie = self.compareCards(playersAndCards)
-
-            if tie: # Tie
-                # Give dealer your pot cards till tie is resolved
-                self.setDealerPot(playersAndCards) # Trick cards are in dealer's possetion 
-
-                while tie:
-                    playersAndCards = [] # Parameter var is empty
-                    # Players select another card from their hands
-                    for player in self.playerList:
-                        card = self.selectCard(player) 
-                        playersAndCards.append({'player': player, 'card': card})
-
-                    # Players compare cards and decide who will be turn player   
-                    tie = self.compareCards(playersAndCards) # Check for tie
-
-                    if tie: # Give dealer your pot cards till tie is resolved
-                        self.setDealerPot(playersAndCards)
-                    
-                    else: # Not tie
-                        print('Tie is False insde the while loop!')
-
-            else: # Not tie
-                print('Not a tie out side the while loop.')
-        
-        # After one logic gate has a been checked the Winner gets the chicken dinner. 
-        self.trickWinner(playersAndCards) 
-
-    def _briscaGame(self):
-        """The logic of the game loop"""
-        pass
+    
 
 """
 Todo list: 
@@ -362,8 +368,8 @@ Todo list:
     - Add 'playerList' parameter to Game class init magic method. 
     - Add set and get HandPosX methods to Player class.
     - Write playerDrawsACard method in Game class. Work on the players drawn a card method
+    - Check to see if players draw a card method can be used across the class to sub stitudes other code.
 
-4) Check to see if players draw a card method can be used across the class to sub stitudes other code. 
 5) Create place holders for client's opponent. 
 6) Figure the other empty methods out.
 7) If there is no deck, draw trump card.
