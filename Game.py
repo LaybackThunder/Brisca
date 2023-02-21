@@ -100,7 +100,7 @@ class Game():
         """
         When players enter the game room the dealer gives each player a card.
         Player with the highest card value wins to be turnPlayer=True.
-        Player's var turnPlayer is set to False by defult.
+        Player's var turnPlayer is False by defult.
         """
         print('highestCardWin - Enter method')
         
@@ -111,10 +111,8 @@ class Game():
             playersAndCards = []
 
             # Each player draws one card each
-            for index in range(len(self.playerList.copy())): # Pick player index
-                oCard = self.oDeck.getCard() # player draws a card
-                self.playerList[index].setHand(oCard) # player puts card in their hand
-                # Set current player and their card in the place holder
+            for playerIndex in range(len(self.playerList.copy())): # Pick player index
+                self.playerDrawsACard(playerIndex)
                 playersAndCards.append(
                     {'player': self.playerList[index], 'card': self.playerList[index].getHand()}
                     )
@@ -123,8 +121,7 @@ class Game():
             tie = self.compareCards(playersAndCards) # Returns and checks for tie
 
             # Remove the 1st card from each player's hand and pass back to deck
-            playerRange = range(len(self.playerList.copy()))
-            for index in playerRange: # Pick player index
+            for index in range(len(self.playerList.copy())):
                 oCard = self.playerList[index].removeCardFromHand(0) # Remove card from player's hand
                 self.oDeck.returnCardToDeck(oCard) # Card returns to deck
 
@@ -132,20 +129,18 @@ class Game():
             # Place holder to identify to whom the card belongs too
             playersAndCards = []
 
-            # Add cards to player's hand
-            for index in range(len(self.playerList.copy())): # Pick player index
-                oCard = self.oDeck.getCard() # player draws a card
-                self.playerList[index].setHand(oCard) # player puts card in their hand
-                # Set current player and their card in the place holder
+            # Each player draws one card each
+            for playerIndex in range(len(self.playerList.copy())): # Pick player index
+                self.playerDrawsACard(playerIndex)
                 playersAndCards.append(
                     {'player': self.playerList[index], 'card': self.playerList[index].getHand()}
                     )
 
-            # Players compare cards and decide who will be turn player   
-            tie = self.compareCards(playersAndCards) # Check for tie
+            # Players compare the card's trickValue and decide who will be turn player   
+            tie = self.compareCards(playersAndCards) # Returns and checks for tie
 
             # Remove the 1st card from each player's hand and pass back to deck
-            for index in range(len(self.playerList.copy())): # Pick player index
+            for index in range(len(self.playerList.copy())):
                 oCard = self.playerList[index].removeCardFromHand(0) # Remove card from player's hand
                 self.oDeck.returnCardToDeck(oCard) # Card returns to deck
 
