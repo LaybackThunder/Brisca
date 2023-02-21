@@ -57,9 +57,18 @@ class Game():
         self.potScoreText.draw()
         self.messageText.draw()
 
-    def setDealerPot(self, oCards):
-        """Appends object Cards to dealerPot list after a trick tie."""
-        for oCard in oCards.copy():
+    def setDealerPot(self, playersAndCards):
+        """
+        Appends object Cards to dealerPot list after a trick tie.
+        Player obj is not appeneded back.
+        """
+        potCards = []
+
+        for i in range(len(playersAndCards.copy())):
+            dict = playersAndCards.pop(0)
+            card = dict.pop('card')
+            potCards.append(card)
+        for oCard in potCards:
             self.dealerPot.append(oCard)
     
     def getDealerPot(self):
@@ -195,23 +204,13 @@ class Game():
                     # set card coordinates per player hand location is...
                     if self.playerList[i].getTurnPlayer and not didTurnPlayerDraw:  # If player is turnPlayer draw!
                         self.playerDrawsACard(i)
-
-                        # Set card coordinates for oPlayer ---- leeeeeft ooooff
-                        cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
-                        oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
-                        oCard.reveal() # show player card running the software
                         didTurnPlayerDraw = True
                     
                     elif didTurnPlayerDraw: # player draw if turnPlayer drew first!
                         self.playerDrawsACard(i)
-
-                        # Set card coordinates for oPlayer 
-                        cardLocX = self.player1CardXPositionList.pop(0) # Add x-coordinates
-                        oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates
-                        oCard.reveal() # show player card running the software
                         keepDrawing = False # Exit while loop
 
-                    # Set card coordinates for place holder 'player'
+                    # Set card coordinates for place holder 'player' ____LEFT OOOOFFFF_____
                     """PLACE HOLDERS ARE EMPTY CARDS with a back image"""
                     cardLocX = self.cardXPositionList.copy().pop(0)
                     Game.CARD_BACK_IMAGE.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
@@ -235,11 +234,6 @@ class Game():
         oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates to player's card
         oCard.reveal() # Show client running the sofware their cards a.k.a. the player's card 
         
-
-
-
-
-
     def selectCard(self):
         """
         Players can select to enter a trick session or if applicable, a trump swap
@@ -300,7 +294,7 @@ class Game():
         """
         Players have chosen their cards for battle; now they fight for supremacy, but mostly points.
         If tie, cards are placed with the dealer pot; after a tie, which ever player wins the following trick
-        gains all the dealer pot cards, uuh nice!
+        obtains all the dealer pot cards, uuh nice!
         """
         # playersAndCards is a list nesing a dictionary with the players and their corresponding cards
         # E.g. playersAndCards = [{'player': oPlayer, 'card': oCard}]
@@ -309,61 +303,49 @@ class Game():
         isPlayer1Trump = playersAndCards[0]['card'].getSuit() == self.trumpCard.getSuit()
         isPlayer2Trump = playersAndCards[1]['card'].getSuit() == self.trumpCard.getSuit()
 
-        # LEFT OOOOOOOOOFFFFF! CHECK THE LOGIC BELOW!!!!!!!!!!!!!!!!!!!!!!
-
         if isPlayer1Trump and isPlayer2Trump: # Both players have a trump card | No tie can HAPPEN!
-            # Compares player's cards; the higest value card wins and gets the spoils of war!
-            self.compareCards(playersAndCards) # playerList is rearranged
-            #self.trickWinner(playersAndCards) # Pot cards are given to trick winner    
+            # Compares player's cards: the higest value card wins; turn player is selected and 
+            self.compareCards(playersAndCards) # turn player is rearranged as 1st iteam in the playerList   
 
         elif isPlayer1Trump or isPlayer2Trump: # A player has a trump card | No tie can HAPPEN!
             if isPlayer1Trump:
                 print("-------You win!")
-
                 # Player1 is turnPlayer, player 2 is false by defult
                 playersAndCards[0]['player'].setTurnPlayer(True) 
                 # Player arrangement decides who draws first
                 self.playerList = [playersAndCards[0]['player'], playersAndCards[1]['player']] 
-                # Player arrangement also decides who gets the cards after a trcik
-                # self.trickWinner(playersAndCards)
-
             else:
-                print("-------Player 2 wins")
+                print("-------You Lose!")
                 # Player2 is turnPlayer, player 1 is false by defult
                 playersAndCards[1]['player'].setTurnPlayer(True) 
                 # Player arrangement decides who draws first
                 self.playerList = [playersAndCards[1]['player'], playersAndCards[0]['player']] 
-                # Player arrangement also decides who gets the cards after a trcik
-                #self.trickWinner(playersAndCards)
 
         else: # No player has a trump card, a tie can happen using trickValues.
             tie = self.compareCards(playersAndCards)
 
             if tie: # Tie
                 # Give dealer your pot cards till tie is resolved
-                potCards = [playersAndCards[0]['card'], playersAndCards[1]['card']]
-                self.setDealerPot(potCards) # Trick cards are in dealer's possetion 
+                self.setDealerPot(playersAndCards) # Trick cards are in dealer's possetion 
 
                 while tie:
-                    playersAndCards = [] # player and their cards go here, prep for battle
+                    playersAndCards = [] # Parameter var is empty
                     # Players select another card from their hands
                     for player in self.playerList:
-                        card = self.selectCard(player) # May have to add a player parameter to identift who can select a card 
+                        card = self.selectCard(player) 
                         playersAndCards.append({'player': player, 'card': card})
 
                     # Players compare cards and decide who will be turn player   
                     tie = self.compareCards(playersAndCards) # Check for tie
 
-                    if tie:
-                        potCards = [playersAndCards[0]['card'], playersAndCards[1]['card']]
-                        self.setDealerPot(potCards) # Trick cards are set to dealerPot
+                    if tie: # Give dealer your pot cards till tie is resolved
+                        self.setDealerPot(playersAndCards)
                     
                     else: # Not tie
                         print('Tie is False insde the while loop!')
 
             else: # Not tie
                 print('Not a tie out side the while loop.')
-                #self.trickWinner(playersAndCards)
         
         # After one logic gate has a been checked the Winner gets the chicken dinner. 
         self.trickWinner(playersAndCards) 
@@ -375,14 +357,17 @@ class Game():
 """
 Todo list: 
 2) Re-check writen methods one more time for logoc consistency.
+    *DID
     - Modified highestCardWins, creat compareCards method
     - Add comments in the reset() and arrange highestCardWins() in the reset method
     - Modify a lot of shit in the Game class between highestCardWins(), compareCards() and trick().
     - Clean trick() and fix logic
-    - Check, fix and clean highestCardWin() ----- LEFT OFF! ------
+    - Check, fix and clean highestCardWin()
     - Check, fix and clean reset()
+    - Add 'playerList' parameter to Game class init magic method. 
+    - Add set and get HandPosX methods to Player class.
+    - Write playerDrawsACard method in Game class. Work on the players drawn a card method
 
-3) Work on the players drawn a card method
 4) Check to see if players draw a card method can be used across the class to sub stitudes other code. 
 5) Create place holders for client's opponent. 
 6) Figure the other empty methods out.
