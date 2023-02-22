@@ -11,7 +11,6 @@ class Game():
     CARDS_LEFT = 75 # X coordinate
     DISPLAY_STARTING_HANDS = 3
     MAX_HAND = 3
-    CARD_BACK_IMAGE = Card()
     
     def __init__(self, window, playerList):
         """Initisialize attributes."""
@@ -19,9 +18,9 @@ class Game():
         self.oDeck = Deck(self.window)
         self.trumpCard = None
         self.dealerPot = []
+        self.ghostHandList = []
         self.oPlayer = Player()
         self.playerList = playerList # LIST is given by client
-        # When to create player and iterate to give it a player id???????????????????
         self.potScore = 0
         self.potScoreText = pygwidgets.DisplayText(window, (450, 164),
                                         f'Pot Score: {self.potScore}',
@@ -156,22 +155,31 @@ class Game():
             keepDrawing = True # Keep drawing till all players have drawn
             while keepDrawing:
                 
-                """LEEEEFT OOOOFF"""
-                for i in range(len(self.playerList.copy())): 
+                for playerIndex in range(len(self.playerList.copy())): 
 
-                    # set card coordinates per player hand location is...
-                    if self.playerList[i].getTurnPlayer and not didTurnPlayerDraw:  # If player is turnPlayer draw!
-                        self.playerDrawsACard(i)
+                    # If player is turnPlayer draw!
+                    if self.playerList[playerIndex].getTurnPlayer and not didTurnPlayerDraw:  
+                        self.playerDrawsACard(playerIndex)
+                        self.playerList[playerIndex].showHand() # Player can see their hand
                         didTurnPlayerDraw = True
                     
-                    elif didTurnPlayerDraw: # player draw if turnPlayer drew first!
-                        self.playerDrawsACard(i)
+                    # player draw if turnPlayer drew first!
+                    elif didTurnPlayerDraw: 
+                        self.playerDrawsACard(playerIndex)
+                        self.playerList[playerIndex].showHand()
                         keepDrawing = False # Exit while loop
 
-                    # Set card coordinates for place holder 'player' ____LEFT OOOOFFFF_____
-                    """PLACE HOLDERS ARE EMPTY CARDS with a back image"""
-                    cardLocX = self.cardXPositionList.copy().pop(0)
-                    Game.CARD_BACK_IMAGE.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
+                    # Set card coordinates for ghost 'player' hand 
+                    # PLACE HOLDERS ARE EMPTY CARDS with a back image
+                    # Ghost player remembers card's posX
+                    currentGhostHand = self.ghostHandList.copy() # Get list
+                    cardIndex = len(currentGhostHand) # How long is the list?
+                    cardLocX = self.cardXPositionList[cardIndex] # Get x-coordinates
+                    oGhostCard = Card() # Instantiate a card
+                    # Set ghost player's card posX to the end of list
+                    self.ghostHandList.append({'cardLocX': cardLocX, 'ghostCard': oGhostCard})
+                    # Add coordinates to player's card                    
+                    oGhostCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP) 
 
         # Start game
         self._briscaGame()
@@ -193,8 +201,11 @@ class Game():
             # Each player draws one card each
             for playerIndex in range(len(self.playerList.copy())): # Pick player index
                 self.playerDrawsACard(playerIndex)
+                self.playerList[playerIndex].showHand()
+                # Pause the game for 3 seconds
+                playerCard = self.playerList[index].getHand()
                 playersAndCards.append(
-                    {'player': self.playerList[index], 'card': self.playerList[index].getHand()}
+                    {'player': self.playerList[index], 'card': playerCard[0]}
                     )
 
             # Players compare the card's trickValue and decide who will be turn player   
@@ -212,8 +223,11 @@ class Game():
             # Each player draws one card each
             for playerIndex in range(len(self.playerList.copy())): # Pick player index
                 self.playerDrawsACard(playerIndex)
+                self.playerList[playerIndex].showHand()
+                # Pause the game for 3 seconds
+                playerCard = self.playerList[index].getHand()
                 playersAndCards.append(
-                    {'player': self.playerList[index], 'card': self.playerList[index].getHand()}
+                    {'player': self.playerList[index], 'card': playerCard[0]}
                     )
 
             # Players compare the card's trickValue and decide who will be turn player   
@@ -238,8 +252,8 @@ class Game():
     def playerDrawsACard(self, playerIndex):
         """Players draw a card and remembers card's posX."""
         # Player draws one card
-        oCard = self.oDeck.getCard() # Take one card from the top of the deck
-        self.playerList[playerIndex].setHand(oCard) # Set card in player's hand
+        card = self.oDeck.getCard() # Take one card from the top of the deck
+        self.playerList[playerIndex].setHand(card) # Set card in player's hand
         
         # Player remembers card's posX
         currentPlayerHand = self.playerList[playerIndex].getHand() # Get list
@@ -248,8 +262,8 @@ class Game():
         self.playerList[playerIndex].setHandPosX(cardLocX) # Set player's card's posX to the end of list
 
         # Tell card its posX and show it to client
-        oCard.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates to player's card
-        oCard.reveal() # Show client running the sofware their cards a.k.a. the player's card 
+        card.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates to player's card
+        card.reveal() # Show client running the sofware their cards a.k.a. the player's card 
         
     def selectCard(self):
         """
@@ -334,6 +348,8 @@ class Game():
 
             player1CardValue = playersAndCards[0]['card'].getTrickValue()
             player2CardValue = playersAndCards[1]['card'].getTrickValue()
+            playersAndCards[0]['card'].reveal()
+            playersAndCards[1]['card'].reveal()
 
             if player1CardValue > player2CardValue:
                 print("-------You WIN!")

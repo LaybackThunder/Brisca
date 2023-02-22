@@ -22,6 +22,10 @@ class Player():
         discard = self.hand.pop(index)
         return discard
 
+    def showHand(self):
+        for card in self.hand:
+            card.reveal()
+
     def setHand(self, oCard):
         """Player puts card in their hand."""
         self.hand.append(oCard)
