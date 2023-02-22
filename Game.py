@@ -87,8 +87,8 @@ class Game():
 
         else: # Return cards to deck
             dealerPot = self.getDealerPot.copy()
-            for card in dealerPot:
-                card = self.dealerPot.pop(0)
+            for cardIndex in range(len(dealerPot)):
+                card = self.dealerPot.pop(cardIndex)
                 self.oDeck.returnCardToDeck(card)
 
     def trickWinner(self, playersAndCards):
@@ -121,16 +121,15 @@ class Game():
         # Reset every Player's pot points
 
         # Remove any cards in every player's pot and put it back int the deck
-        for player in self.playerList:
-            for card in range(len(player.getPot().copy())): # Number iteration
-                  discard = player.removeCardFromPot(card) # Pop using the index
+        for playerIndex in range(len(self.playerList.copy())): # playerList Iteration
+            playerPotLen = self.playerList[playerIndex].getPot()
+            for cardIndex in range(len(playerPotLen)): # potCards iteration
+                  discard = self.playerList[playerIndex].removeCardFromPot(cardIndex) # Pop using the index
                   self.oDeck.returnCardToDeck(discard) # The resturned value is placed back in the deck
 
         # Remove any cards in dealer's pot and put it back int the deck
         if self.getDealerPot(): # is it true that there are cards?
-            for card in range(len(self.getDealerPot.copy())): # Number iteration
-                discard = player.removeCardFromPot(card) # Pop using the index
-                self.oDeck.returnCardToDeck(discard) # The resturned value is placed back at the bottom of the deck
+            self.dealerPotTransfer()
 
         # Decide which player becomes turnPlayer when game resets
         self.highestCardWins()
@@ -157,6 +156,7 @@ class Game():
             keepDrawing = True # Keep drawing till all players have drawn
             while keepDrawing:
                 
+                """LEEEEFT OOOOFF"""
                 for i in range(len(self.playerList.copy())): 
 
                     # set card coordinates per player hand location is...
@@ -370,6 +370,7 @@ Todo list:
     - Write playerDrawsACard method in Game class. Work on the players drawn a card method
     - Check to see if players draw a card method can be used across the class to sub stitudes other code.
 
+4) CURRENT TASK: ----> Where ever a card moves to make sure to update card's image coordinates
 5) Create place holders for client's opponent. 
 6) Figure the other empty methods out.
 7) If there is no deck, draw trump card.
