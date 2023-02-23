@@ -118,6 +118,7 @@ class Game():
         Resets: deck, pots, points
         """
         # Reset every Player's pot points
+        self.potScore = 0
 
         # Remove any cards in every player's pot and put it back int the deck
         for playerIndex in range(len(self.playerList.copy())): # playerList Iteration
@@ -202,19 +203,23 @@ class Game():
             for playerIndex in range(len(self.playerList.copy())): # Pick player index
                 self.playerDrawsACard(playerIndex)
                 self.playerList[playerIndex].showHand()
-                # Pause the game for 3 seconds
-                playerCard = self.playerList[index].getHand()
+                oCard = self.playerList[playerIndex].selectCard() # player selects their card
                 playersAndCards.append(
-                    {'player': self.playerList[index], 'card': playerCard[0]}
+                    {'player': self.playerList[playerIndex], 'card': oCard}
                     )
 
             # Players compare the card's trickValue and decide who will be turn player   
             tie = self.compareCards(playersAndCards) # Returns and checks for tie
 
-            # Remove the 1st card from each player's hand and pass back to deck
-            for index in range(len(self.playerList.copy())):
-                oCard = self.playerList[index].removeCardFromHand(0) # Remove card from player's hand
+            """-----------------WORKING ON THIS SECTION------------------------------"""
+            # ----> use "playersAndCards" to figure out the cards to be removed
+            # ----> Don't forget to update the cards posX in player!
+            # Remove the 1st card from each player's hand and pass it back to deck
+            for playerIndex in range(len(self.playerList.copy())): # Check every player
+                # Remove card from player's hand --- HOW?????????
+                oCard = self.playerList[playerIndex].removeCardFromHand(0) #<--- Used an index????? 
                 self.oDeck.returnCardToDeck(oCard) # Card returns to deck
+            """-----------------WORKING ON THIS SECTION------------------------------"""
 
         while tie:
             # Place holder to identify to whom the card belongs too
@@ -244,7 +249,6 @@ class Game():
 
         print('highestCardWin - exit method')
 
-    # Current Game
     def _briscaGame(self):
         """The logic of the game loop"""
         pass
@@ -264,6 +268,7 @@ class Game():
         # Tell card its posX and show it to client
         card.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates to player's card
         card.reveal() # Show client running the sofware their cards a.k.a. the player's card 
+        # ***Notice: After fuction is called, player sends message to show hand. "Card.reaveal()" may be removed.
         
     def selectCard(self):
         """
@@ -296,13 +301,11 @@ class Game():
 
             elif isPlayer1Trump or isPlayer2Trump: # A player has a trump card | No tie can HAPPEN!
                 if isPlayer1Trump:
-                    print("-------You win!")
                     # Player1 is turnPlayer, player 2 is false by defult
                     playersAndCards[0]['player'].setTurnPlayer(True) 
                     # Player arrangement decides who draws first
                     self.playerList = [playersAndCards[0]['player'], playersAndCards[1]['player']] 
                 else:
-                    print("-------You Lose!")
                     # Player2 is turnPlayer, player 1 is false by defult
                     playersAndCards[1]['player'].setTurnPlayer(True) 
                     # Player arrangement decides who draws first
@@ -385,10 +388,11 @@ Todo list:
     - Add set and get HandPosX methods to Player class.
     - Write playerDrawsACard method in Game class. Work on the players drawn a card method
     - Check to see if players draw a card method can be used across the class to sub stitudes other code.
+    - Create place holders for client's opponent
 
-4) CURRENT TASK: ----> Where ever a card moves to make sure to update card's image coordinates
-5) Create place holders for client's opponent. 
+5) Look for 'WORKING ON THIS SECTION' to check what Iam doing!
 6) Figure the other empty methods out.
 7) If there is no deck, draw trump card.
 8) Whatever needs to happen next lol!
+9) Where ever a card moves to make sure to update card's image coordinates for player and ghost
 """

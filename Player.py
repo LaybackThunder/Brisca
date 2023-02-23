@@ -17,9 +17,9 @@ class Player():
         oCard = oDeck.getCard()
         return oCard
 
-    def removeCardFromHand(self, index):    
-        """Remove card from hand."""
-        discard = self.hand.pop(index)
+    def removeCardFromHand(self, cardIndex):    
+        """Remove card from hand and returns."""
+        discard = self.hand.pop(cardIndex)
         return discard
 
     def showHand(self):
@@ -41,6 +41,10 @@ class Player():
     def getHandPosX(self):
         """Returns a list format of the hand."""
         return self.playerHandPosX
+
+    def removeAPosXFromHand(self, posXIndex):
+        """Removed an x-coordinates from playerHandPosX list."""
+        del self.playerHandPosX[posXIndex]
 
     def setPot(self, oCard):
         """Add the spoils of battle in your pot pile."""
