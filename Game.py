@@ -11,6 +11,7 @@ class Game():
     CARDS_LEFT = 350 # X coordinate; 1st card in the hand; buffer will be added 
     MAX_HAND = 3
     DISPLAY_STARTING_HANDS = 3
+    DECK_LOCATION = (600, 500)
     
     def __init__(self, window, playerList):
         """Initisialize attributes."""
@@ -18,7 +19,7 @@ class Game():
         self.oDeck = Deck(self.window)
         self.trumpCard = None
         self.dealerPot = []
-        self.ghostHandList = [] # Holds back cards
+        self.ghostHandList = [] # Holds place holder cards for ghost player
         self.playerList = playerList # LIST is given by client
         self.potScore = 0
         self.potScoreText = pygwidgets.DisplayText(window, (450, 164),
@@ -29,7 +30,7 @@ class Game():
                                         f'', width=900, justified='center',
                                         fontSize=36, textColor=(255, 255, 255))
         
-        # Calculate player & ghost card locations for their hands
+        # Calculate player & ghost card locations for their hands on the game's board
         self.handPosXList = []
         leftToRight = Game.CARDS_LEFT # Starting card to the left of the player's hand
         # Calculate the x positions of all cards, once 
@@ -39,8 +40,8 @@ class Game():
             # Space between cards in the player's hand
             leftToRight += Game.BUFFER_BETWEEN_HAND_CARDS
 
+        # Players now have knowledge of where to place their cards on the board
         for playerIndex in range(len(self.playerList.copy())):
-            # Players now have knowledge of where to place their cards on the board
             self.playerList[playerIndex].setHandPosX(self.handPosXList)
 
         # Card shuffle sound
@@ -123,14 +124,15 @@ class Game():
         Resets: deck, pots, points
         """
         # Reset every Player's pot points
-        self.potScore = 0
+        for playerIndex in range(len(self.playerList.copy())): # playerList Iteration
+            self.playerList[playerIndex].setPotScore(gameReset=True)
 
         # Remove any cards in every player's pot and put it back int the deck
         for playerIndex in range(len(self.playerList.copy())): # playerList Iteration
             playerPotLen = self.playerList[playerIndex].getPot()
             for cardIndex in range(len(playerPotLen)): # potCards iteration
-                  discard = self.playerList[playerIndex].removeCardFromPot(cardIndex) # Pop using the index
-                  self.oDeck.returnCardToDeck(discard) # The resturned value is placed back in the deck
+                  oCard = self.playerList[playerIndex].removeCardFromPot(cardIndex) # Pop card object using the index
+                  self.oDeck.returnCardToDeck(oCard, loc=Game.DECK_LOCATION) # oCard object is placed back in the deck
 
         # Remove any cards in dealer's pot and put it back int the deck
         if self.getDealerPot(): # is it true that there are cards?
@@ -146,13 +148,13 @@ class Game():
         oCard = oDeck.getCard() 
         self.setTrump(oCard)
         # Trump location under the deck
-        self.trumpCard.setLoc((600, 500))
+        self.trumpCard.setLoc(Game.DECK_LOCATION)
         self.trumpCard.setRotate(90) # 90 degrees rotation
         # Reveal trump card
         self.showTrumpCard(self.trumpCard)  
 
         # Deck's location
-        self.oDeck.setLoc((600, 500))
+        self.oDeck.setLoc(Game.DECK_LOCATION)
                 
         # Deal cards to players before the game starts
         for i in range(Game.MAX_HAND): # Players draw up to 3 cards
@@ -197,6 +199,9 @@ class Game():
         Player's var turnPlayer is False by defult.
         """
         print('highestCardWin - Enter method')
+
+        self.cardShuffleSound.play() # play shuffle sound
+        self.oDeck.shuffle() # shuffle new deck
         
         tie = False
     
@@ -264,20 +269,18 @@ class Game():
 
     def playerDrawsACard(self, playerIndex):
         """Players draw a card and remembers card's posX."""
-        # Player draws one card
-        card = self.oDeck.getCard() # Take one card from the top of the deck
-        self.playerList[playerIndex].setHand(card) # Set card in player's hand
+        # Player draws one card and sets card in their hand
+        self.playerList[playerIndex].drawCard(self.oDeck)
         
-        # Player remembers card's posX
+        # Set coordinates for player card's X position
         currentPlayerHand = self.playerList[playerIndex].getHand() # Get list
         cardIndex = len(currentPlayerHand) # How long is the list?
-        cardLocX = self.cardXPositionList[cardIndex] # Get x-coordinates
-        self.playerList[playerIndex].setHandPosX(cardLocX) # Set player's card's posX to the end of list
+        cardLocX = self.handPosXList[cardIndex] # Get the x-coordinates allowed by Game class
 
-        # Tell card its posX and show it to client
-        card.setLoc(cardLocX, Game.PLAYER1_HAND_CARDS_BOTTOM) # Add coordinates to player's card
-        card.reveal() # Show client running the sofware their cards a.k.a. the player's card 
-        # ***Notice: After fuction is called, player sends message to show hand. "Card.reaveal()" may be removed.
+        # Tell card its location and show it to client
+        self.playerList[playerIndex].setCardLoc(
+            self, cardIndex, loc=(cardLocX, Game.PLAYER_HAND_CARDS_BOTTOM)
+            )
         
     def selectCard(self):
         """

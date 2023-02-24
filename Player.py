@@ -7,18 +7,25 @@ class Player():
         self.hand = [] # oCards go here
         self.playerHandPosX = None # oCards location are here
         self.pot = []
+        self.potScore = 0
         self.turnPlayer = False
         self.window = window # Window is for card placement in player's hand 
     
     def drawCard(self, oDeck):
-        """This gets a card from the top of the deck."""
-        oCard = oDeck.getCard()
-        return oCard
+        """This gets a card from the top of the deck and puts it in player's hand."""
+        oCard = oDeck.getCard() # Draw
+        oCard.reveal() # Show
+        self.setHand(oCard) # In player's hand
 
     def removeCardFromHand(self, cardIndex):    
         """Remove card from hand and returns."""
         remove = self.hand.pop(cardIndex)
         return remove
+
+    def removeCardFromPot(self, oCard=-1):
+        """Removes the last card in the player's pot by defult."""
+        discard = self.pot.pop(oCard)
+        return discard
 
     def showHand(self):
         for card in self.hand:
@@ -28,35 +35,36 @@ class Player():
         """Player puts card in their hand."""
         self.hand.append(oCard)
     
-    def getHand(self):
-        """Returns a list format of the hand."""
-        return self.hand
-    
-    def getHandPosX(self, oCardIndex):
-        """Returns a list format of the hand."""
-        return self.playerHandPosX[oCardIndex]
-    
-    def setHandPosX(self, handPosXList):
-        """Obtain a list of the game's hand location for player."""
-        self.playerHandPosX = handPosXList
+    def setCardLoc(self, cardIndex, loc):
+        """Set the cards image location to player's hand."""
+        oCard = self.hand[cardIndex]
+        oCard.setLoc(loc)
 
     def setPot(self, oCard):
         """Add the spoils of battle in your pot pile."""
         self.pot.append(oCard)
 
-    def getPot(self):
-        """Returns a list format of the pot."""
-        return self.pot
-    
-    def removeCardFromPot(self, oCard=-1):
-        """Removes the last card in the player's pot by defult."""
-        discard = self.pot.pop(oCard)
-        return discard
+    def setPotScore(self, points=0, gameReset=False):
+        if gameReset:
+            self.potScore = 0
+        else:
+            self.potScore += points
 
     def setTurnPlayer(self, bool):
         """Sets player's right to be turnPlayer or not."""
         self.turnPlayer = bool
-    
+
+    def getHand(self):
+        """Returns a list format of the hand."""
+        return self.hand
+
+    def getPot(self):
+        """Returns a list format of the pot."""
+        return self.pot
+        
+    def getPotPoints(self):
+        return self.potScore
+
     def getTurnPlayer(self):
         """Returns True or False if current player is turn player."""
         return self.turnPlayer
@@ -72,16 +80,14 @@ if __name__ == "__main__":
 
     oDeck = Deck(window) # Instatiate Deck
     # Instantiate Players
-    oPlayer = Player()
-    oPlayer2 = Player()
+    oPlayer = Player(window)
+    oPlayer2 = Player(window)
 
     # Each player draws one card before the other player continues to draw
     for i in range(3): 
         oCard = oPlayer.drawCard(oDeck)
-        oPlayer.setHand(oCard)
 
         oCard = oPlayer2.drawCard(oDeck)
-        oPlayer2.setHand(oCard)
 
     # Obtain Hand info 
     ply1HandList = oPlayer.getHand()
@@ -110,7 +116,7 @@ if __name__ == "__main__":
             print("-------Player 1 wins")
 
             # Remove the 1st card from each player's hand
-            potCards = [oPlayer.removeCard(0), oPlayer2.removeCard(0)]
+            potCards = [oPlayer.removeCardFromHand(0), oPlayer2.removeCardFromHand(0)]
             # Add cards into pot
             for oCard in potCards.copy():
                 oCard = potCards.pop(0)
@@ -120,7 +126,7 @@ if __name__ == "__main__":
             print("-------Player 2 wins")
 
             # Remove the 1st card from each player's hand
-            potCards = [oPlayer.removeCard(0), oPlayer2.removeCard(0)]
+            potCards = [oPlayer.removeCardFromHand(0), oPlayer2.removeCardFromHand(0)]
             # Add cards into pot
             for oCard in potCards.copy():
                 oCard = potCards.pop(0)
