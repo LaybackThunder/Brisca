@@ -38,8 +38,10 @@ class Deck():
         oCard = self.playingDeckList.pop()
         return oCard
     
-    def returnCardToDeck(self, oCard):
-        # Put a card back into the deck
+    def returnCardToDeck(self, oCard, loc):
+        """conceal card and Put it back into the deck"""
+        oCard.conceal()
+        oCard.setLoc(loc)
         self.playingDeckList.append(0, oCard)
 
     def setLoc(self, loc):

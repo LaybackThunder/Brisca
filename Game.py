@@ -19,7 +19,6 @@ class Game():
         self.trumpCard = None
         self.dealerPot = []
         self.ghostHandList = []
-        self.oPlayer = Player()
         self.playerList = playerList # LIST is given by client
         self.potScore = 0
         self.potScoreText = pygwidgets.DisplayText(window, (450, 164),
@@ -35,17 +34,9 @@ class Game():
         # Win sound
         self.winnerSound = pygame.mixer.Sound("sounds/ding.wav")
         # Lost sound
-        self.loserSound = pygame.mixer.Sound("sounds/loser.wav")
-        
-        # Calculating Players card positions within the player's hand
-        self.cardXPositionList = []
-        thisLeft = Game.CARDS_LEFT # Starting card to the left of the player's hand
-        # Calculate the x positions of all cards, once 
-        for i in range(Game.DISPLAY_STARTING_HANDS): # 3 cards
-            self.cardXPositionList.append(thisLeft)
-            thisLeft += Game.HAND_CARD_OFFSET # Space between cards in the player's hand     
+        self.loserSound = pygame.mixer.Sound("sounds/loser.wav")     
 
-        # Game decides who goes first at random before game starts
+        # Game resets
         self.reset()
         
     def draw(self): # draw image to screen.
@@ -199,6 +190,7 @@ class Game():
             # Place holder to identify to whom the card belongs too
             playersAndCards = []
 
+            """-----------------WORKING ON THIS SECTION------------------------------"""
             # Each player draws one card each
             for playerIndex in range(len(self.playerList.copy())): # Pick player index
                 self.playerDrawsACard(playerIndex)
@@ -211,14 +203,17 @@ class Game():
             # Players compare the card's trickValue and decide who will be turn player   
             tie = self.compareCards(playersAndCards) # Returns and checks for tie
 
-            """-----------------WORKING ON THIS SECTION------------------------------"""
             # ----> use "playersAndCards" to figure out the cards to be removed
+            # Example: {'player': oPlayer, 'card': oCard, 'LocX': (x, y)}
             # ----> Don't forget to update the cards posX in player!
+
             # Remove the 1st card from each player's hand and pass it back to deck
             for playerIndex in range(len(self.playerList.copy())): # Check every player
-                # Remove card from player's hand --- HOW?????????
-                oCard = self.playerList[playerIndex].removeCardFromHand(0) #<--- Used an index????? 
-                self.oDeck.returnCardToDeck(oCard) # Card returns to deck
+                # Remove card from player's hand
+                oCard = self.playerList[playerIndex].removeCardFromHand(0) # Remove card
+                self.oDeck.returnCardToDeck(oCard, loc=(600, 500)) # Card returns to deck concealed 
+
+                # Work with the tie section too -------------------------------------
             """-----------------WORKING ON THIS SECTION------------------------------"""
 
         while tie:

@@ -3,14 +3,28 @@ from Card import *
 
 class Player():
 
-    BEGINNING_HAND = 3
+    BUFFER_BETWEEN_HAND_CARDS = 150 # Space between cards in player's hand
+    GHOST_HAND_CARDS_TOP = 400 # Y coordinate; where ghost cards will go; top of screen
+    PLAYER_HAND_CARDS_BOTTOM = 100 # Y coordinate; where player hand will go
+    CARDS_LEFT = 350 # X coordinate; 1st card in the hand; buffer will be added 
+    DISPLAY_STARTING_HANDS = 3
+    MAX_HAND = 3
 
-    def __init__(self, iD=None):
+    def __init__(self, window, iD=None):
         self.hand = []
-        self.playerHandPosX = []
         self.pot = []
-        self.playerId = iD # Identify if its player 1(int=0) or 2(int=1)
         self.turnPlayer = False
+        self.window = window # Window is for card placement in player's hand
+
+        # Calculate Player's card locations within the player's hand
+        self.playerHandPosX = []
+        leftToRight = Player.CARDS_LEFT # Starting card to the left of the player's hand
+        # Calculate the x positions of all cards, once 
+        for i in range(Player.DISPLAY_STARTING_HANDS): # 3 cards
+            # Add the coresponding space for the oCard to inhabit
+            self.playerHandPosX.append(leftToRight)
+            # Space between cards in the player's hand
+            leftToRight += Player.BUFFER_BETWEEN_HAND_CARDS 
     
     def drawCard(self, oDeck):
         """This gets a card from the top of the deck."""
@@ -19,8 +33,8 @@ class Player():
 
     def removeCardFromHand(self, cardIndex):    
         """Remove card from hand and returns."""
-        discard = self.hand.pop(cardIndex)
-        return discard
+        remove = self.hand.pop(cardIndex)
+        return remove
 
     def showHand(self):
         for card in self.hand:
@@ -34,17 +48,9 @@ class Player():
         """Returns a list format of the hand."""
         return self.hand
     
-    def setHandPosX(self, PosX):
-        """Player puts card in their hand."""
-        self.playerHandPosX.append(PosX)
-    
-    def getHandPosX(self):
+    def getHandPosX(self, oCardIndex):
         """Returns a list format of the hand."""
-        return self.playerHandPosX
-
-    def removeAPosXFromHand(self, posXIndex):
-        """Removed an x-coordinates from playerHandPosX list."""
-        del self.playerHandPosX[posXIndex]
+        return self.playerHandPosX[oCardIndex]
 
     def setPot(self, oCard):
         """Add the spoils of battle in your pot pile."""
@@ -58,12 +64,6 @@ class Player():
         """Removes the last card in the player's pot by defult."""
         discard = self.pot.pop(oCard)
         return discard
-
-    def setPlayerId(self, iD):
-        self.playerId = iD
-
-    def getPlayerId(self):
-        return self.playerId
 
     def setTurnPlayer(self, bool):
         """Sets player's right to be turnPlayer or not."""
