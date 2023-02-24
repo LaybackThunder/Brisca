@@ -213,17 +213,21 @@ class Game():
             # Each player draws one card each
             for playerIndex in range(len(self.playerList.copy())): # Pick player index
                 self.playerDrawsACard(playerIndex)
-                self.playerList[playerIndex].showHand()
+
                 oCard = self.playerList[playerIndex].selectCard() # player selects their card
+
                 playersAndCards.append(
-                    {'player': self.playerList[playerIndex], 'card': oCard}
+                    {'player': self.playerList[playerIndex], 
+                     'card': oCard,
+                     'Loc': oCard.getLoc()
+                    }
                     )
 
             # Players compare the card's trickValue and decide who will be turn player   
             tie = self.compareCards(playersAndCards) # Returns and checks for tie
 
             # ----> use "playersAndCards" to figure out the cards to be removed
-            # Example: {'player': oPlayer, 'card': oCard, 'LocX': (x, y)}
+            # Example: {'player': oPlayer, 'card': oCard, 'Loc': (x, y)}
             # ----> Don't forget to update the cards posX in player!
 
             # Remove the 1st card from each player's hand and pass it back to deck
@@ -263,6 +267,25 @@ class Game():
 
         print('highestCardWin - exit method')
 
+    def selectCard(self, event):
+        """
+        Player will be asked to select a card from their hand.
+        Once player clicks card they can 
+            - Cancel card selection (stay in loop)
+            - Re-select card (Currently in loop)
+            - Accept card selection (exit loop) 
+        """
+        pass    
+
+    def playerStatus():
+        """
+        After player selects a card,
+        They will be asked to
+            - Enter trick
+            - Swap trump card
+            - Quit game
+        """
+
     def _briscaGame(self):
         """The logic of the game loop"""
         pass
@@ -281,14 +304,6 @@ class Game():
         self.playerList[playerIndex].setCardLoc(
             self, cardIndex, loc=(cardLocX, Game.PLAYER_HAND_CARDS_BOTTOM)
             )
-        
-    def selectCard(self):
-        """
-        Players can select to enter a trick session or if applicable, a trump swap
-        Returns the card. If players can't select a card from their hands, 
-        let them draw a card from the deck and place it in their hand.
-        """
-        pass
 
     def trumpHandSwap(self):
         """Swap one card in the player's hand for the trump card."""
