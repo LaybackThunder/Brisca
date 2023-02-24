@@ -5,10 +5,12 @@ from Player import *
 
 class Game():
     # Class Variables
+    PLAYER_HAND_CARDS_BOTTOM = 100 # Y coordinate; where player hand will go
     GHOST_HAND_CARDS_TOP = 400 # Y coordinate; where ghost cards will go; top of screen
     BUFFER_BETWEEN_HAND_CARDS = 150 # Space between cards in player's hand
     CARDS_LEFT = 350 # X coordinate; 1st card in the hand; buffer will be added 
     MAX_HAND = 3
+    DISPLAY_STARTING_HANDS = 3
     
     def __init__(self, window, playerList):
         """Initisialize attributes."""
@@ -16,7 +18,7 @@ class Game():
         self.oDeck = Deck(self.window)
         self.trumpCard = None
         self.dealerPot = []
-        self.ghostHandList = []
+        self.ghostHandList = [] # Holds back cards
         self.playerList = playerList # LIST is given by client
         self.potScore = 0
         self.potScoreText = pygwidgets.DisplayText(window, (450, 164),
@@ -27,6 +29,20 @@ class Game():
                                         f'', width=900, justified='center',
                                         fontSize=36, textColor=(255, 255, 255))
         
+        # Calculate player & ghost card locations for their hands
+        self.handPosXList = []
+        leftToRight = Game.CARDS_LEFT # Starting card to the left of the player's hand
+        # Calculate the x positions of all cards, once 
+        for i in range(Game.DISPLAY_STARTING_HANDS): # 3 cards
+            # Add the coresponding space for the oCard to inhabit
+            self.handPosXList.append(leftToRight)
+            # Space between cards in the player's hand
+            leftToRight += Game.BUFFER_BETWEEN_HAND_CARDS
+
+        for playerIndex in range(len(self.playerList.copy())):
+            # Players now have knowledge of where to place their cards on the board
+            self.playerList[playerIndex].setHandPosX(self.handPosXList)
+
         # Card shuffle sound
         self.cardShuffleSound = pygame.mixer.Sound("sounds/cardShuffle.wav")
         # Win sound

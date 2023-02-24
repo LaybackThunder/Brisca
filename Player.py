@@ -3,26 +3,12 @@ from Card import *
 
 class Player():
 
-    BUFFER_BETWEEN_HAND_CARDS = 150 # Space between cards in player's hand
-    PLAYER_HAND_CARDS_BOTTOM = 100 # Y coordinate; where player hand will go
-    CARDS_LEFT = 350 # X coordinate; 1st card in the hand; buffer will be added 
-    DISPLAY_STARTING_HANDS = 3
-
     def __init__(self, window, iD=None):
-        self.hand = []
+        self.hand = [] # oCards go here
+        self.playerHandPosX = None # oCards location are here
         self.pot = []
         self.turnPlayer = False
-        self.window = window # Window is for card placement in player's hand
-
-        # Calculate Player's card locations within the player's hand
-        self.playerHandPosX = []
-        leftToRight = Player.CARDS_LEFT # Starting card to the left of the player's hand
-        # Calculate the x positions of all cards, once 
-        for i in range(Player.DISPLAY_STARTING_HANDS): # 3 cards
-            # Add the coresponding space for the oCard to inhabit
-            self.playerHandPosX.append(leftToRight)
-            # Space between cards in the player's hand
-            leftToRight += Player.BUFFER_BETWEEN_HAND_CARDS 
+        self.window = window # Window is for card placement in player's hand 
     
     def drawCard(self, oDeck):
         """This gets a card from the top of the deck."""
@@ -49,6 +35,10 @@ class Player():
     def getHandPosX(self, oCardIndex):
         """Returns a list format of the hand."""
         return self.playerHandPosX[oCardIndex]
+    
+    def setHandPosX(self, handPosXList):
+        """Obtain a list of the game's hand location for player."""
+        self.playerHandPosX = handPosXList
 
     def setPot(self, oCard):
         """Add the spoils of battle in your pot pile."""
@@ -69,6 +59,7 @@ class Player():
     
     def getTurnPlayer(self):
         """Returns True or False if current player is turn player."""
+        return self.turnPlayer
 
 # Test player
 if __name__ == "__main__":
