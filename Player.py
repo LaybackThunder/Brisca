@@ -4,11 +4,9 @@ from Card import *
 class Player():
 
     BUFFER_BETWEEN_HAND_CARDS = 150 # Space between cards in player's hand
-    GHOST_HAND_CARDS_TOP = 400 # Y coordinate; where ghost cards will go; top of screen
     PLAYER_HAND_CARDS_BOTTOM = 100 # Y coordinate; where player hand will go
     CARDS_LEFT = 350 # X coordinate; 1st card in the hand; buffer will be added 
     DISPLAY_STARTING_HANDS = 3
-    MAX_HAND = 3
 
     def __init__(self, window, iD=None):
         self.hand = []

@@ -5,11 +5,9 @@ from Player import *
 
 class Game():
     # Class Variables
-    HAND_CARD_OFFSET = 20 # player's cards buffer between each other
-    PLAYER2_HAND_CARDS_TOP = 400 # Y coordinate
-    PLAYER1_HAND_CARDS_BOTTOM = 100 # Y coordinate
-    CARDS_LEFT = 75 # X coordinate
-    DISPLAY_STARTING_HANDS = 3
+    GHOST_HAND_CARDS_TOP = 400 # Y coordinate; where ghost cards will go; top of screen
+    BUFFER_BETWEEN_HAND_CARDS = 150 # Space between cards in player's hand
+    CARDS_LEFT = 350 # X coordinate; 1st card in the hand; buffer will be added 
     MAX_HAND = 3
     
     def __init__(self, window, playerList):
