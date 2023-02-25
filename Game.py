@@ -213,7 +213,9 @@ class Game():
             # Each player draws one card each
             for playerIndex in range(len(self.playerList.copy())): # Pick player index
                 self.playerDrawsACard(playerIndex)
-
+                self.ghostDrawsACard(playerIndex)
+            
+            for playerIndex in range(len(self.playerList.copy())): # Pick player index
                 oCard = self.playerList[playerIndex].selectCard() # player selects their card
 
                 playersAndCards.append(
@@ -269,6 +271,7 @@ class Game():
 
     def selectCard(self, event):
         """
+        String based logic gates "Cancel", "Re-select" "Accept"
         Player will be asked to select a card from their hand.
         Once player clicks card they can 
             - Cancel card selection (stay in loop)
@@ -285,6 +288,7 @@ class Game():
             - Swap trump card
             - Quit game
         """
+        pass
 
     def _briscaGame(self):
         """The logic of the game loop"""
@@ -304,6 +308,20 @@ class Game():
         self.playerList[playerIndex].setCardLoc(
             self, cardIndex, loc=(cardLocX, Game.PLAYER_HAND_CARDS_BOTTOM)
             )
+
+    def ghostDrawsACard(self, playerIndex):
+        """Players draw a card and remembers card's posX."""
+        # Player draws one card and sets card in their hand
+        oGhostCard = Card()
+        self.ghostHandList.append(oGhostCard)
+        
+        # Set coordinates for ghost player card's X position
+        currentPlayerHand = self.playerList[playerIndex].getHand() # Get list
+        cardIndex = len(currentPlayerHand) # How long is the list?
+        cardLocX = self.handPosXList[cardIndex] # Get the x-coordinates allowed by Game class
+
+        # Tell card its location and show backside of card to client
+        self.ghostHandList[cardIndex].setLoc(loc=(cardLocX, Game.GHOST_HAND_CARDS_TOP))
 
     def trumpHandSwap(self):
         """Swap one card in the player's hand for the trump card."""
