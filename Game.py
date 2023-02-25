@@ -2,6 +2,7 @@ import pygwidgets
 from Deck import *
 from Card import *
 from Player import *
+from constants import *
 
 class Game():
     # Class Variables
