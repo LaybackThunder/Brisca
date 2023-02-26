@@ -119,7 +119,7 @@ class Game():
         self.trumpCard = oCard
 
     # Pre-game
-    def reset(self):
+    def reset(self, event):
         """
         This method is called when a new round starts. 
         Resets: deck, pots, points
@@ -140,7 +140,8 @@ class Game():
             self.dealerPotTransfer()
 
         # Decide which player becomes turnPlayer when game resets
-        self.highestCardWins()
+        self.highestCardWins(event) # Mini game
+        """The pygame event stops here."""
 
         self.cardShuffleSound.play() # play shuffle sound
         self.oDeck.shuffle() # shuffle new deck
@@ -179,12 +180,10 @@ class Game():
                         keepDrawing = False # Exit while loop
 
                     # Set card coordinates for ghost 'player' hand 
-                    # PLACE HOLDERS ARE EMPTY CARDS with a back image
-                    # Ghost player remembers card's posX
-                    currentGhostHand = self.ghostHandList.copy() # Get list
+                    currentGhostHand = self.ghostHandList.copy() # Ghost player remembers card's posX
                     cardIndex = len(currentGhostHand) # How long is the list?
                     cardLocX = self.cardXPositionList[cardIndex] # Get x-coordinates
-                    oGhostCard = Card() # Instantiate a card
+                    oGhostCard = Card() # Ghost cards ARE EMPTY CARDS with a back image
                     # Set ghost player's card posX to the end of list
                     self.ghostHandList.append({'cardLocX': cardLocX, 'ghostCard': oGhostCard})
                     # Add coordinates to player's card                    
@@ -193,7 +192,7 @@ class Game():
         # Start game
         self._briscaGame()
 
-    def highestCardWins(self):
+    def highestCardWins(self, event):
         """
         When players enter the game room the dealer gives each player a card.
         Player with the highest card value wins to be turnPlayer=True.
@@ -203,8 +202,11 @@ class Game():
 
         self.cardShuffleSound.play() # play shuffle sound
         self.oDeck.shuffle() # shuffle new deck
+
+        # Deck's location
+        self.oDeck.setLoc(Game.DECK_LOCATION)
         
-        tie = False
+        tie = False 
     
         if not tie: 
             # Place holder to identify to whom the card belongs too
@@ -216,15 +218,22 @@ class Game():
                 self.playerDrawsACard(playerIndex)
                 self.ghostDrawsACard(playerIndex)
             
+            
             for playerIndex in range(len(self.playerList.copy())): # Pick player index
-                oCard = self.playerList[playerIndex].selectCard() # player selects their card
+                    # player selects their card using the event data
+                    cardSelected = self.playerList[playerIndex].selectACard(event) 
 
-                playersAndCards.append(
-                    {'player': self.playerList[playerIndex], 
-                     'card': oCard,
-                     'Loc': oCard.getLoc()
-                    }
-                    )
+                    if cardSelected['bool']: # AND button trick is pressed
+                        # card has been selected
+                        oCard = self.playerList[playerIndex].cardSelected(cardSelected['cardIndex'])
+
+                    # Cards are places as contenders for battle
+                    playersAndCards.append(
+                        {'player': self.playerList[playerIndex], 
+                        'card': oCard,
+                        'Loc': oCard.getLoc((500, 300)) # To be drawn at the middle of the screen
+                        }
+                        )
 
             # Players compare the card's trickValue and decide who will be turn player   
             tie = self.compareCards(playersAndCards) # Returns and checks for tie
@@ -268,30 +277,7 @@ class Game():
             if tie:
                 self.oDeck.shuffle() 
 
-        print('highestCardWin - exit method')
-
-    def selectCard(self, event):
-        """
-        String based logic gates "Cancel", "Re-select" "Accept"
-        Player will be asked to select a card from their hand.
-        Once player clicks card they can 
-            - Cancel card selection (stay in loop)
-            - Re-select card (Currently in loop)
-            - Accept card selection (exit loop) 
-        """
-        
-        
-            
-
-    def playerStatus():
-        """
-        After player selects a card,
-        They will be asked to
-            - Enter trick
-            - Swap trump card
-            - Quit game
-        """
-        pass
+        print('highestCardWin - exit method') 
 
     def _briscaGame(self):
         """The logic of the game loop"""

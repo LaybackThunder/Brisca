@@ -11,6 +11,21 @@ class Player():
         self.turnPlayer = False
         self.window = window # Window is for card placement in player's hand 
     
+    def selectACard(self, event):
+        """Returns a bool and the card index"""
+        for index in range(len(self.hand.copy())): # Index of Obj inside hand
+                isSelected = {
+                    'bool': self.hand[index].selectedCard(event) # Check if object card has bee selected
+                    } 
+                if isSelected['bool']:
+                    isSelected.update({'cardIndex': index})
+                    return isSelected
+
+    def cardSelected(self, cardIndex):
+        """Retunrs oCard after being removed from the player's hand."""
+        oCard = self.removeCardFromHand(cardIndex)
+        return oCard
+
     def drawCard(self, oDeck):
         """This gets a card from the top of the deck and puts it in player's hand."""
         oCard = oDeck.getCard() # Draw

@@ -23,12 +23,6 @@ background = pygwidgets.Image(window, (0, 0),
                             'images/background.png')
 newGameButton = pygwidgets.TextButton(window, (20, 530),
                             'New Game', width=100, height=45)
-trickButton = pygwidgets.TextButton(window, (540, 520),
-                            'Trick', width=120, height=55)
-trumpSwapButton = pygwidgets.TextButton(window, (340, 520),
-                            'Trump', width=120, height=55)
-selectCardButton = pygwidgets.TextButton(window, (880, 530),
-                            'Select', width=100, height=45)
 quitButton = pygwidgets.TextButton(window, (600, 530),
                             'Quit', width=100, height=45)
 
@@ -47,16 +41,11 @@ while True:
             sys.exit()
 
         if newGameButton.handleEvent(event):
-            oGame.reset()
-            # When a card is selected then 'select' and 'cancel' and 'trick' buttons are enabled?
-            # Game loop begins? 
+            oGame.reset(event)
+            # What buttons are enable and disable when the game resets?
 
-        if trickButton.handleEvent(event): # Should this even be here?
-            gameOver = oGame.trick() # Should I add a parameter in trick?
-            if gameOver:
-                selectCardButton.disable()
-                trickButton.disable()
-                trumpSwapButton.disable()
+            
+
 
     # 8 - Do any "per frame" actions
 
@@ -68,9 +57,6 @@ while True:
     oGame.draw()
     # Draw remaining user interface components
     newGameButton.draw()
-    selectCardButton.draw()
-    trickButton.draw()
-    trumpSwapButton.draw()
     quitButton.draw()
 
     # 11 - Update the window

@@ -18,6 +18,19 @@ class Card():
                                                 {'front': fileName,
                                                 'back': Card.BACK_OF_CARD_IMAGE}, 'back')
     
+    def selectedCard(self, event):
+        """Return true if selected."""
+        if self.images.handleEvent(event):
+            # Move card 25 pixels up to id card as selected
+            self.images.moveY(-25) 
+            return True
+    
+    def unselectCard(self, event):
+        """When card selection is false card is set to original Y position in the player's hand."""
+        if self.images.handleEvent(event) == False:
+            # Move card 25 pixels up to id card as selected
+            self.images.moveY(25) 
+
     def conceal(self):
         self.images.replace('back')
     
