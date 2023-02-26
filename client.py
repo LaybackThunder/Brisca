@@ -27,7 +27,9 @@ quitButton = pygwidgets.TextButton(window, (600, 530),
                             'Quit', width=100, height=45)
 
 # 5 - Initialize variables
-oGame = Game(window)
+oPlayer = Player(window)
+playerList = [oPlayer]
+oGame = Game(window, playerList)
 
 # 6 - Loop forever
 while True:
@@ -41,8 +43,8 @@ while True:
             sys.exit()
 
         if newGameButton.handleEvent(event):
-            oGame.reset(event)
-            # What buttons are enable and disable when the game resets?
+            oGame.reset()
+            oGame.highestCardWins(event)
 
             
 

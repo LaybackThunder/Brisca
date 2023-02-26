@@ -3,7 +3,7 @@ from Card import *
 
 class Player():
 
-    def __init__(self, window, iD=None):
+    def __init__(self, window):
         self.hand = [] # oCards go here
         self.playerHandPosX = None # oCards location are here
         self.pot = []
@@ -13,18 +13,13 @@ class Player():
     
     def selectACard(self, event):
         """Returns a bool and the card index"""
-        for index in range(len(self.hand.copy())): # Index of Obj inside hand
-                isSelected = {
-                    'bool': self.hand[index].selectedCard(event) # Check if object card has bee selected
-                    } 
-                if isSelected['bool']:
-                    isSelected.update({'cardIndex': index})
-                    return isSelected
-
-    def cardSelected(self, cardIndex):
-        """Retunrs oCard after being removed from the player's hand."""
-        oCard = self.removeCardFromHand(cardIndex)
-        return oCard
+        for oCardIndex in range(len(self.hand.copy())): # Index of Obj inside hand
+            # Check if object card has bee selected
+            isSelected = {'bool': self.hand[oCardIndex].selectedCard(event)} 
+            if isSelected['bool']:
+                # oCard index location in playerList
+                isSelected.update({'cardIndex': oCardIndex}) 
+                return isSelected
 
     def drawCard(self, oDeck):
         """This gets a card from the top of the deck and puts it in player's hand."""

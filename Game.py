@@ -119,11 +119,8 @@ class Game():
         self.trumpCard = oCard
 
     # Pre-game
-    def reset(self, event):
-        """
-        This method is called when a new round starts. 
-        Resets: deck, pots, points
-        """
+    def reset(self):
+        """This method is called when a new round starts. Resets deck, pots, points"""
         # Reset every Player's pot points
         for playerIndex in range(len(self.playerList.copy())): # playerList Iteration
             self.playerList[playerIndex].setPotScore(gameReset=True)
@@ -137,12 +134,89 @@ class Game():
 
         # Remove any cards in dealer's pot and put it back int the deck
         if self.getDealerPot(): # is it true that there are cards?
-            self.dealerPotTransfer()
+            self.dealerPotTransfer() 
 
-        # Decide which player becomes turnPlayer when game resets
-        self.highestCardWins(event) # Mini game
-        """The pygame event stops here."""
+    def highestCardWins(self, event):
+        """Player with the highest card value wins to be turn player."""
+        self.cardShuffleSound.play() # play shuffle sound
+        self.oDeck.shuffle() # shuffle new deck
 
+        # Deck's location
+        self.oDeck.setLoc(Game.DECK_LOCATION)
+        
+        tie = False 
+    
+        if not tie: 
+            # Place holder to identify to whom the card belongs too
+            playersAndCards = []
+            
+            # Each player draws one card each
+            for playerIndex in range(len(self.playerList.copy())): # Pick player index
+                self.playerDrawsACard(playerIndex)
+                self.ghostDrawsACard(playerIndex)
+            
+            """-----------------WORKING ON THIS SECTION------------------------------"""
+
+            for playerIndex in range(len(self.playerList.copy())): # Pick player index
+                    # player selects their card using the event data
+                    cardSelected = self.playerList[playerIndex].selectACard(event) 
+
+                    if cardSelected['bool']: # AND button trick is pressed
+                        # card has been selected
+                        oCard = self.playerList[playerIndex].removeCardFromHand(cardSelected['cardIndex'])
+
+                        # Cards are places as contenders for battle
+                        playersAndCards.append(
+                            {'player': self.playerList[playerIndex], 
+                            'card': oCard,
+                            'Loc': oCard.getLoc((500, 300)) # To be drawn at the middle of the screen
+                            }
+                            )
+
+            # Players compare the card's trickValue and decide who will be turn player   
+            tie = self.compareCards(playersAndCards) # Returns and checks for tie
+
+            # ----> use "playersAndCards" to figure out the cards to be removed
+            # Example: {'player': oPlayer, 'card': oCard, 'Loc': (x, y)}
+            # ----> Don't forget to update the cards posX in player!
+
+            # Remove the 1st card from each player's hand and pass it back to deck
+            for playerIndex in range(len(self.playerList.copy())): # Check every player
+                # Remove card from player's hand
+                oCard = self.playerList[playerIndex].removeCardFromHand(0) # Remove card
+                self.oDeck.returnCardToDeck(oCard, loc=(600, 500)) # Card returns to deck concealed 
+
+                # Work with the tie section too -------------------------------------
+            """-----------------WORKING ON THIS SECTION------------------------------"""
+
+        while tie:
+            # Place holder to identify to whom the card belongs too
+            playersAndCards = []
+
+            # Each player draws one card each
+            for playerIndex in range(len(self.playerList.copy())): # Pick player index
+                self.playerDrawsACard(playerIndex)
+                self.playerList[playerIndex].showHand()
+                # Pause the game for 3 seconds
+                playerCard = self.playerList[index].getHand()
+                playersAndCards.append(
+                    {'player': self.playerList[index], 'card': playerCard[0]}
+                    )
+
+            # Players compare the card's trickValue and decide who will be turn player   
+            tie = self.compareCards(playersAndCards) # Returns and checks for tie
+
+            # Remove the 1st card from each player's hand and pass back to deck
+            for index in range(len(self.playerList.copy())):
+                oCard = self.playerList[index].removeCardFromHand(0) # Remove card from player's hand
+                self.oDeck.returnCardToDeck(oCard) # Card returns to deck
+
+            # If true shuffle deck after cards return deck after
+            if tie:
+                self.oDeck.shuffle() 
+
+    def _briscaGame(self):
+        """The logic of the game loop"""
         self.cardShuffleSound.play() # play shuffle sound
         self.oDeck.shuffle() # shuffle new deck
 
@@ -187,101 +261,7 @@ class Game():
                     # Set ghost player's card posX to the end of list
                     self.ghostHandList.append({'cardLocX': cardLocX, 'ghostCard': oGhostCard})
                     # Add coordinates to player's card                    
-                    oGhostCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP) 
-
-        # Start game
-        self._briscaGame()
-
-    def highestCardWins(self, event):
-        """
-        When players enter the game room the dealer gives each player a card.
-        Player with the highest card value wins to be turnPlayer=True.
-        Player's var turnPlayer is False by defult.
-        """
-        print('highestCardWin - Enter method')
-
-        self.cardShuffleSound.play() # play shuffle sound
-        self.oDeck.shuffle() # shuffle new deck
-
-        # Deck's location
-        self.oDeck.setLoc(Game.DECK_LOCATION)
-        
-        tie = False 
-    
-        if not tie: 
-            # Place holder to identify to whom the card belongs too
-            playersAndCards = []
-
-            """-----------------WORKING ON THIS SECTION------------------------------"""
-            # Each player draws one card each
-            for playerIndex in range(len(self.playerList.copy())): # Pick player index
-                self.playerDrawsACard(playerIndex)
-                self.ghostDrawsACard(playerIndex)
-            
-            
-            for playerIndex in range(len(self.playerList.copy())): # Pick player index
-                    # player selects their card using the event data
-                    cardSelected = self.playerList[playerIndex].selectACard(event) 
-
-                    if cardSelected['bool']: # AND button trick is pressed
-                        # card has been selected
-                        oCard = self.playerList[playerIndex].cardSelected(cardSelected['cardIndex'])
-
-                    # Cards are places as contenders for battle
-                    playersAndCards.append(
-                        {'player': self.playerList[playerIndex], 
-                        'card': oCard,
-                        'Loc': oCard.getLoc((500, 300)) # To be drawn at the middle of the screen
-                        }
-                        )
-
-            # Players compare the card's trickValue and decide who will be turn player   
-            tie = self.compareCards(playersAndCards) # Returns and checks for tie
-
-            # ----> use "playersAndCards" to figure out the cards to be removed
-            # Example: {'player': oPlayer, 'card': oCard, 'Loc': (x, y)}
-            # ----> Don't forget to update the cards posX in player!
-
-            # Remove the 1st card from each player's hand and pass it back to deck
-            for playerIndex in range(len(self.playerList.copy())): # Check every player
-                # Remove card from player's hand
-                oCard = self.playerList[playerIndex].removeCardFromHand(0) # Remove card
-                self.oDeck.returnCardToDeck(oCard, loc=(600, 500)) # Card returns to deck concealed 
-
-                # Work with the tie section too -------------------------------------
-            """-----------------WORKING ON THIS SECTION------------------------------"""
-
-        while tie:
-            # Place holder to identify to whom the card belongs too
-            playersAndCards = []
-
-            # Each player draws one card each
-            for playerIndex in range(len(self.playerList.copy())): # Pick player index
-                self.playerDrawsACard(playerIndex)
-                self.playerList[playerIndex].showHand()
-                # Pause the game for 3 seconds
-                playerCard = self.playerList[index].getHand()
-                playersAndCards.append(
-                    {'player': self.playerList[index], 'card': playerCard[0]}
-                    )
-
-            # Players compare the card's trickValue and decide who will be turn player   
-            tie = self.compareCards(playersAndCards) # Returns and checks for tie
-
-            # Remove the 1st card from each player's hand and pass back to deck
-            for index in range(len(self.playerList.copy())):
-                oCard = self.playerList[index].removeCardFromHand(0) # Remove card from player's hand
-                self.oDeck.returnCardToDeck(oCard) # Card returns to deck
-
-            # If true shuffle deck after cards return deck after
-            if tie:
-                self.oDeck.shuffle() 
-
-        print('highestCardWin - exit method') 
-
-    def _briscaGame(self):
-        """The logic of the game loop"""
-        pass
+                    oGhostCard.setLoc(cardLocX, Game.PLAYER2_HAND_CARDS_TOP)
 
     def playerDrawsACard(self, playerIndex):
         """Players draw a card and remembers card's posX."""
