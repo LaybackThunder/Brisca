@@ -137,7 +137,7 @@ class Game():
             self.dealerPotTransfer() 
 
     def highestCardWins(self, event):
-        """Player with the highest card value wins to be turn player."""
+        """Player with the highest card value wins to be turn player. Method returns playerList."""
         self.cardShuffleSound.play() # play shuffle sound
         self.oDeck.shuffle() # shuffle new deck
 
@@ -214,6 +214,8 @@ class Game():
             # If true shuffle deck after cards return deck after
             if tie:
                 self.oDeck.shuffle() 
+
+        return self.playerList
 
     def _briscaGame(self):
         """The logic of the game loop"""

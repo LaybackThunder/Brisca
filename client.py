@@ -28,7 +28,7 @@ quitButton = pygwidgets.TextButton(window, (600, 530),
 
 # 5 - Initialize variables
 oPlayer = Player(window)
-playerList = [oPlayer]
+playerList = [oPlayer, oPlayer]
 oGame = Game(window, playerList)
 
 # 6 - Loop forever
@@ -44,10 +44,7 @@ while True:
 
         if newGameButton.handleEvent(event):
             oGame.reset()
-            oGame.highestCardWins(event)
-
-            
-
+            playerList = oGame.highestCardWins(event, playerList)
 
     # 8 - Do any "per frame" actions
 
