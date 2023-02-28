@@ -5,7 +5,7 @@ class Card():
 
     BACK_OF_CARD_IMAGE = pygame.image.load('images/back-side.jpg')
     
-    def __init__(self, window, suit, rank, value, trickValue):
+    def __init__(self, window, suit='Clubs', rank='2', value=0, trickValue=2):
         self.window = window
         self.suit = suit
         self.rank = rank

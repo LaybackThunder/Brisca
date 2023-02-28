@@ -9,8 +9,8 @@ import pygwidgets
 from Game import *
 
 # 2 - Define constants
-WINDOW_WIDTH = 1000
-WINDOW_HEIGHT = 600
+WINDOW_WIDTH = 950
+WINDOW_HEIGHT = 850
 FRAMES_PER_SECOND = 30
 
 # 3 - Initialize the world
@@ -21,14 +21,14 @@ window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 # 4 - Load assets: image(s), sounds,  etc.
 background = pygwidgets.Image(window, (0, 0),
                             'images/background.jpg')
-newGameButton = pygwidgets.TextButton(window, (20, 530),
+newGameButton = pygwidgets.TextButton(window, (20, 780),
                             'New Game', width=100, height=45)
-quitButton = pygwidgets.TextButton(window, (600, 530),
+quitButton = pygwidgets.TextButton(window, (830, 780),
                             'Quit', width=100, height=45)
 
 # 5 - Initialize variables
 oPlayer = Player(window)
-playerList = [oPlayer, oPlayer]
+playerList = [oPlayer]
 oGame = Game(window, playerList)
 
 # 6 - Loop forever 
@@ -44,7 +44,7 @@ while True:
 
         if newGameButton.handleEvent(event):
             oGame.reset()
-            playerList = oGame.highestCardWins(event, playerList)
+            oGame.highestCardWins()
 
     # 8 - Do any "per frame" actions
 

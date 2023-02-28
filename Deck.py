@@ -29,15 +29,6 @@ class Deck():
         # shuffle using the random module
         random.shuffle(self.playingDeckList)
     
-    def getCard(self):
-        # Checks to see if there are any cards
-        if len(self.playingDeckList) == 0:
-            print('Ha! No more cards, go and get a life!')
-            return False
-        # Returns one card from the top of the deck
-        oCard = self.playingDeckList.pop()
-        return oCard
-    
     def returnCardToDeck(self, oCard, loc):
         """conceal card and Put it back into the deck"""
         oCard.conceal()
@@ -54,6 +45,18 @@ class Deck():
             locXY = self.oCard.getLoc()
             loc.append(f"{oCard.getName()} is loc at {locXY}")
         return loc
+    
+    def getCard(self):
+        # Checks to see if there are any cards
+        if len(self.playingDeckList) == 0:
+            print('Ha! No more cards, go and get a life!')
+            return False
+        # Returns one card from the top of the deck
+        oCard = self.playingDeckList.pop()
+        return oCard
+
+    def getDeck(self):
+        return self.playingDeckList.copy()
 
 # Test deck
 if __name__ == "__main__":

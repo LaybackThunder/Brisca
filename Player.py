@@ -41,9 +41,12 @@ class Player():
         for card in self.hand:
             card.reveal()
 
-    def setHand(self, oCard):
-        """Player puts card in their hand."""
-        self.hand.append(oCard)
+    def setHand(self, oCard=None, gameReset=False):
+        """Player clear or add card in their hand."""
+        if gameReset == True:
+            self.hand.clear()
+        else:
+            self.hand.append(oCard)
     
     def setHandPosX(self, playerHandPosX):
         """set player's hand card coordinates"""
@@ -51,7 +54,7 @@ class Player():
 
     def setCardLoc(self, cardIndex, loc):
         """Set the cards image location to player's hand."""
-        oCard = self.hand[cardIndex]
+        oCard = self.hand[cardIndex - 1]
         oCard.setLoc(loc)
 
     def setPot(self, oCard):

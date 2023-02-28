@@ -6,13 +6,13 @@ from constants import *
 
 class Game():
     # Class Variables
-    PLAYER_HAND_CARDS_BOTTOM = 100 # Y coordinate; where player hand will go
-    GHOST_HAND_CARDS_TOP = 400 # Y coordinate; where ghost cards will go; top of screen
+    PLAYER_HAND_CARDS_BOTTOM = 500 # Y coordinate; where player hand will go
+    GHOST_HAND_CARDS_TOP = 50 # Y coordinate; where ghost cards will go; top of screen
     BUFFER_BETWEEN_HAND_CARDS = 150 # Space between cards in player's hand
     CARDS_LEFT = 350 # X coordinate; 1st card in the hand; buffer will be added 
     MAX_HAND = 3
     DISPLAY_STARTING_HANDS = 3
-    DECK_LOCATION = (600, 500)
+    DECK_LOCATION = (700, 280)
     
     def __init__(self, window, playerList):
         """Initisialize attributes."""
@@ -23,7 +23,9 @@ class Game():
         self.ghostHandList = [] # Holds place holder cards for ghost player
         self.playerList = playerList # LIST is given by client
         self.potScore = 0
-        self.potScoreText = pygwidgets.DisplayText(window, (450, 164),
+
+        # Text To be displayed to client's window
+        self.potScoreText = pygwidgets.DisplayText(window, (500, 790),
                                         f'Pot Score: {self.potScore}',
                                         fontSize=36, textColor=(255, 255, 255))
         
@@ -59,11 +61,14 @@ class Game():
         """Tell each card to draw an image of itself"""
         for playerIndex in range(len(self.playerList)):
             for oCardIndex in range(len(self.playerList[playerIndex].getHand())):
-                for oCard in self.playerList[playerIndex].getHand(oCardIndex):
-                    oCard.draw()
+                oCard = self.playerList[playerIndex].getHand(oCardIndex - 1)
+                oCard.draw()
         
         for oGhostCard in self.ghostHandList:
             oGhostCard.draw()
+
+        for oCard in self.oDeck.getDeck():
+            oCard.draw()
 
         self.potScoreText.draw()
         self.messageText.draw()
@@ -139,28 +144,39 @@ class Game():
 
         # Remove any cards in dealer's pot and put it back int the deck
         if self.getDealerPot(): # is it true that there are cards?
-            self.dealerPotTransfer() 
+            self.dealerPotTransfer()
+        
+        # Remove any cards in the player's hand
+        for playerIndex in range(len(self.playerList.copy())): # playerList Iteration
+            self.playerList[playerIndex].setHand(gameReset=True)
 
-    def highestCardWins(self, event):
-        """Player with the highest card value wins to be turn player. Method returns playerList."""
+        # Remove any cards in ghost player's Hand
+        self.ghostHandList.clear()
+
+
+        # Set up deck
         self.cardShuffleSound.play() # play shuffle sound
         self.oDeck.shuffle() # shuffle new deck
-
         # Deck's location
         self.oDeck.setLoc(Game.DECK_LOCATION)
-        
-        tie = False 
+
+    def highestCardWins(self):
+        """Player with the highest card value wins to be turn player. Method returns playerList."""
+
+        #tie = False 
     
-        if not tie: 
+        #if not tie: 
             # Place holder to identify to whom the card belongs too
-            playersAndCards = []
+            #playersAndCards = []
             
             # Each player draws one card each
-            for playerIndex in range(len(self.playerList.copy())): # Pick player index
-                self.playerDrawsACard(playerIndex)
-                self.ghostDrawsACard(playerIndex)
+        for playerIndex in range(len(self.playerList.copy())): # Pick player index
+            self.playerDrawsACard(playerIndex)
+            self.ghostDrawsACard(playerIndex)
             
-            """-----------------WORKING ON THIS SECTION------------------------------"""
+            """
+            
+            #-----------------WORKING ON THIS SECTION------------------------------
 
             for playerIndex in range(len(self.playerList.copy())): # Pick player index
                     # player selects their card using the event data
@@ -191,8 +207,8 @@ class Game():
                 oCard = self.playerList[playerIndex].removeCardFromHand(0) # Remove card
                 self.oDeck.returnCardToDeck(oCard, loc=(600, 500)) # Card returns to deck concealed 
 
-                # Work with the tie section too -------------------------------------
-            """-----------------WORKING ON THIS SECTION------------------------------"""
+                # Work with the tie section too ------------------------------------
+            #-----------------WORKING ON THIS SECTION------------------------------
 
         while tie:
             # Place holder to identify to whom the card belongs too
@@ -221,6 +237,7 @@ class Game():
                 self.oDeck.shuffle() 
 
         return self.playerList
+        """
 
     def _briscaGame(self):
         """The logic of the game loop"""
@@ -278,26 +295,26 @@ class Game():
         # Set coordinates for player card's X position
         currentPlayerHand = self.playerList[playerIndex].getHand() # Get list
         cardIndex = len(currentPlayerHand) # How long is the list?
-        cardLocX = self.handPosXList[cardIndex] # Get the x-coordinates allowed by Game class
+        cardLocX = self.handPosXList[cardIndex - 1] # Get the x-coordinates allowed by Game class
 
         # Tell card its location and show it to client
         self.playerList[playerIndex].setCardLoc(
-            self, cardIndex, loc=(cardLocX, Game.PLAYER_HAND_CARDS_BOTTOM)
+            cardIndex, loc=(cardLocX, Game.PLAYER_HAND_CARDS_BOTTOM)
             )
 
     def ghostDrawsACard(self, playerIndex):
         """Players draw a card and remembers card's posX."""
         # Player draws one card and sets card in their hand
-        oGhostCard = Card()
+        oGhostCard = Card(self.window)
         self.ghostHandList.append(oGhostCard)
         
         # Set coordinates for ghost player card's X position
         currentPlayerHand = self.playerList[playerIndex].getHand() # Get list
         cardIndex = len(currentPlayerHand) # How long is the list?
-        cardLocX = self.handPosXList[cardIndex] # Get the x-coordinates allowed by Game class
+        cardLocX = self.handPosXList[cardIndex - 1] # Get the x-coordinates allowed by Game class
 
         # Tell card its location and show backside of card to client
-        self.ghostHandList[cardIndex].setLoc(loc=(cardLocX, Game.GHOST_HAND_CARDS_TOP))
+        self.ghostHandList[cardIndex - 1].setLoc(loc=(cardLocX, Game.GHOST_HAND_CARDS_TOP))
 
     def trumpHandSwap(self):
         """Swap one card in the player's hand for the trump card."""
