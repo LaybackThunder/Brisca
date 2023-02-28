@@ -45,6 +45,10 @@ class Player():
         """Player puts card in their hand."""
         self.hand.append(oCard)
     
+    def setHandPosX(self, playerHandPosX):
+        """set player's hand card coordinates"""
+        self.playerHandPosX = playerHandPosX
+
     def setCardLoc(self, cardIndex, loc):
         """Set the cards image location to player's hand."""
         oCard = self.hand[cardIndex]
@@ -64,9 +68,12 @@ class Player():
         """Sets player's right to be turnPlayer or not."""
         self.turnPlayer = bool
 
-    def getHand(self):
-        """Returns a list format of the hand."""
-        return self.hand
+    def getHand(self, cardIndex=None):
+        """Returns a list format of the hand or a particular card."""
+        if cardIndex == None:
+            return self.hand
+        else:
+            return self.hand[cardIndex]
 
     def getPot(self):
         """Returns a list format of the pot."""

@@ -20,7 +20,7 @@ window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # 4 - Load assets: image(s), sounds,  etc.
 background = pygwidgets.Image(window, (0, 0),
-                            'images/background.png')
+                            'images/background.jpg')
 newGameButton = pygwidgets.TextButton(window, (20, 530),
                             'New Game', width=100, height=45)
 quitButton = pygwidgets.TextButton(window, (600, 530),
@@ -31,7 +31,7 @@ oPlayer = Player(window)
 playerList = [oPlayer, oPlayer]
 oGame = Game(window, playerList)
 
-# 6 - Loop forever
+# 6 - Loop forever 
 while True:
 
     # 7 - Check for and handle events

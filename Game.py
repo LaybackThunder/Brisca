@@ -46,19 +46,24 @@ class Game():
             self.playerList[playerIndex].setHandPosX(self.handPosXList)
 
         # Card shuffle sound
-        self.cardShuffleSound = pygame.mixer.Sound("sounds/cardShuffle.wav")
+        self.cardShuffleSound = pygame.mixer.Sound("sounds/sounds_cardShuffle.wav")
         # Win sound
-        self.winnerSound = pygame.mixer.Sound("sounds/ding.wav")
+        self.winnerSound = pygame.mixer.Sound("sounds/sounds_ding.wav")
         # Lost sound
-        self.loserSound = pygame.mixer.Sound("sounds/loser.wav")     
+        self.loserSound = pygame.mixer.Sound("sounds/sounds_loser.wav")     
 
         # Game resets
         self.reset()
         
     def draw(self): # draw image to screen.
         """Tell each card to draw an image of itself"""
-        for oCard in self.cardList:
-            oCard.draw()
+        for playerIndex in range(len(self.playerList)):
+            for oCardIndex in range(len(self.playerList[playerIndex].getHand())):
+                for oCard in self.playerList[playerIndex].getHand(oCardIndex):
+                    oCard.draw()
+        
+        for oGhostCard in self.ghostHandList:
+            oGhostCard.draw()
 
         self.potScoreText.draw()
         self.messageText.draw()
