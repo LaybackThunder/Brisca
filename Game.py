@@ -141,7 +141,7 @@ class Game():
         if self.getDealerPot(): # is it true that there are cards?
             self.dealerPotTransfer() 
 
-    def highestCardWins(self, event):
+    def highestCardWins(self, event, playerList): # JM -> Does playerList needs to be implemented? Check client.py line 47
         """Player with the highest card value wins to be turn player. Method returns playerList."""
         self.cardShuffleSound.play() # play shuffle sound
         self.oDeck.shuffle() # shuffle new deck
@@ -164,9 +164,10 @@ class Game():
 
             for playerIndex in range(len(self.playerList.copy())): # Pick player index
                     # player selects their card using the event data
-                    cardSelected = self.playerList[playerIndex].selectACard(event) 
-
-                    if cardSelected['bool']: # AND button trick is pressed
+                    cardSelected = self.playerList[playerIndex].selectACard(event)
+                    # JM -> selectACard method doesn't always return a value, resulting in None
+                    # JM -> Therefore `cardSelected` needs to be checked that is not None before accessing any of its properties
+                    if bool(cardSelected['bool']): # AND button trick is pressed
                         # card has been selected
                         oCard = self.playerList[playerIndex].removeCardFromHand(cardSelected['cardIndex'])
 
@@ -178,6 +179,9 @@ class Game():
                             }
                             )
 
+
+            if len(playersAndCards) == 0:
+                return
             # Players compare the card's trickValue and decide who will be turn player   
             tie = self.compareCards(playersAndCards) # Returns and checks for tie
 
@@ -277,27 +281,31 @@ class Game():
         
         # Set coordinates for player card's X position
         currentPlayerHand = self.playerList[playerIndex].getHand() # Get list
-        cardIndex = len(currentPlayerHand) # How long is the list?
+        cardIndex = 0# len(currentPlayerHand) # How long is the list? # JM -> Current index is starting at 1 and self.hand in Player.py has only a 1 element startingf at 0 index, causing error
         cardLocX = self.handPosXList[cardIndex] # Get the x-coordinates allowed by Game class
 
         # Tell card its location and show it to client
         self.playerList[playerIndex].setCardLoc(
-            self, cardIndex, loc=(cardLocX, Game.PLAYER_HAND_CARDS_BOTTOM)
+            cardIndex, (cardLocX, Game.PLAYER_HAND_CARDS_BOTTOM) # JM -> `loc=` was causing issues, it was probably being treated as a function
+                                                                 # JM -> Removed self from arguments and it fixed an issue. Self was probably being counted twice
             )
 
     def ghostDrawsACard(self, playerIndex):
         """Players draw a card and remembers card's posX."""
         # Player draws one card and sets card in their hand
-        oGhostCard = Card()
+        # JM -> Implement args: window, suit, rank, value, trickValue
+        # JM -> oCard = Card(window, suit, rank, value[0], trickValue=value[1])
+        # JM -> Is a new Card being created here?
+        # JM -> Creating new card here might need re-thinking.
+        oGhostCard = Card(self.window, 'Swords', 2, 0, 2)
         self.ghostHandList.append(oGhostCard)
         
         # Set coordinates for ghost player card's X position
         currentPlayerHand = self.playerList[playerIndex].getHand() # Get list
-        cardIndex = len(currentPlayerHand) # How long is the list?
+        cardIndex = 0 # len(currentPlayerHand) # How long is the list? # JM -> Tmp value, remove 0
         cardLocX = self.handPosXList[cardIndex] # Get the x-coordinates allowed by Game class
-
         # Tell card its location and show backside of card to client
-        self.ghostHandList[cardIndex].setLoc(loc=(cardLocX, Game.GHOST_HAND_CARDS_TOP))
+        self.ghostHandList[cardIndex].setLoc((cardLocX, Game.GHOST_HAND_CARDS_TOP))
 
     def trumpHandSwap(self):
         """Swap one card in the player's hand for the trump card."""
@@ -369,7 +377,6 @@ class Game():
             """
             # playersAndCards is a list nesing a dictionary with the player's iD and corresponding cards
             # E.g. playersAndCards = [{'player: oPlayer, 'card': oCard}]
-
             player1CardValue = playersAndCards[0]['card'].getTrickValue()
             player2CardValue = playersAndCards[1]['card'].getTrickValue()
             playersAndCards[0]['card'].reveal()

@@ -9,7 +9,7 @@ class Card():
         self.window = window
         self.suit = suit
         self.rank = rank
-        self.cardName = rank + " of " + suit
+        self.cardName = str(rank) + " of " + suit # JM -> Error when using + operator. Must convert number to string first, fixed using str()
         self.value = value
         self.trickValue = trickValue
         fileName = "images/" + self.cardName + ".jpg"

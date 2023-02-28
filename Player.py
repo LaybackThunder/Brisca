@@ -1,33 +1,36 @@
 from Deck import *
 from Card import *
 
+
 class Player():
 
     def __init__(self, window):
-        self.hand = [] # oCards go here
-        self.playerHandPosX = None # oCards location are here
+        self.hand = []  # oCards go here
+        self.playerHandPosX = None  # oCards location are here
         self.pot = []
         self.potScore = 0
         self.turnPlayer = False
-        self.window = window # Window is for card placement in player's hand 
-    
+        self.window = window  # Window is for card placement in player's hand
+
     def selectACard(self, event):
         """Returns a bool and the card index"""
-        for oCardIndex in range(len(self.hand.copy())): # Index of Obj inside hand
+        for oCardIndex in range(len(self.hand.copy())):  # Index of Obj inside hand
             # Check if object card has bee selected
-            isSelected = {'bool': self.hand[oCardIndex].selectedCard(event)} 
+            isSelected = {'bool': self.hand[oCardIndex].selectedCard(event)}
+
             if isSelected['bool']:
                 # oCard index location in playerList
-                isSelected.update({'cardIndex': oCardIndex}) 
-                return isSelected
+                isSelected.update({'cardIndex': oCardIndex})
+
+            return isSelected
 
     def drawCard(self, oDeck):
         """This gets a card from the top of the deck and puts it in player's hand."""
-        oCard = oDeck.getCard() # Draw
-        oCard.reveal() # Show
-        self.setHand(oCard) # In player's hand
+        oCard = oDeck.getCard()  # Draw
+        oCard.reveal()  # Show
+        self.setHand(oCard)  # In player's hand
 
-    def removeCardFromHand(self, cardIndex):    
+    def removeCardFromHand(self, cardIndex):
         """Remove card from hand and returns."""
         remove = self.hand.pop(cardIndex)
         return remove
@@ -44,7 +47,7 @@ class Player():
     def setHand(self, oCard):
         """Player puts card in their hand."""
         self.hand.append(oCard)
-    
+
     def setHandPosX(self, playerHandPosX):
         """set player's hand card coordinates"""
         self.playerHandPosX = playerHandPosX
@@ -78,13 +81,14 @@ class Player():
     def getPot(self):
         """Returns a list format of the pot."""
         return self.pot
-        
+
     def getPotPoints(self):
         return self.potScore
 
     def getTurnPlayer(self):
         """Returns True or False if current player is turn player."""
         return self.turnPlayer
+
 
 # Test player
 if __name__ == "__main__":
@@ -95,18 +99,18 @@ if __name__ == "__main__":
     pygame.init()
     window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    oDeck = Deck(window) # Instatiate Deck
+    oDeck = Deck(window)  # Instatiate Deck
     # Instantiate Players
     oPlayer = Player(window)
     oPlayer2 = Player(window)
 
     # Each player draws one card before the other player continues to draw
-    for i in range(3): 
+    for i in range(3):
         oCard = oPlayer.drawCard(oDeck)
 
         oCard = oPlayer2.drawCard(oDeck)
 
-    # Obtain Hand info 
+    # Obtain Hand info
     ply1HandList = oPlayer.getHand()
     ply2HandList = oPlayer2.getHand()
 
@@ -126,14 +130,15 @@ if __name__ == "__main__":
     print("\n|||||||||||||||||||||||||||||||||||\n")
 
     # Compare player cards --------------------------
-    for trick in range(3): # Trick will loop 3 times
+    for trick in range(3):  # Trick will loop 3 times
 
         # Compares player's hands; the higest value card wins
         if oPlayer.hand[0].getTrickValue() > oPlayer2.hand[0].getTrickValue():
             print("-------Player 1 wins")
 
             # Remove the 1st card from each player's hand
-            potCards = [oPlayer.removeCardFromHand(0), oPlayer2.removeCardFromHand(0)]
+            potCards = [oPlayer.removeCardFromHand(
+                0), oPlayer2.removeCardFromHand(0)]
             # Add cards into pot
             for oCard in potCards.copy():
                 oCard = potCards.pop(0)
@@ -143,12 +148,13 @@ if __name__ == "__main__":
             print("-------Player 2 wins")
 
             # Remove the 1st card from each player's hand
-            potCards = [oPlayer.removeCardFromHand(0), oPlayer2.removeCardFromHand(0)]
+            potCards = [oPlayer.removeCardFromHand(
+                0), oPlayer2.removeCardFromHand(0)]
             # Add cards into pot
             for oCard in potCards.copy():
                 oCard = potCards.pop(0)
                 oPlayer2.setPot(oCard)
-            
+
     ply1Pot = oPlayer.getPot()
     ply2Pot = oPlayer2.getPot()
 
@@ -164,7 +170,6 @@ if __name__ == "__main__":
     for oCard in ply2Pot:
         print(oCard.getName())
     print()
-
 
 
 """Error Notes
