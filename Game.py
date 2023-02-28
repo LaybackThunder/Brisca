@@ -410,6 +410,8 @@ class Game():
 
             return tie # Return the value of Tie
 
+    def getPlayers(self):
+        return self.playerList
     
 
 """

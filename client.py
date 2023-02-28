@@ -42,9 +42,15 @@ while True:
             pygame.quit()
             sys.exit()
 
+        # Check for new game
         if newGameButton.handleEvent(event):
             oGame.reset()
             oGame.highestCardWins()
+
+        # Check if player has clicked any of their cards
+        playerList = oGame.getPlayers()
+        for player in playerList:
+            pass 
 
     # 8 - Do any "per frame" actions
 
