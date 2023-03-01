@@ -7,6 +7,8 @@ class Card():
     
     def __init__(self, window, suit='Clubs', rank='2', value=0, trickValue=2):
         self.window = window
+        self.window_rect = window.get_rect()
+        self.clicked = False
         self.suit = suit
         self.rank = rank
         self.cardName = rank + " of " + suit
@@ -17,22 +19,21 @@ class Card():
         self.images = pygwidgets.ImageCollection(window, (0, 0),
                                                 {'front': fileName,
                                                 'back': Card.BACK_OF_CARD_IMAGE}, 'back')
+        self.images_rect = self.images.getRect()
     
     def selectedCardEvent(self, event):
-        """Return true if selected."""
-        clicked = True
-        if self.images.handleEvent(event) and clicked:
-            # Move card 25 pixels up to id card as selected
-            self.images.moveY(-25) 
-            clicked = False
-            return True
-    
-    def unselectCard(self, event):
-        """When card selection is false card is set to original Y position in the player's hand."""
-        if self.images.handleEvent(event) == False:
-            # Move card 25 pixels up to id card as selected
-            self.images.moveY(25) 
-
+        """Checks if card was clicked."""
+        if self.images.handleEvent(event):
+            if self.clicked == False:
+                print('Clicked! BUH!') # Because I can
+                self.images.moveY(-25) # Move card 25 pixels to id selcted card
+                self.clicked = True # To avoid moving it up for every click
+                
+            elif self.clicked:
+                print('un clicked')
+                self.images.moveY(25) # Return to original position
+                self.clicked = False
+            
     def conceal(self):
         self.images.replace('back')
     

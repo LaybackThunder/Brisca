@@ -47,12 +47,13 @@ while True:
             oGame.reset()
             oGame.highestCardWins()
 
-        # Check if player has clicked any of their cards
+        # Check the status of the player's cards
         playerList = oGame.getPlayers()
         for player in playerList:
             oCards = player.getHand()
             for oCard in oCards:
-                oCard.selectedCardEvent(event)
+                # Check if player has clicked or de_clicked any of their cards
+                oCard.selectedCardEvent(event) 
 
 
 

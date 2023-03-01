@@ -59,6 +59,9 @@ class Game():
         
     def draw(self): # draw image to screen.
         """Tell each card to draw an image of itself"""
+        for oCard in self.oDeck.getDeck():
+            oCard.draw()
+
         for playerIndex in range(len(self.playerList)):
             for oCardIndex in range(len(self.playerList[playerIndex].getHand())):
                 oCard = self.playerList[playerIndex].getHand(oCardIndex - 1)
@@ -66,9 +69,6 @@ class Game():
         
         for oGhostCard in self.ghostHandList:
             oGhostCard.draw()
-
-        for oCard in self.oDeck.getDeck():
-            oCard.draw()
 
         self.potScoreText.draw()
         self.messageText.draw()
@@ -152,7 +152,6 @@ class Game():
 
         # Remove any cards in ghost player's Hand
         self.ghostHandList.clear()
-
 
         # Set up deck
         self.cardShuffleSound.play() # play shuffle sound
