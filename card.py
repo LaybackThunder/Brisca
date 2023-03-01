@@ -18,11 +18,13 @@ class Card():
                                                 {'front': fileName,
                                                 'back': Card.BACK_OF_CARD_IMAGE}, 'back')
     
-    def selectedCard(self, event):
+    def selectedCardEvent(self, event):
         """Return true if selected."""
-        if self.images.handleEvent(event):
+        clicked = True
+        if self.images.handleEvent(event) and clicked:
             # Move card 25 pixels up to id card as selected
             self.images.moveY(-25) 
+            clicked = False
             return True
     
     def unselectCard(self, event):

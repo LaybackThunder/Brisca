@@ -50,7 +50,11 @@ while True:
         # Check if player has clicked any of their cards
         playerList = oGame.getPlayers()
         for player in playerList:
-            pass 
+            oCards = player.getHand()
+            for oCard in oCards:
+                oCard.selectedCardEvent(event)
+
+
 
     # 8 - Do any "per frame" actions
 
