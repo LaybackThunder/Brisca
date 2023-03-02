@@ -7,7 +7,6 @@ class Card():
     
     def __init__(self, window, suit='Clubs', rank='2', value=0, trickValue=2):
         self.window = window
-        self.window_rect = window.get_rect()
         self.clicked = False
         self.suit = suit
         self.rank = rank
@@ -21,21 +20,25 @@ class Card():
                                                 'back': Card.BACK_OF_CARD_IMAGE}, 'back')
         self.images_rect = self.images.getRect()
     
-    def selectedCardEvent(self, event):
+    def handleEvent(self, event):
         """Checks if card was clicked."""
         if self.images.handleEvent(event): # It was clicked
             if self.clicked == False:
-                print('Clicked! BUH!') # Because I can
+                #print('Clicked! BUH!') # Because I can
                 self.images.moveY(-25) # Move card 25 pixels up the screen to id selcted card
                 self.clicked = True # To avoid moving it up for every click
                 return self.clicked
                 
             elif self.clicked: # It was de-selected (clicked again)
-                print('un clicked')
+                #print('un clicked')
                 self.images.moveY(25) # Return to original position
                 self.clicked = False
                 return self.clicked
-            
+    
+    def disable(self):
+        """Disable the card's ability to be clicked for stuff to happen."""
+        self.images.disable()
+
     def conceal(self):
         self.images.replace('back')
     

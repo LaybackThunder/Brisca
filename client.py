@@ -9,8 +9,8 @@ import pygwidgets
 from Game import *
 
 # 2 - Define constants
-WINDOW_WIDTH = 950
-WINDOW_HEIGHT = 850
+WINDOW_WIDTH = 1100
+WINDOW_HEIGHT = 900
 FRAMES_PER_SECOND = 30
 
 # 3 - Initialize the world
@@ -18,24 +18,26 @@ pygame.init()
 clock = pygame.time.Clock()
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
+
+
 # 4 - Load assets: image(s), sounds,  etc.
 background = pygwidgets.Image(window, (0, 0),
                             'images/background.jpg')
-newGameButton = pygwidgets.TextButton(window, (20, 780),
+newGameButton = pygwidgets.TextButton(window, (20, 840),
                             'New Game', width=100, height=45)
 
-trickButton = pygwidgets.TextButton(window, (130, 780),
+trickButton = pygwidgets.TextButton(window, (130, 840),
                             'Play trick', width=100, height=45)
 
-quitButton = pygwidgets.TextButton(window, (830, 780),
+quitButton = pygwidgets.TextButton(window, (970, 840),
                             'Quit', width=100, height=45)
 trickButton.disable()
 
 # 5 - Initialize variables
-battleReady = []
 oPlayer = Player(window)
 playerList = [oPlayer]
 oGame = Game(window, playerList)
+clickedCard = None
 
 
 # 6 - Loop forever 
@@ -52,7 +54,6 @@ while True:
         # Check for new game
         if newGameButton.handleEvent(event):
             oGame.reset()
-            oGame.highestCardWins()
             trickButton.disable()
 
         # Check the status of the player's cards
@@ -62,21 +63,24 @@ while True:
 
             # Check if player has clicked or de_clicked any of their cards
             for oCard in oCards: 
-                isCardClicked = oCard.selectedCardEvent(event)
+                isCardClicked = oCard.handleEvent(event)
+
                 if isCardClicked:
                     # You can battle
-                    trickButton.enable() 
-                    # Battle Ready append
+                    trickButton.enable()
+                    clickedCard = oCard
                 elif isCardClicked == False:
-                    # You think you can, but you can't!
                     trickButton.disable()
-                    # Remove card from battle ready
+                    clickedCard = None
 
         if trickButton.handleEvent(event): # If clicked when enabled
-            # Cards battle, how?
-            # Check player's battle ready cards
-            # Enter trick
-            pass
+            print("Button click")
+            clickedCard.disable() # Playe cannot click card anymore
+            oGame.battleGroundLocation(oCard=clickedCard) # Sets card in the middle
+
+            # Check that both players have cards ready to battle
+                # If battle ready has two items; enter trick
+                    # trick
 
     # 8 - Do any "per frame" actions
 

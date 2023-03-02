@@ -6,13 +6,13 @@ from constants import *
 
 class Game():
     # Class Variables
-    PLAYER_HAND_CARDS_BOTTOM = 500 # Y coordinate; where player hand will go
+    PLAYER_HAND_CARDS_BOTTOM = 610 # Y coordinate; where player hand will go
     GHOST_HAND_CARDS_TOP = 50 # Y coordinate; where ghost cards will go; top of screen
     BUFFER_BETWEEN_HAND_CARDS = 150 # Space between cards in player's hand
-    CARDS_LEFT = 350 # X coordinate; 1st card in the hand; buffer will be added 
+    CARDS_LEFT = 450 # X coordinate; 1st card in the hand; buffer will be added 
     MAX_HAND = 3
     DISPLAY_STARTING_HANDS = 3
-    DECK_LOCATION = (700, 280)
+    DECK_LOCATION = (910, 360)
     
     def __init__(self, window, playerList):
         """Initisialize attributes."""
@@ -25,11 +25,11 @@ class Game():
         self.potScore = 0
 
         # Text To be displayed to client's window
-        self.potScoreText = pygwidgets.DisplayText(window, (500, 790),
+        self.potScoreText = pygwidgets.DisplayText(window, (300, 840),
                                         f'Pot Score: {self.potScore}',
                                         fontSize=36, textColor=(255, 255, 255))
         
-        self.messageText = pygwidgets.DisplayText(window, (50, 460),
+        self.messageText = pygwidgets.DisplayText(window, (200, 840),
                                         f'', width=900, justified='center',
                                         fontSize=36, textColor=(255, 255, 255))
         
@@ -72,6 +72,12 @@ class Game():
 
         self.potScoreText.draw()
         self.messageText.draw()
+
+    def battleGroundLocation(self, oCard):
+        """Card is placed in the middle of the screen"""
+        oCard.setLoc((self.window.get_width()//2, self.window.get_height()//2))
+        #oCards[1].setLoc((self.window.get_width()//2, self.window.get_height()//2))
+        """Change card dloc"""
 
     # Dealer 
     def setDealerPot(self, playersAndCards):
@@ -159,21 +165,23 @@ class Game():
         # Deck's location
         self.oDeck.setLoc(Game.DECK_LOCATION)
 
+        # Player and ghost player draw one card
+        for playerIndex in range(len(self.playerList.copy())): # Pick player index
+            self.playerDrawsACard(playerIndex)
+            self.ghostDrawsACard(playerIndex)
+
     def highestCardWins(self):
         """Player with the highest card value wins to be turn player. Method returns playerList."""
 
-        #tie = False 
+        # tie = False 
     
         #if not tie: 
             # Place holder to identify to whom the card belongs too
             #playersAndCards = []
             
             # Each player draws one card each
-        for playerIndex in range(len(self.playerList.copy())): # Pick player index
-            self.playerDrawsACard(playerIndex)
-            self.ghostDrawsACard(playerIndex)
             
-            """
+        """
             
             #-----------------WORKING ON THIS SECTION------------------------------
 
@@ -299,7 +307,7 @@ class Game():
         # Tell card its location and show it to client
         self.playerList[playerIndex].setCardLoc(
             cardIndex, loc=(cardLocX, Game.PLAYER_HAND_CARDS_BOTTOM)
-            )
+            )       
 
     def ghostDrawsACard(self, playerIndex):
         """Players draw a card and remembers card's posX."""
