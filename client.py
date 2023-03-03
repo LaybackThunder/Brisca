@@ -54,6 +54,8 @@ while True:
         # Check for new game
         if newGameButton.handleEvent(event):
             oGame.reset()
+            playersAndClickedCard = []
+            clickedCard = None
             trickButton.disable()
 
         # Check the status of the player's cards
@@ -70,10 +72,12 @@ while True:
                     trickButton.enable()
                     clickedCard = oCard
                     playersAndClickedCard.append({'player': player, 'card': clickedCard})
+                    print(playersAndClickedCard)
                 elif isCardClicked == False:
                     trickButton.disable()
                     clickedCard = None
                     del playersAndClickedCard[-1]
+                    print(playersAndClickedCard)
 
                 
 
