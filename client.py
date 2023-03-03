@@ -39,6 +39,7 @@ playerList = [oPlayer]
 oGame = Game(window, playerList)
 playersAndClickedCard = []
 clickedCard = None
+currentPlayer = None
 
 # 6 - Loop forever 
 while True:
@@ -55,10 +56,11 @@ while True:
         if newGameButton.handleEvent(event):
             oGame.reset()
             playersAndClickedCard = []
+            currentPlayer = None
             clickedCard = None
             trickButton.disable()
 
-        # Check the status of the player's cards
+        # Players choose which card to battle in the trick
         playerList = oGame.getPlayers()
         for player in playerList:
             oCards = player.getHand()
@@ -70,21 +72,20 @@ while True:
                 if isCardClicked:
                     # You can battle
                     trickButton.enable()
-                    clickedCard = oCard
-                    playersAndClickedCard.append({'player': player, 'card': clickedCard})
-                    print(playersAndClickedCard)
+                    clickedCard = oCard # LEFT OFF ---> Pop card from player's hand
+                    currentPlayer = player
+                    playersAndClickedCard.append({'player': currentPlayer, 'card': clickedCard})
+
                 elif isCardClicked == False:
                     trickButton.disable()
                     clickedCard = None
                     del playersAndClickedCard[-1]
-                    print(playersAndClickedCard)
-
-                
-
+                    
         if trickButton.handleEvent(event): # If clicked when enabled
             print("Button click")
             clickedCard.disable() # Player cannot click card anymore
             oGame.battleGroundLocation(oCard=clickedCard) # Sets card in the middle
+            print(playersAndClickedCard)
 
             # Check that both players have cards ready to battle
             if len(playersAndClickedCard) == 2: # If battle ready has two items; enter trick
