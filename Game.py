@@ -75,7 +75,7 @@ class Game():
 
     def battleGroundLocation(self, oCard):
         """Card is placed in the middle of the screen"""
-        oCard.setLoc((self.window.get_width()//2, self.window.get_height()//2))
+        oCard.setLoc((self.window.get_width()//2, 360))
         #oCards[1].setLoc((self.window.get_width()//2, self.window.get_height()//2))
         """Change card dloc"""
 

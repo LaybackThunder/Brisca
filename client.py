@@ -37,8 +37,8 @@ trickButton.disable()
 oPlayer = Player(window)
 playerList = [oPlayer]
 oGame = Game(window, playerList)
+playersAndClickedCard = []
 clickedCard = None
-
 
 # 6 - Loop forever 
 while True:
@@ -69,18 +69,24 @@ while True:
                     # You can battle
                     trickButton.enable()
                     clickedCard = oCard
+                    playersAndClickedCard.append({'player': player, 'card': clickedCard})
                 elif isCardClicked == False:
                     trickButton.disable()
                     clickedCard = None
+                    del playersAndClickedCard[-1]
+
+                
 
         if trickButton.handleEvent(event): # If clicked when enabled
             print("Button click")
-            clickedCard.disable() # Playe cannot click card anymore
+            clickedCard.disable() # Player cannot click card anymore
             oGame.battleGroundLocation(oCard=clickedCard) # Sets card in the middle
 
             # Check that both players have cards ready to battle
-                # If battle ready has two items; enter trick
-                    # trick
+            if len(playersAndClickedCard) == 2: # If battle ready has two items; enter trick
+                # enter trick
+                pass
+
 
     # 8 - Do any "per frame" actions
 
