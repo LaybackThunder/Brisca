@@ -29,8 +29,8 @@ class Player():
 
     def removeCardFromHand(self, cardIndex):    
         """Remove card from hand and returns."""
-        remove = self.hand.pop(cardIndex)
-        return remove
+        removeCard = self.hand.pop(cardIndex)
+        return removeCard
 
     def removeCardFromPot(self, oCard=-1):
         """Removes the last card in the player's pot by defult."""

@@ -420,6 +420,8 @@ class Game():
     def getPlayers(self):
         return self.playerList
     
+    def removeCardFromHand(self, oPlayerIndex, oCardIndex):
+        return self.playerList[oPlayerIndex].removeCardFromHand(oCardIndex)
 
 """
 Todo list: 
