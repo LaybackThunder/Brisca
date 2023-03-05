@@ -4,7 +4,7 @@ import pygwidgets
 class Card():
 
     BACK_OF_CARD_IMAGE = pygame.image.load('images/back-side.jpg')
-    
+    # Created defult values in init method to get the ghost player to work    
     def __init__(self, window, suit='Clubs', rank='2', value=0, trickValue=2):
         self.window = window
         self.clicked = False

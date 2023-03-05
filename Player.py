@@ -98,6 +98,8 @@ if __name__ == "__main__":
     pygame.init()
     window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
+    dealerPot = []
+
     oDeck = Deck(window) # Instatiate Deck
     # Instantiate Players
     oPlayer = Player(window)
@@ -106,7 +108,6 @@ if __name__ == "__main__":
     # Each player draws one card before the other player continues to draw
     for i in range(3): 
         oCard = oPlayer.drawCard(oDeck)
-
         oCard = oPlayer2.drawCard(oDeck)
 
     # Obtain Hand info 
@@ -151,11 +152,20 @@ if __name__ == "__main__":
             for oCard in potCards.copy():
                 oCard = potCards.pop(0)
                 oPlayer2.setPot(oCard)
-            
+        
+        else:
+            print("-------Players Tie and Dealer wins!")
+            # Remove the 1st card from each player's hand
+            potCards = [oPlayer.removeCardFromHand(0), oPlayer2.removeCardFromHand(0)]
+            # Add cards into pot
+            for oCard in potCards.copy():
+                oCard = potCards.pop(0)
+                dealerPot.append(oCard)
+        
     ply1Pot = oPlayer.getPot()
     ply2Pot = oPlayer2.getPot()
 
-    print("\nPlayer's pots\n")
+    print("\nPlayer's And Dealer pots\n")
 
     print("Player 1:")
     for oCard in ply1Pot:
@@ -167,6 +177,30 @@ if __name__ == "__main__":
     for oCard in ply2Pot:
         print(oCard.getName())
     print()
+
+    print("\n-------\n")
+
+    print("Dealer:")
+    for oCard in ply2Pot:
+        print(oCard.getName())
+    print()
+
+    print("\n|||||||||||||||||||||||||||||||||||\n")
+
+    # Print to verify players have no cards on hand
+    print("\nPlayer's hands\n")
+
+    print("Player 1:")
+    for oCard in ply1HandList:
+        print(oCard.getName())
+
+    print("\n-------\n")
+
+    print("Player 2:")
+    for oCard in ply2HandList:
+        print(oCard.getName())
+
+    print("\n-------\n")
 
 
 
