@@ -18,6 +18,7 @@ class Game():
         """Initisialize attributes."""
         self.window = window
         self.oDeck = Deck(self.window)
+        self.boardCardList = []
         self.trumpCard = None
         self.dealerPot = []
         self.ghostHandList = [] # Holds place holder cards for ghost player
@@ -67,6 +68,9 @@ class Game():
                 oCard = self.playerList[playerIndex].getHand(oCardIndex - 1)
                 oCard.draw()
         
+        for oCard in self.boardCardList:
+            oCard.draw()
+        
         for oGhostCard in self.ghostHandList:
             oGhostCard.draw()
 
@@ -78,6 +82,14 @@ class Game():
         oCard.setLoc((self.window.get_width()//2, 360))
         #oCards[1].setLoc((self.window.get_width()//2, self.window.get_height()//2))
         """Change card dloc"""
+
+    def setBoardCards(self, oCard):
+        """Appends cards into board list."""
+        self.boardCardList.append(oCard)
+    
+    def popCardFromBoard(self, cardIndex):
+        """Pop's card from th eboard's list"""
+        return self.boardCardList.pop(cardIndex)
 
     # Dealer 
     def setDealerPot(self, playersAndCards):
@@ -124,7 +136,7 @@ class Game():
             # The trick winner is rearranged in the player list as 1st item
             self.playerList[0].setPot(card)
         
-        if self.dealerPot: # If there are cards in the dealer list, give them all to player1
+        if self.dealerPot: # If there are cards in the dealer list, give them all to turnPlayer
                 self.dealerPotTransfer(self.playerList[0]) # Player has all the dealer cards in their pot
 
     # Trump
@@ -162,8 +174,7 @@ class Game():
         # Set up deck
         self.cardShuffleSound.play() # play shuffle sound
         self.oDeck.shuffle() # shuffle new deck
-        # Deck's location
-        self.oDeck.setLoc(Game.DECK_LOCATION)
+        self.oDeck.setLoc(Game.DECK_LOCATION) # Deck's location
 
         # Player and ghost player draw one card
         for playerIndex in range(len(self.playerList.copy())): # Pick player index
@@ -191,7 +202,7 @@ class Game():
 
                     if cardSelected['bool']: # AND button trick is pressed
                         # card has been selected
-                        oCard = self.playerList[playerIndex].removeCardFromHand(cardSelected['cardIndex'])
+                        oCard = self.playerList[playerIndex].popCardFromHand(cardSelected['cardIndex'])
 
                         # Cards are places as contenders for battle
                         playersAndCards.append(
@@ -211,7 +222,7 @@ class Game():
             # Remove the 1st card from each player's hand and pass it back to deck
             for playerIndex in range(len(self.playerList.copy())): # Check every player
                 # Remove card from player's hand
-                oCard = self.playerList[playerIndex].removeCardFromHand(0) # Remove card
+                oCard = self.playerList[playerIndex].popCardFromHand(0) # Remove card
                 self.oDeck.returnCardToDeck(oCard, loc=(600, 500)) # Card returns to deck concealed 
 
                 # Work with the tie section too ------------------------------------
@@ -236,7 +247,7 @@ class Game():
 
             # Remove the 1st card from each player's hand and pass back to deck
             for index in range(len(self.playerList.copy())):
-                oCard = self.playerList[index].removeCardFromHand(0) # Remove card from player's hand
+                oCard = self.playerList[index].popCardFromHand(0) # Remove card from player's hand
                 self.oDeck.returnCardToDeck(oCard) # Card returns to deck
 
             # If true shuffle deck after cards return deck after
@@ -340,20 +351,15 @@ class Game():
             isPlayer1Trump = playersAndCards[0]['card'].getSuit() == self.trumpCard.getSuit()
             isPlayer2Trump = playersAndCards[1]['card'].getSuit() == self.trumpCard.getSuit()
 
-            if isPlayer1Trump and isPlayer2Trump: # Both players have a trump card | No tie can HAPPEN!
-                # Compares player's cards: the higest value card wins; turn player is selected and 
-                self.compareCards(playersAndCards) # turn player is rearranged as 1st iteam in the playerList   
+            if isPlayer1Trump and isPlayer2Trump: # Both players have a trump card | No tie can HAPPEN! 
+                self.compareCards(playersAndCards)   
 
             elif isPlayer1Trump or isPlayer2Trump: # A player has a trump card | No tie can HAPPEN!
                 if isPlayer1Trump:
-                    # Player1 is turnPlayer, player 2 is false by defult
-                    playersAndCards[0]['player'].setTurnPlayer(True) 
-                    # Player arrangement decides who draws first
+                    playersAndCards[0]['player'].setTurnPlayer(True) # Player 1 is turn player
                     self.playerList = [playersAndCards[0]['player'], playersAndCards[1]['player']] 
                 else:
-                    # Player2 is turnPlayer, player 1 is false by defult
-                    playersAndCards[1]['player'].setTurnPlayer(True) 
-                    # Player arrangement decides who draws first
+                    playersAndCards[1]['player'].setTurnPlayer(True) #  Player2 is turnPlayer
                     self.playerList = [playersAndCards[1]['player'], playersAndCards[0]['player']] 
 
             else: # No player has a trump card, a tie can happen using trickValues.
@@ -420,8 +426,8 @@ class Game():
     def getPlayers(self):
         return self.playerList
     
-    def removeCardFromHand(self, oPlayerIndex, oCardIndex):
-        return self.playerList[oPlayerIndex].removeCardFromHand(oCardIndex)
+    def popCardFromHand(self, oPlayerIndex, oCardIndex):
+        return self.playerList[oPlayerIndex].popCardFromHand(oCardIndex)
 
 """
 Todo list: 

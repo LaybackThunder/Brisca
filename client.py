@@ -34,8 +34,10 @@ quitButton = pygwidgets.TextButton(window, (970, 840),
 trickButton.disable()
 
 # 5 - Initialize variables
-oPlayer = Player(window)
-playerList = [oPlayer]
+oPlayer1 = Player(window) # Test
+# oPlayer2 = Player(window) # Test
+playerList = [oPlayer1]
+
 oGame = Game(window, playerList)
 playersAndClickedCard = [] # Ids player and their card
 clickedCard = None # Ids current card selected from current player
@@ -54,35 +56,39 @@ while True:
 
         # Check for new game
         if newGameButton.handleEvent(event):
-            oGame.reset() # New game
-            playersAndClickedCard = [] 
+            oGame.reset() # New game 
             currentPlayer = None 
             clickedCard = None 
+            playersAndClickedCard = []
             trickButton.disable()
 
-        # Players choose which card to battle in the trick
-        playerList = oGame.getPlayers()
-        for player in playerList:
+        # One player at a time; Players choose which card to battle in the trick
+        for player in oGame.getPlayers():
             oCards = player.getHand()
 
             # Check if player has clicked or de_clicked any of their cards
             for oCard in oCards: 
-                isCardClicked = oCard.handleEvent(event)
+                isCardClicked = oCard.handleEvent(event) # Returns bool
 
-                if isCardClicked:
-                    # You can battle
-                    trickButton.enable()
-                    clickedCard = oCard # LEFT OFF ---> Pop card from player's hand
-                    currentPlayer = player
-                    playersAndClickedCard.append({'player': currentPlayer, 'card': clickedCard})
-
-                elif isCardClicked == False:
+                if isCardClicked == False:
                     trickButton.disable()
                     clickedCard = None
-                    del playersAndClickedCard[-1]
-                    
-        if trickButton.handleEvent(event): # If clicked when enabled
+                    if playersAndClickedCard: # If any cards
+                        del playersAndClickedCard[-1] # Delete them
+
+                elif isCardClicked:
+                    # You can battle
+                    trickButton.enable()
+                    currentPlayer = player # Ref of oPlayer
+                    clickedCard = oCard  # Ref of oPlayer's oCard
+                           
+        if trickButton.handleEvent(event): # If clicked when enabled & client is currentPlayer
             print("Button click")
+            # LEFT OFF ---> Pop card from player's hand
+            oCards = currentPlayer.getHand() # Get list
+            oCardIndex = oCards.index(clickedCard) # In that list get oCard index
+            playerCard = currentPlayer.popCardFromHand(oCardIndex) # Feed index and pop card from player's hand
+            playersAndClickedCard.append({'player': currentPlayer, 'card': playerCard}) # Player now has not cards in hand
 
 
     # 8 - Do any "per frame" actions

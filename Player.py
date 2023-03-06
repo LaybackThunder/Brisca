@@ -27,10 +27,10 @@ class Player():
         oCard.reveal() # Show
         self.setHand(oCard) # In player's hand
 
-    def removeCardFromHand(self, cardIndex):    
+    def popCardFromHand(self, cardIndex):    
         """Remove card from hand and returns."""
-        removeCard = self.hand.pop(cardIndex)
-        return removeCard
+        popCard = self.hand.pop(cardIndex)
+        return popCard
 
     def removeCardFromPot(self, oCard=-1):
         """Removes the last card in the player's pot by defult."""
@@ -137,7 +137,7 @@ if __name__ == "__main__":
             print("-------Player 1 wins")
 
             # Remove the 1st card from each player's hand
-            potCards = [oPlayer.removeCardFromHand(0), oPlayer2.removeCardFromHand(0)]
+            potCards = [oPlayer.popCardFromHand(0), oPlayer2.popCardFromHand(0)]
             # Add cards into pot
             for oCard in potCards.copy():
                 oCard = potCards.pop(0)
@@ -147,7 +147,7 @@ if __name__ == "__main__":
             print("-------Player 2 wins")
 
             # Remove the 1st card from each player's hand
-            potCards = [oPlayer.removeCardFromHand(0), oPlayer2.removeCardFromHand(0)]
+            potCards = [oPlayer.popCardFromHand(0), oPlayer2.popCardFromHand(0)]
             # Add cards into pot
             for oCard in potCards.copy():
                 oCard = potCards.pop(0)
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         else:
             print("-------Players Tie and Dealer wins!")
             # Remove the 1st card from each player's hand
-            potCards = [oPlayer.removeCardFromHand(0), oPlayer2.removeCardFromHand(0)]
+            potCards = [oPlayer.popCardFromHand(0), oPlayer2.popCardFromHand(0)]
             # Add cards into pot
             for oCard in potCards.copy():
                 oCard = potCards.pop(0)

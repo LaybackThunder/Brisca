@@ -21,18 +21,18 @@ class Card():
         self.images_rect = self.images.getRect()
     
     def handleEvent(self, event):
-        """Checks if card was clicked."""
+        """Returns if the card was clicked and Ids th ecard that was clicked."""
+
         if self.images.handleEvent(event): # It was clicked
+
             if self.clicked == False:
-                #print('Clicked! BUH!') # Because I can
                 self.images.moveY(-25) # Move card 25 pixels up the screen to id selcted card
                 self.clicked = True # To avoid moving it up for every click
                 return self.clicked
                 
             elif self.clicked: # It was de-selected (clicked again)
-                #print('un clicked')
                 self.images.moveY(25) # Return to original position
-                self.clicked = False
+                self.clicked = False # Now it can be clicked to move up
                 return self.clicked
     
     def disable(self):
