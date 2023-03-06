@@ -18,7 +18,7 @@ class Game():
         """Initisialize attributes."""
         self.window = window
         self.oDeck = Deck(self.window)
-        self.boardCardList = []
+        self.boardCardList = [] # Ids the player's card a dict goes here
         self.trumpCard = None
         self.dealerPot = []
         self.ghostHandList = [] # Holds place holder cards for ghost player
@@ -68,8 +68,8 @@ class Game():
                 oCard = self.playerList[playerIndex].getHand(oCardIndex - 1)
                 oCard.draw()
         
-        for oCard in self.boardCardList:
-            oCard.draw()
+        for playerAndCard in self.boardCardList: # FIX
+            playerAndCard['card'].draw() # Fix
         
         for oGhostCard in self.ghostHandList:
             oGhostCard.draw()
@@ -83,9 +83,9 @@ class Game():
         #oCards[1].setLoc((self.window.get_width()//2, self.window.get_height()//2))
         """Change card dloc"""
 
-    def setBoardCards(self, oCard):
+    def setBoardCards(self, playersAndCards):
         """Appends cards into board list."""
-        self.boardCardList.append(oCard)
+        self.boardCardList.append(playersAndCards)
     
     def popCardFromBoard(self, cardIndex):
         """Pop's card from th eboard's list"""

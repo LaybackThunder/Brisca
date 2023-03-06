@@ -39,7 +39,7 @@ oPlayer1 = Player(window) # Test
 playerList = [oPlayer1]
 
 oGame = Game(window, playerList)
-playersAndClickedCard = [] # Ids player and their card
+playersAndCard = [] # Ids player and their card
 clickedCard = None # Ids current card selected from current player
 currentPlayer = None # Ids a current player inside an iteration of players
 
@@ -73,8 +73,8 @@ while True:
                 if isCardClicked == False:
                     trickButton.disable()
                     clickedCard = None
-                    if playersAndClickedCard: # If any cards
-                        del playersAndClickedCard[-1] # Delete them
+                    if playersAndCard: # If any cards
+                        del playersAndCard[-1] # Delete them
 
                 elif isCardClicked:
                     # You can battle
@@ -88,7 +88,8 @@ while True:
             oCards = currentPlayer.getHand() # Get list
             oCardIndex = oCards.index(clickedCard) # In that list get oCard index
             playerCard = currentPlayer.popCardFromHand(oCardIndex) # Feed index and pop card from player's hand
-            playersAndClickedCard.append({'player': currentPlayer, 'card': playerCard}) # Player now has not cards in hand
+            playersAndCard.append({'player': currentPlayer, 'card': playerCard}) # Player now has not cards in hand
+            oGame.setBoardCards(playersAndCard) # ASK YOURSELF ---> IS THIS UNDERSTANDABLE FROM ANOTHER CODER'S VIEW?
 
 
     # 8 - Do any "per frame" actions
