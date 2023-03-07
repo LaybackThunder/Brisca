@@ -60,20 +60,28 @@ class Game():
         
     def draw(self): # draw image to screen.
         """Tell each card to draw an image of itself"""
+
+        # Draw Deck of cards
         for oCard in self.oDeck.getDeck():
             oCard.draw()
 
+        # Draw cards in player's hand
         for playerIndex in range(len(self.playerList)):
             for oCardIndex in range(len(self.playerList[playerIndex].getHand())):
                 oCard = self.playerList[playerIndex].getHand(oCardIndex - 1)
                 oCard.draw()
         
-        for playerAndCard in self.boardCardList: # FIX
-            playerAndCard['card'].draw() # Fix
+        # Draw Cards on the board
+        if self.boardCardList:
+            for i in range(len(self.boardCardList)):
+                for playerAndCard in self.boardCardList: # FIX
+                    playerAndCard[i]['card'].draw() # Fix
         
+        # Draw Ghost player's hand
         for oGhostCard in self.ghostHandList:
             oGhostCard.draw()
 
+        # Draw Text
         self.potScoreText.draw()
         self.messageText.draw()
 
@@ -83,9 +91,10 @@ class Game():
         #oCards[1].setLoc((self.window.get_width()//2, self.window.get_height()//2))
         """Change card dloc"""
 
-    def setBoardCards(self, playersAndCards):
+    def setCardsOnBoard(self, playersAndCards):
         """Appends cards into board list."""
         self.boardCardList.append(playersAndCards)
+        print(self.boardCardList)
     
     def popCardFromBoard(self, cardIndex):
         """Pop's card from th eboard's list"""
