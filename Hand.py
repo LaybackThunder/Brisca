@@ -15,7 +15,8 @@ class Hand():
 
     def __init__(self, window):
         self.window = window
-        self.cardList = []
+        self.cardList = [] # Holds all the cards on hand
+        self.iDCardSlots = [] # Remembers where cards are on hand
         self.oCard = None
         self.enableAllCards = True
         self.oCardClicked = False
@@ -34,17 +35,32 @@ class Hand():
 
             # Set ID to card
             if self.cardList:
+
+                iDCounter = 0
                 for i in range(len(self.cardList)):
-                    i += 1
-                    print(i)
-                    oCard.setCardId(i)
+                    iDCounter += 1
+                oCard.setCardId(iDCounter) 
+
             else:
                  print("By defult oCard has an iD of 0")
+            
+            """
+            This code doesn't work, fix it??????
+                if iDCounter != self.iDCardSlots[oCard.getCardId]:
+                     oCard.setCardId(self.iDCardSlots.pop[0])
+                else:
+                    oCard.setCardId(iDCounter) 
+                
+            I am trying to identidy how to tell the 
+            card where to go depending on the vacant 
+            slots in the hand.
+            """
 
             # Add card to hand
             self.cardList.insert(oCard.getCardId(), oCard)
 
-            # Give card display coordinates ------------LEFT OFF---------------
+            # Give card display coordinates based of card iD
+            print(oCard.getCardId())
             if oCard.getCardId() == 0:
                 self.cardList[oCard.getCardId()].setLoc(
                      HAND_LOCATION_DICT["HAND_SLOT0"]
@@ -86,6 +102,10 @@ class Hand():
         self.enableAllCards = True
         self.oCardClicked = False # Not sure if needed
         self.oCard = None # Not sure if needed
+
+        # Snapshot the slot the card was in
+        self.iDCardSlots.append(oCardIndex)
+        
         return oTrickCard
 
     # Polymorphism section 
