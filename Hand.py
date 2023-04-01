@@ -38,7 +38,6 @@ class Hand():
             if self.iDCardSlots:
                     iDCounter = self.iDCardSlots.pop(0)
                     oCard.setCardId(iDCounter)    
-
             else:
                 # The initial way to setting cards up with an ID
                 for i in range(len(self.cardList)): # If for loop is empty it won't loop

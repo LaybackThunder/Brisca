@@ -7,6 +7,7 @@ class Game():
 
     HAND_LIMIT = 3
     DECK_LOC = (860, 360)
+    TRUMP_LOC = (800, 360)
 
     GHOST_HAND_Y_LOCATION = 650
     GHOST_HAND_LOC_LIST = [(300, GHOST_HAND_Y_LOCATION), (500, GHOST_HAND_Y_LOCATION)]
@@ -21,7 +22,7 @@ class Game():
         self.oDeck = BriscaDeck(self.window, Game.DECK_LOC, SUIT, RANK_VALUE_DICT=BRISCA_DICT)
         self.playerList = [player]
 
-        self.trumpCard = None
+        self.trumpCard = self.oDeck.drawCard()
         self.trickList = [] # Where cards battle
         self.dealerPot = [] # When there is a tie, the dealer holds cards
         self.ghostHandList = [] # Holds cards for ghost player
@@ -33,6 +34,9 @@ class Game():
         self.trickButton = pygwidgets.TextButton(window, (20, 840),
                                     'Trick', width=100, height=45)
         self.trickButton.disable()
+        self.trumpCard.reveal() 
+        self.trumpCard.setLoc(Game.TRUMP_LOC)
+        self.trumpCard.setRotation(-90)
     
     # Polymorphism section 
     def enterTrick(self, oPlayer):
@@ -76,22 +80,19 @@ class Game():
 
     def draw(self):
         """Display cards to screen"""
-
         # GUI components
         self.trickButton.draw()
         self.drawCardButton.draw()
 
         # Game elements
-        self.oDeck.draw()
-
-        # self.trumpCard.draw()
-
-        for player in self.playerList:
-            player.draw()
-
+        if self.trumpCard:
+            self.trumpCard.draw()
         if self.trickList:
             for oTrickCard in self.trickList:
                 oTrickCard.draw()
+        for player in self.playerList:
+            player.draw()
+        self.oDeck.draw()
 
         # for ghostCard in self.ghostHandList:
             # ghostCard.draw()
