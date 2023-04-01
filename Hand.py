@@ -33,30 +33,20 @@ class Hand():
             # Reveal card to Player
             oCard.reveal() 
 
-            # Set ID to card
-            if self.cardList:
-
-                iDCounter = 0
-                for i in range(len(self.cardList)):
-                    iDCounter += 1
-                oCard.setCardId(iDCounter) 
+            # Set ID to car using ID card slots
+            iDCounter = 0
+            if self.iDCardSlots:
+                    iDCounter = self.iDCardSlots.pop(0)
+                    oCard.setCardId(iDCounter)    
 
             else:
-                 print("By defult oCard has an iD of 0")
-            
-            """
-            This code doesn't work, fix it??????
-                if iDCounter != self.iDCardSlots[oCard.getCardId]:
-                     oCard.setCardId(self.iDCardSlots.pop[0])
-                else:
+                # The initial way to setting cards up with an ID
+                for i in range(len(self.cardList)): # If for loop is empty it won't loop
+                    iDCounter += 1
                     oCard.setCardId(iDCounter) 
-                
-            I am trying to identidy how to tell the 
-            card where to go depending on the vacant 
-            slots in the hand.
-            """
-
+            
             # Add card to hand
+            # By defult oCard has an iD of 0
             self.cardList.insert(oCard.getCardId(), oCard)
 
             # Give card display coordinates based of card iD
@@ -104,9 +94,13 @@ class Hand():
         self.oCard = None # Not sure if needed
 
         # Snapshot the slot the card was in
-        self.iDCardSlots.append(oCardIndex)
+        self.retriveId(oTrickCard)
         
         return oTrickCard
+
+    def retriveId(self, oCard):
+        """Obtains the oTrickCard's iD and assigns it to self.iDCardSlots"""
+        self.iDCardSlots.append(oCard.getCardId())
 
     # Polymorphism section 
     def handleEvent(self, event):
