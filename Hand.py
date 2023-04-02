@@ -49,7 +49,6 @@ class Hand():
             self.cardList.insert(oCard.getCardId(), oCard)
 
             # Give card display coordinates based of card iD
-            print(oCard.getCardId())
             if oCard.getCardId() == 0:
                 self.cardList[oCard.getCardId()].setLoc(
                      HAND_LOCATION_DICT["HAND_SLOT0"]
@@ -93,13 +92,14 @@ class Hand():
         self.oCard = None # Not sure if needed
 
         # Snapshot the slot the card was in
-        self.retriveId(oTrickCard)
+        self._retriveId(oTrickCard)
         
         return oTrickCard
 
-    def retriveId(self, oCard):
+    def _retriveId(self, oCard):
         """Obtains the oTrickCard's iD and assigns it to self.iDCardSlots"""
         self.iDCardSlots.append(oCard.getCardId())
+        self.iDCardSlots.sort() 
 
     # Polymorphism section 
     def handleEvent(self, event):
