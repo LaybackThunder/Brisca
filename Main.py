@@ -36,7 +36,6 @@ newGameButton = pygwidgets.TextButton(window, (880, 840),
 quitButton = pygwidgets.TextButton(window, (990, 840),
                                     'Quit', width=100, height=45)
 
-
 # 5 - Initialize variables
 oPlayer = Player(window)
 oGame = Game(window, oPlayer, SUIT=SUIT_TUPLE, BRISCA_DICT=BRISCA_DICT)

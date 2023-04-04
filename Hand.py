@@ -1,5 +1,4 @@
-import pygame
-import pygwidgets
+
 
 class Hand():
     # Index 0 is left side of hand. 
@@ -49,17 +48,8 @@ class Hand():
             self.cardList.insert(oCard.getCardId(), oCard)
 
             # Give card display coordinates based of card iD
-            if oCard.getCardId() == 0:
-                self.cardList[oCard.getCardId()].setLoc(
-                     HAND_LOCATION_DICT["HAND_SLOT0"]
-                     )
-            elif oCard.getCardId() == 1:
-                self.cardList[oCard.getCardId()].setLoc(
-                     HAND_LOCATION_DICT["HAND_SLOT1"]
-                     ) 
-            else:
-                self.cardList[oCard.getCardId()].setLoc(
-                     HAND_LOCATION_DICT["HAND_SLOT2"]
+            self.cardList[oCard.getCardId()].setLoc(
+                     HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
                      )
 
     def playCardFromHand(self, oCard):

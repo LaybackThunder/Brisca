@@ -1,5 +1,3 @@
-import pygame
-import pygwidgets
 from Hand import *
 
 class Player():
