@@ -41,7 +41,7 @@ class Game():
         self.trickButton.disable()
 
     # Doesn't work yet
-    def battleStep(self, cardsAndOwners):
+    def battleStep(self, playersAndCards):
         """
         Calculates which oTrickCard wins the battle step.
         Sets a turnPlayer by comparing the highest value card.
@@ -51,44 +51,53 @@ class Game():
         # playersAndCards is a list nesing a dictionary with the player's iD and corresponding cards
         # E.g. playersAndCards = [{'player: oPlayer, 'card': oCard}]
 
-        player1CardValue = cardsAndOwners[0]['card'].getTrickValue()
-        player2CardValue = cardsAndOwners[1]['card'].getTrickValue()
-        cardsAndOwners[0]['card'].reveal()
-        cardsAndOwners[1]['card'].reveal()
+        player1 = playersAndCards[0]['oPlayer']
+        player2 = playersAndCards[1]['oPlayer']
+        player1CardValue = playersAndCards[0]['oCard'].getRankValue()
+        player2CardValue = playersAndCards[1]['oCard'].getRankValue()
 
         if player1CardValue > player2CardValue:
             print("-------You WIN!")
-            cardsAndOwners[0]['player'].setTurnPlayer(True) # Player1 is turnPlayer, player 2 is false by defult
-            self.playerList = [cardsAndOwners[0]['player'], cardsAndOwners[1]['player']] # Player arrangement decides who draws first
+            print()
+            player1.setTurnPlayerTrue() # Player1 will have the bool to draw firs
+            player2.setTurnPlayerFalse()
+            self.playerList = [player1, player2] # Player arrangement decides who draws first
             tie = False
             
         elif player1CardValue < player2CardValue:
             print("-------You LOSE!")
-            cardsAndOwners[1]['player'].setTurnPlayer(True) # Player1 is turnPlayer, player 2 is false by defult
-            self.playerList = [cardsAndOwners[1]['player'], cardsAndOwners[0]['player']] # Player arrangement decides who draws first
+            print()
+            player2.setTurnPlayerTrue() # Player2 will have the bool to draw first
+            player1.setTurnPlayerFalse()
+            self.playerList = [player2, player1] # Player arrangement decides who draws first
             tie = False
 
         else: # If players end in a tie: cards return to deck
-            print("Tie")
+            print("-------Tie")
             tie = True
 
         return tie # Return the value of Tie
 
     # Polymorphism section 
     def enterTrick(self, oPlayer):
-        """Place card in the middle of the board."""
+        """Place card in the middle of the board and battle."""
         oTrickCard = oPlayer.enterTrick()
         trickIndex = len(self.trickList)
-
-        """LEFT OFF!"""
-        cardAndOwner = {'oCard': oTrickCard, 'oPlayer': oPlayer}
-
-        self.trickList.append(cardAndOwner)
+        # Prep for battle: identify card and owner
+        playerAndCard = {'oPlayer': oPlayer, 'oCard': oTrickCard}
+        self.trickList.append(playerAndCard)
         oTrickCard.setLoc((Game.TRICK_LOCATION_LIST[trickIndex]))
 
         # Battle step of the game
         if len(self.trickList) == 2:
             print("Battle!")
+            tie = True
+            while tie:
+                tie = self.battleStep(self.trickList)
+                if tie:
+                    tie = False
+
+            print("End of Battle!")
 
     def drawCard(self, oPlayer):
         """Player draws a card."""

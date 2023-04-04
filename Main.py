@@ -16,10 +16,10 @@ FRAMES_PER_SECOND = 30
 
 # Brisca Deck Constants
 SUIT_TUPLE = ('Swords', 'Coins', 'Cups', 'Clubs')
-# Deck example: '2' is rank, value is list [pointsValue, trcikValue] of rank
-BRISCA_DICT = {'2':[0, 2], '3':[0, 13], '4':[0, 4], '5':[0, 5],
-                        '6':[0, 6], '7':[0, 7], 'Jack':[2, 10],
-                        'Knight':[3, 11], 'King':[4, 12], 'Ace':[11, 14]}
+# Deck example: '2' is rank, value is list [rankValue, rankPoints] of rank
+BRISCA_DICT = {'2':[2, 0], '3':[13, 10], '4':[4, 0], '5':[5, 0],
+                        '6':[6, 0], '7':[7, 0], 'Jack':[10, 2],
+                        'Knight':[11, 3], 'King':[12, 10], 'Ace':[14, 11]}
 
 # 3 - Initialize the world
 pygame.init()
