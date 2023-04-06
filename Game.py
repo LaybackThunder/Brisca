@@ -25,6 +25,7 @@ class Game():
         self.trumpCard.reveal() 
         self.trumpCard.setLoc(Game.TRUMP_LOC)
         self.trumpCard.setRotation(-90)
+
         self.trickList = [] # Where cards battle
         self.dealerPot = [] # When there is a tie, the dealer holds cards
         self.ghostHandList = [] # Holds cards for ghost player
@@ -40,7 +41,6 @@ class Game():
         self.swapButton.disable()
         self.trickButton.disable()
 
-    # Doesn't work yet
     def battleStep(self, playersAndCards):
         """
         Calculates which oTrickCard wins the battle step.
@@ -96,8 +96,28 @@ class Game():
                 tie = self.battleStep(self.trickList)
                 if tie:
                     tie = False
+                else:
+                    # Transfer trickCards to potCards
+                    self.setPotList(self.trickList)
+                    self.getPotList()
+                    print("End of Battle!")
+                    # testing - List will be 0
+                    print("There are " + str(len(self.trickList)) + " trick cards in the list.")
+                    oPlayer.getHandEnableAllCardsBool() # Testing - Will return True
 
-            print("End of Battle!")
+    def setPotList(self, trickList):
+        """Gives turnPlayer the spoils of war. As in the winning cards."""
+        cardsAndOwners = []
+        for i in trickList.copy(): # Copy, because we are modifying list.
+            index = trickList.index(i)
+            cardAndOwner = trickList.pop(index)
+            cardsAndOwners.append(cardAndOwner)
+        self.playerList[0].setPotList(cardsAndOwners)    
+
+    def getPotList(self):
+        """Prints the name of every card in the turnPlayer's potList."""
+        potList = self.playerList[0].getPotList()
+        return potList
 
     def drawCard(self, oPlayer):
         """Player draws a card."""

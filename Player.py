@@ -5,10 +5,12 @@ class Player():
     def __init__(self, window):
         self.window = window
         self.turnPlayer = False
+        self.playerId = 0 # testing
         self.potList = []
         self.oHand = Hand(window)
 
     def getTurnPlayer(self):
+        print(f"Turn player's iD is {self.turnPlayerId}.") # testing
         return self.turnPlayer
 
     def setTurnPlayerTrue(self):
@@ -23,12 +25,26 @@ class Player():
         else:
             self.turnPlayer = False 
 
+    def setPotList(self, cardsAndOwners):
+        """Retrive oCard from trickList and add them to potList."""
+        # {'oPlayer': oPlayer, 'oCard': oTrickCard}
+        for i in cardsAndOwners:
+            oCard = i.pop('oCard')
+            print(oCard.getName())
+            self.potList.append(oCard)
+    
+    def getPotList(self):
+        return self.potList
+
     # Polymorphism section
     def enterTrick(self):
         """Place card in the middle of the board."""
         # Asks had to give card, return card.
         oTrickCard = self.oHand.enterTrick()
         return oTrickCard
+
+    def getHandEnableAllCardsBool(self):
+        self.oHand.getHandEnableAllCardsBool()
 
     def getLengthCardsOnHand(self):
         """Returns the total number of cards on hand."""
@@ -46,14 +62,6 @@ class Player():
         If none; return no card error.
         """
         self.oHand.drawCard(oCard)
-
-    def playCardFromHand(self, oCard=None):
-        """
-        Removes card from player's hand.
-        If none; return no card error.
-        else; return card.
-        """
-        self.oHand.playCardFromHand(oCard)
 
     def handleEvent(self, event):
         """Returns a bool if any card on hand was clicked."""

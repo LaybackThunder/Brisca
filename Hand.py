@@ -20,6 +20,10 @@ class Hand():
         self.enableAllCards = True
         self.oCardClicked = False
 
+    def getHandEnableAllCardsBool(self):
+         """After a trick, all cards should be clickable."""
+         print(f"Enable all cards is: {self.enableAllCards}.")
+
     def drawCard(self, oCard):
         """
         Adds card to player's hand.
@@ -51,18 +55,6 @@ class Hand():
             self.cardList[oCard.getCardId()].setLoc(
                      HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
                      )
-
-    def playCardFromHand(self, oCard):
-        """
-        Removes card from player's hand.
-        If none; return no card error.
-        else; return card.
-        """
-        if oCard == None:
-            print("No card were removed.")
-        else:
-            oCardIndex = self.cardList.index(oCard)
-            return self.cardList.pop(oCardIndex)
 
     def getLengthCardsOnHand(self):
         """Returns the total number of cards on hand."""
@@ -105,9 +97,9 @@ class Hand():
                             self.oCard = oCard # Remember Ocard
                             self.oCardClicked = self.oCard.getOcardClicked() # Assign click (True)
                             self.enableAllCards = False
+                            print('Click')
                             return self.oCardClicked # Return value and exit method
-
-        # Check is the clicked card has be declicked         
+        # Check if the clicked card has be declicked         
         else:
             if self.oCard.handleEvent(event):
                         self.oCardClicked = self.oCard.getOcardClicked()
