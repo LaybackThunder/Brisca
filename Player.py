@@ -28,8 +28,8 @@ class Player():
     def setPotList(self, cardsAndOwners):
         """Retrive oCard from trickList and add them to potList."""
         # {'oPlayer': oPlayer, 'oCard': oTrickCard}
-        for i in cardsAndOwners:
-            oCard = i.pop('oCard')
+        for cardAndOwner in cardsAndOwners:
+            oCard = cardAndOwner.pop('oCard')
             print(oCard.getName())
             self.potList.append(oCard)
     

@@ -97,13 +97,12 @@ class Hand():
                             self.oCard = oCard # Remember Ocard
                             self.oCardClicked = self.oCard.getOcardClicked() # Assign click (True)
                             self.enableAllCards = False
-                            print('Click')
                             return self.oCardClicked # Return value and exit method
         # Check if the clicked card has be declicked         
         else:
             if self.oCard.handleEvent(event):
+                        # Error may be that pygame is detecting one click as two clicks after trick finishes running.
                         self.oCardClicked = self.oCard.getOcardClicked()
-                        #print(self.oCardClicked)
                         self.enableAllCards = True
                         self.oCard = None
 

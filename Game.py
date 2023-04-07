@@ -41,39 +41,33 @@ class Game():
         self.swapButton.disable()
         self.trickButton.disable()
 
-    def battleStep(self, playersAndCards):
+    def battleStep(self):
         """
         Calculates which oTrickCard wins the battle step.
         Sets a turnPlayer by comparing the highest value card.
-        Arrange player list; winner is first item on playerList.
         Returns True or False for tie.
         """
-        # playersAndCards is a list nesing a dictionary with the player's iD and corresponding cards
-        # E.g. playersAndCards = [{'player: oPlayer, 'card': oCard}]
-
-        player1 = playersAndCards[0]['oPlayer']
-        player2 = playersAndCards[1]['oPlayer']
-        player1CardValue = playersAndCards[0]['oCard'].getRankValue()
-        player2CardValue = playersAndCards[1]['oCard'].getRankValue()
+        player1 = self.trickList[0]['oPlayer']
+        player2 = self.trickList[1]['oPlayer']
+        player1CardValue = self.trickList[0]['oCard'].getRankValue()
+        player2CardValue = self.trickList[1]['oCard'].getRankValue()
 
         if player1CardValue > player2CardValue:
             print("-------You WIN!")
-            print()
             player1.setTurnPlayerTrue() # Player1 will have the bool to draw firs
             player2.setTurnPlayerFalse()
-            self.playerList = [player1, player2] # Player arrangement decides who draws first
+            self.playerList = [player1] # Player arrangement decides who draws first
             tie = False
             
         elif player1CardValue < player2CardValue:
             print("-------You LOSE!")
-            print()
             player2.setTurnPlayerTrue() # Player2 will have the bool to draw first
             player1.setTurnPlayerFalse()
-            self.playerList = [player2, player1] # Player arrangement decides who draws first
+            self.playerList = [player1] # Player arrangement decides who draws first
             tie = False
 
         else: # If players end in a tie: cards return to deck
-            print("-------Tie")
+            print("-------TIE/n")
             tie = True
 
         return tie # Return the value of Tie
@@ -85,32 +79,28 @@ class Game():
         trickIndex = len(self.trickList)
         # Prep for battle: identify card and owner
         playerAndCard = {'oPlayer': oPlayer, 'oCard': oTrickCard}
-        self.trickList.append(playerAndCard)
         oTrickCard.setLoc((Game.TRICK_LOCATION_LIST[trickIndex]))
-
+        self.trickList.append(playerAndCard)
+        
         # Battle step of the game
         if len(self.trickList) == 2:
             print("Battle!")
             tie = True
             while tie:
-                tie = self.battleStep(self.trickList)
+                tie = self.battleStep()
                 if tie:
                     tie = False
                 else:
                     # Transfer trickCards to potCards
-                    self.setPotList(self.trickList)
-                    self.getPotList()
-                    print("End of Battle!")
-                    # testing - List will be 0
-                    print("There are " + str(len(self.trickList)) + " trick cards in the list.")
-                    oPlayer.getHandEnableAllCardsBool() # Testing - Will return True
+                    self.setPotList()
+            print("End of Battle!")
 
-    def setPotList(self, trickList):
+    def setPotList(self):
         """Gives turnPlayer the spoils of war. As in the winning cards."""
         cardsAndOwners = []
-        for i in trickList.copy(): # Copy, because we are modifying list.
-            index = trickList.index(i)
-            cardAndOwner = trickList.pop(index)
+        for i in self.trickList.copy(): # Copy, because we are modifying list.
+            index = self.trickList.index(i)
+            cardAndOwner = self.trickList.pop(index)
             cardsAndOwners.append(cardAndOwner)
         self.playerList[0].setPotList(cardsAndOwners)    
 
@@ -139,7 +129,6 @@ class Game():
             # Check if player's card are clickable
             if oPlayer.handleEvent(event):
                 self.trickButton.enable()
-                    # Should selected card be returned?
             else:
                 self.trickButton.disable()
             
@@ -158,7 +147,6 @@ class Game():
         if self.trumpCard:
             self.trumpCard.draw()
         
-        # HOW WILL I DRAW THE CARDS IN THE TRICK DICT?
         if self.trickList: 
             for cardAndOwner in self.trickList:
                 cardAndOwner['oCard'].draw()
