@@ -75,8 +75,9 @@ class Game():
     # Polymorphism section 
     def enterTrick(self, oPlayer):
         """Place card in the middle of the board and battle."""
-        # Player can't draw 
+        # Player can't draw while in a trick (battle)
         self.drawCardButton.disable() 
+
         # Retrieve player's card and trickList index
         oTrickCard = oPlayer.enterTrick()
         trickIndex = len(self.trickList)
@@ -84,7 +85,6 @@ class Game():
         playerAndCard = {'oPlayer': oPlayer, 'oCard': oTrickCard}
         oTrickCard.setLoc((Game.TRICK_LOCATION_LIST[trickIndex]))
         self.trickList.append(playerAndCard)
-        
         # Battle step of the game
         if len(self.trickList) == 2:
             print("Battle!")
@@ -97,8 +97,9 @@ class Game():
                     # Transfer trickCards to potCards
                     self.setPotList()
             print("End of Battle!")
-            # Testing enabling draw button
-            self.drawCardButton.enable()
+
+        # Testing enabling draw button
+        self.drawCardButton.enable()
 
     def setPotList(self):
         """Gives turnPlayer the spoils of war. As in the winning cards."""
@@ -116,35 +117,36 @@ class Game():
 
     def drawCard(self, oPlayer):
         """Player draws a card."""
-        if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
-            oCard = self.oDeck.drawCard()
-            oPlayer.drawCard(oCard)
-        else:
-            print('Hand is full!')        
+        oCard = self.oDeck.drawCard()
+        oPlayer.drawCard(oCard)
 
     def handleEvent(self, event):
         """Handles pygame events and buttons"""
-        # If player is turnPlayer do below (code later)
         for oPlayer in self.playerList:
 
-            """
-            <--- LEFT OFF --- > 
-            Trying to disable draw button after a card enters the trick. 
-            Revert after trick ends.
-            """
+            # If your hand isn't full you can't battle
+            if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
+                # But if the player clicks a card, for testing it can battle
+                self.drawCardButton.enable()
+                self.trickButton.disable() 
+            else:
+                self.drawCardButton.disable()
 
-            # Check player draw
+            # Draw button enabled for testing when game starts
             if self.drawCardButton.handleEvent(event):
-                    self.drawCard(oPlayer)
+                self.drawCard(oPlayer) 
 
-            # Check if player's card are clickable
+            # Check player's gameplay options after click a card
             if oPlayer.handleEvent(event):
+                # Battle (trick) ability able
                 self.trickButton.enable()
             else:
+                # Battle (trick) ability unavailable
                 self.trickButton.disable()
             
             # Check for trick button
             if self.trickButton.handleEvent(event):
+                # Enter the battle
                 self.enterTrick(oPlayer)         
 
     def draw(self):

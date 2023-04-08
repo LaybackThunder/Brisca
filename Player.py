@@ -37,14 +37,21 @@ class Player():
         return self.potList
 
     # Polymorphism section
+
+    def disableAllHandCards(self):
+        self.oHand.disableAllHandCards()
+    
+    def enableAllHandCards(self):
+        self.oHand.enableAllHandCards()
+
+    def getHandEnableAllCardsBool(self):
+        self.oHand.getHandEnableAllCardsBool()
+        
     def enterTrick(self):
         """Place card in the middle of the board."""
         # Asks had to give card, return card.
         oTrickCard = self.oHand.enterTrick()
         return oTrickCard
-
-    def getHandEnableAllCardsBool(self):
-        self.oHand.getHandEnableAllCardsBool()
 
     def getLengthCardsOnHand(self):
         """Returns the total number of cards on hand."""

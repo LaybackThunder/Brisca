@@ -20,6 +20,12 @@ class Hand():
         self.enableAllCards = True
         self.oCardClicked = False
 
+    def disableAllHandCards(self):
+         self.enableAllCards = False
+    
+    def enableAllHandCards(self):
+         self.enableAllCards = True
+
     def getHandEnableAllCardsBool(self):
          """After a trick, all cards should be clickable."""
          print(f"Enable all cards is: {self.enableAllCards}.")
