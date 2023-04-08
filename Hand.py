@@ -1,9 +1,9 @@
 
 
 class Hand():
-    # Index 0 is left side of hand. 
-    # Index 1 is middle side of hand.
-    # Index 2 is right side of hand.
+    # slot 0 is left side of hand. 
+    # slot 1 is middle side of hand.
+    # slot 2 is right side of hand.
     HAND_Y_LOC = 650
     HAND_LOCATION_DICT = {
          # "HAND_SLOT_EXAMPLE":[card identifier in the hand, (CARD LOCATION ON SCREEN)]

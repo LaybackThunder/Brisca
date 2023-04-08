@@ -75,6 +75,9 @@ class Game():
     # Polymorphism section 
     def enterTrick(self, oPlayer):
         """Place card in the middle of the board and battle."""
+        # Player can't draw 
+        self.drawCardButton.disable() 
+        # Retrieve player's card and trickList index
         oTrickCard = oPlayer.enterTrick()
         trickIndex = len(self.trickList)
         # Prep for battle: identify card and owner
@@ -94,6 +97,8 @@ class Game():
                     # Transfer trickCards to potCards
                     self.setPotList()
             print("End of Battle!")
+            # Testing enabling draw button
+            self.drawCardButton.enable()
 
     def setPotList(self):
         """Gives turnPlayer the spoils of war. As in the winning cards."""
@@ -118,9 +123,15 @@ class Game():
             print('Hand is full!')        
 
     def handleEvent(self, event):
-        """Handles pygame events"""
+        """Handles pygame events and buttons"""
         # If player is turnPlayer do below (code later)
         for oPlayer in self.playerList:
+
+            """
+            <--- LEFT OFF --- > 
+            Trying to disable draw button after a card enters the trick. 
+            Revert after trick ends.
+            """
 
             # Check player draw
             if self.drawCardButton.handleEvent(event):
@@ -134,7 +145,7 @@ class Game():
             
             # Check for trick button
             if self.trickButton.handleEvent(event):
-                self.enterTrick(oPlayer)          
+                self.enterTrick(oPlayer)         
 
     def draw(self):
         """Display cards to screen"""
