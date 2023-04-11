@@ -45,7 +45,6 @@ class Game():
         """
         Calculates which oTrickCard wins the battle step.
         Sets a turnPlayer by comparing the highest value card.
-        Returns True or False for tie.
         """
         player1 = self.trickList[0]['oPlayer']
         player2 = self.trickList[1]['oPlayer']
@@ -57,26 +56,20 @@ class Game():
             player1.setTurnPlayerTrue() # Player1 will have the bool to draw firs
             player2.setTurnPlayerFalse()
             self.playerList = [player1] # Player arrangement decides who draws first
-            tie = False
             
         elif player1CardValue < player2CardValue:
             print("-------You LOSE!")
             player2.setTurnPlayerTrue() # Player2 will have the bool to draw first
             player1.setTurnPlayerFalse()
             self.playerList = [player1] # Player arrangement decides who draws first
-            tie = False
 
         else: # If players end in a tie: cards return to deck
             print("-------TIE/n")
             tie = True
 
-        return tie # Return the value of Tie
-
     # Polymorphism section 
     def enterTrick(self, oPlayer):
         """Place card in the middle of the board and battle."""
-        # Player can't draw while in a trick (battle)
-        self.drawCardButton.disable() 
 
         # Retrieve player's card and trickList index
         oTrickCard = oPlayer.enterTrick()
@@ -85,21 +78,57 @@ class Game():
         playerAndCard = {'oPlayer': oPlayer, 'oCard': oTrickCard}
         oTrickCard.setLoc((Game.TRICK_LOCATION_LIST[trickIndex]))
         self.trickList.append(playerAndCard)
-        # Battle step of the game
-        if len(self.trickList) == 2:
-            print("Battle!")
-            tie = True
-            while tie:
-                tie = self.battleStep()
-                if tie:
-                    tie = False
-                else:
-                    # Transfer trickCards to potCards
-                    self.setPotList()
-            print("End of Battle!")
 
-        # Testing enabling draw button
-        self.drawCardButton.enable()
+        # Enter battle phase
+        if len(self.trickList) == 2:
+
+            # Compare player's trump cards to the main trump card
+            isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == self.trumpCard.getSuit()
+            isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == self.trumpCard.getSuit()
+            print("Battle!\n")
+
+            # A player has a trump card
+            if isPlayer1Trump and isPlayer2Trump: 
+                self.self.battleStep()
+            
+            # Both players have a trump card 
+            elif isPlayer1Trump or isPlayer2Trump:   
+                if isPlayer1Trump:
+                    print("-------You WIN!\n")
+                    self.trickList[0]['oPlayer'].setTurnPlayerTrue() # Player 1 is turn player
+                    self.trickList[1]['oPlayer'].setTurnPlayerFalse()
+                    self.playerList = [self.trickList[0]['oPlayer']] # Test 
+                else:
+                    print("-------You LOSE!")
+                    self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
+                    self.trickList[0]['oPlayer'].setTurnPlayerFalse()
+                    self.playerList = [self.trickList[1]['oPlayer']] # Test 
+            
+            # No one has a trump card, the 1st card on the board leads as trump
+            else:
+                trumpCard = self.trickList[0]['oCard']
+                # Compare player's trump cards to the main trump card
+                isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == trumpCard.getSuit()
+                isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == trumpCard.getSuit()
+
+                if isPlayer1Trump and isPlayer2Trump:
+                    self.self.battleStep()
+
+                else:
+                    if isPlayer1Trump:
+                        print("-------You WIN!\n")
+                        self.trickList[0]['oPlayer'].setTurnPlayerTrue() # Player 1 is turn player
+                        self.trickList[1]['oPlayer'].setTurnPlayerFalse()
+                        self.playerList = [self.trickList[0]['oPlayer']] # Test 
+                    else:
+                        print("-------You LOSE!")
+                        self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
+                        self.trickList[0]['oPlayer'].setTurnPlayerFalse()
+                        self.playerList = [self.trickList[1]['oPlayer']] # Test
+                    
+            # Transfer trickCards to winner's potCards
+            self.setPotList()
+            print("End of Battle!")
 
     def setPotList(self):
         """Gives turnPlayer the spoils of war. As in the winning cards."""
@@ -127,8 +156,11 @@ class Game():
             # If your hand isn't full you can't battle
             if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
                 # But if the player clicks a card, for testing it can battle
-                self.drawCardButton.enable()
-                self.trickButton.disable() 
+                self.trickButton.disable()
+                if self.trickList:
+                    self.drawCardButton.disable()
+                else:
+                    self.drawCardButton.enable() 
             else:
                 self.drawCardButton.disable()
 
@@ -136,7 +168,7 @@ class Game():
             if self.drawCardButton.handleEvent(event):
                 self.drawCard(oPlayer) 
 
-            # Check player's gameplay options after click a card
+            # Check player's gameplay options after a card click
             if oPlayer.handleEvent(event):
                 # Battle (trick) ability able
                 self.trickButton.enable()
