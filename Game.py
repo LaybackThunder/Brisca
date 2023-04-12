@@ -68,7 +68,7 @@ class Game():
             tie = True
 
     # Polymorphism section 
-    def enterTrick(self, oPlayer):
+    def enterTrick(self, oPlayer) :
         """Place card in the middle of the board and battle."""
 
         # Retrieve player's card and trickList index
@@ -89,7 +89,7 @@ class Game():
 
             # A player has a trump card
             if isPlayer1Trump and isPlayer2Trump: 
-                self.self.battleStep()
+                self.battleStep()
             
             # Both players have a trump card 
             elif isPlayer1Trump or isPlayer2Trump:   
@@ -112,7 +112,7 @@ class Game():
                 isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == trumpCard.getSuit()
 
                 if isPlayer1Trump and isPlayer2Trump:
-                    self.self.battleStep()
+                    self.battleStep()
 
                 else:
                     if isPlayer1Trump:
@@ -153,7 +153,7 @@ class Game():
         """Handles pygame events and buttons"""
         for oPlayer in self.playerList:
 
-            # If your hand isn't full you can't battle
+            # If your hand isn't full you can't battle for now (TEST)
             if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
                 # But if the player clicks a card, for testing it can battle
                 self.trickButton.disable()
@@ -168,18 +168,45 @@ class Game():
             if self.drawCardButton.handleEvent(event):
                 self.drawCard(oPlayer) 
 
-            # Check player's gameplay options after a card click
+            # Gameplay options after a card is selected
             if oPlayer.handleEvent(event):
-                # Battle (trick) ability able
                 self.trickButton.enable()
+
+                if self.isCardSwappable(oPlayer):
+                    self.swapButton.enable()
+
+            # Gameplay options after a card is deselected
             else:
                 # Battle (trick) ability unavailable
                 self.trickButton.disable()
+                self.swapButton.disable()
+            
+            if self.swapButton.handleEvent(event):
+                print("Success!")
+                # Swap Card
             
             # Check for trick button
             if self.trickButton.handleEvent(event):
                 # Enter the battle
                 self.enterTrick(oPlayer)         
+
+    def isCardSwappable(self, oPlayer):
+        """
+        Function access the player's selected card and compares it with the trump card.
+        The method Returns a bool.
+        """
+        selectedCard = oPlayer.getSelectedObjCard()
+        if selectedCard.getSuit() == self.trumpCard.getSuit(): # Same String?
+            if selectedCard.getRankValue() == 7 and self.trumpCard.getRankValue() > 7:
+                return True
+            elif selectedCard.getRankValue() == 2 and self.trumpCard.getRankValue() <= 7: 
+                return True
+            else:
+                return False
+
+    def cardSwap(self):
+        """Action to swap cards."""
+        pass
 
     def draw(self):
         """Display cards to screen"""

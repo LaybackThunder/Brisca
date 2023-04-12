@@ -63,6 +63,11 @@ class Player():
         cardList = self.oHand.getCardsOnhand()
         return cardList
 
+    def getSelectedObjCard(self):
+        """This method tells us which card did the player select."""
+        selectedCard = self.oHand.getSelectedObjCard()
+        return selectedCard
+
     def drawCard(self, oCard=None):
         """
         Adds card to player's hand.

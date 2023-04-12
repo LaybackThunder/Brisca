@@ -12,7 +12,7 @@ from Game import *
 # 2 - Define constants
 WINDOW_WIDTH = 1100
 WINDOW_HEIGHT = 900
-FRAMES_PER_SECOND = 30
+FRAMES_PER_SECOND = 30 
 
 # Brisca Deck Constants
 SUIT_TUPLE = ('Swords', 'Coins', 'Cups', 'Clubs')

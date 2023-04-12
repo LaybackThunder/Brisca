@@ -70,6 +70,14 @@ class Hand():
         """Returns cards on hand."""
         return self.cardList
 
+    def getSelectedObjCard(self):
+        """This method tells us which card did the player select."""
+        if self.oCard is None:
+              print("Object is None Type.")
+        else:
+            selectedCard = self.oCard
+            return selectedCard
+
     def enterTrick(self):
         """Place card in the middle of the board."""
         # We pop card from hand, return card
