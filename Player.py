@@ -63,10 +63,17 @@ class Player():
         cardList = self.oHand.getCardsOnhand()
         return cardList
 
-    def getSelectedObjCard(self):
+    def getSelectedCardfromHand(self):
         """This method tells us which card did the player select."""
-        selectedCard = self.oHand.getSelectedObjCard()
+        selectedCard = self.oHand.getSelectedCardfromHand()
         return selectedCard
+    
+    def popCardFromHand(self):
+        oCard = self.oHand.popCardFromHand()
+        return oCard
+
+    def cardSwap(self, oCard):
+        self.oHand.cardSwap(oCard)
 
     def drawCard(self, oCard=None):
         """

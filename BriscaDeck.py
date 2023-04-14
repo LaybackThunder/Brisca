@@ -61,7 +61,7 @@ if __name__ == "__main__":
     WINDOW_WIDTH = 500
     WINDOW_HEIGHT = 500
 
-    SUIT_TUPLE = ('Swords', 'Coins', 'Cups', 'Clubs')
+    SUIT_TUPLE = ('Swords',)
     # Example: '2' is rank, value is list [pointsValue, trcikValue]
     BRISCA_DICT = {'2':[0, 2], '3':[0, 13], '4':[0, 4], '5':[0, 5],
                         '6':[0, 6], '7':[0, 7], 'Jack':[2, 10],
@@ -72,6 +72,6 @@ if __name__ == "__main__":
 
     oDeck = BriscaDeck(window, (0,0), SUIT_TUPLE, BRISCA_DICT)
 
-    for i in range(1, 41):
+    for i in range(1, 10):
         oCard = oDeck.drawCard()
         print(f"Name: {oCard.getName()}, Rank: {oCard.getRankValue()}, Rank Points: {oCard.getRankPoints()}")

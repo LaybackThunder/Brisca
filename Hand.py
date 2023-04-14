@@ -70,13 +70,48 @@ class Hand():
         """Returns cards on hand."""
         return self.cardList
 
-    def getSelectedObjCard(self):
+    def getSelectedCardfromHand(self):
         """This method tells us which card did the player select."""
         if self.oCard is None:
               print("Object is None Type.")
         else:
             selectedCard = self.oCard
             return selectedCard
+
+    def popCardFromHand(self):
+        """This method pops a card from the hand."""
+        if self.oCard is None:
+              print("Object is None Type.")
+        else:
+            oCardIndex = self.cardList.index(self.oCard)
+            selectedCard = self.cardList.pop(oCardIndex)
+            self._retriveId(selectedCard)
+            return selectedCard
+
+    def cardSwap(self, oCard):
+            HAND_LOCATION_DICT = Hand.HAND_LOCATION_DICT
+            # Set ID to car using ID card slots
+            iDCounter = 0
+            if self.iDCardSlots:
+                    iDCounter = self.iDCardSlots.pop(0)
+                    oCard.setCardId(iDCounter)
+            
+            # Add card to hand
+            # By defult oCard has an iD of 0
+            self.cardList.insert(oCard.getCardId(), oCard)
+
+            # Rotate card to 0 degrees
+            oCard.setRotation(90)
+
+            # Give card display coordinates based of card iD
+            self.cardList[oCard.getCardId()].setLoc(
+                     HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
+                     )
+
+            # After card is swapped, make all cards clickable
+            self.enableAllCards = True
+            self.oCardClicked = False # Not sure if needed
+            self.oCard = None # Not sure if needed
 
     def enterTrick(self):
         """Place card in the middle of the board."""
@@ -93,7 +128,7 @@ class Hand():
         return oTrickCard
 
     def _retriveId(self, oCard):
-        """Obtains the oTrickCard's iD and assigns it to self.iDCardSlots"""
+        """Obtains the oCard's iD and assigns it to self.iDCardSlots"""
         self.iDCardSlots.append(oCard.getCardId())
         self.iDCardSlots.sort() 
 

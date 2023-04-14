@@ -183,6 +183,7 @@ class Game():
             
             if self.swapButton.handleEvent(event):
                 print("Success!")
+                self.cardSwap(oPlayer)
                 # Swap Card
             
             # Check for trick button
@@ -195,7 +196,7 @@ class Game():
         Function access the player's selected card and compares it with the trump card.
         The method Returns a bool.
         """
-        selectedCard = oPlayer.getSelectedObjCard()
+        selectedCard = oPlayer.getSelectedCardfromHand()
         if selectedCard.getSuit() == self.trumpCard.getSuit(): # Same String?
             if selectedCard.getRankValue() == 7 and self.trumpCard.getRankValue() > 7:
                 return True
@@ -204,9 +205,14 @@ class Game():
             else:
                 return False
 
-    def cardSwap(self):
-        """Action to swap cards."""
-        pass
+    def cardSwap(self, oPlayer):
+        """Action to swap the trump card to for a hand card."""
+        theSwapCard = self.trumpCard
+        self.trumpCard = oPlayer.popCardFromHand()
+        self.trumpCard.setLoc(Game.TRUMP_LOC)
+        self.trumpCard.setRotation(-90)
+        oPlayer.cardSwap(theSwapCard)
+
 
     def draw(self):
         """Display cards to screen"""
