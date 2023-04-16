@@ -130,6 +130,11 @@ class Game():
             self.setPotList()
             print("End of Battle!")
 
+
+
+
+
+
     def setPotList(self):
         """Gives turnPlayer the spoils of war. As in the winning cards."""
         cardsAndOwners = []
@@ -149,14 +154,16 @@ class Game():
         oCard = self.oDeck.drawCard()
         oPlayer.drawCard(oCard)
 
+
     def handleEvent(self, event):
         """Handles pygame events and buttons"""
         for oPlayer in self.playerList:
 
             # If your hand isn't full you can't battle for now (TEST)
+            # Check if player can draw
             if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
                 # But if the player clicks a card, for testing it can battle
-                self.trickButton.disable()
+                # self.trickButton.disable() -----------------------
                 if self.trickList:
                     self.drawCardButton.disable()
                 else:
@@ -174,6 +181,9 @@ class Game():
 
                 if self.isCardSwappable(oPlayer):
                     self.swapButton.enable()
+                    
+                else:
+                    self.swapButton.disable()
 
             # Gameplay options after a card is deselected
             else:
@@ -182,13 +192,11 @@ class Game():
                 self.swapButton.disable()
             
             if self.swapButton.handleEvent(event):
-                print("Success!")
                 self.cardSwap(oPlayer)
-                # Swap Card
             
             # Check for trick button
             if self.trickButton.handleEvent(event):
-                # Enter the battle
+                # Enter the battle phase
                 self.enterTrick(oPlayer)         
 
     def isCardSwappable(self, oPlayer):
@@ -197,22 +205,29 @@ class Game():
         The method Returns a bool.
         """
         selectedCard = oPlayer.getSelectedCardfromHand()
-        if selectedCard.getSuit() == self.trumpCard.getSuit(): # Same String?
-            if selectedCard.getRankValue() == 7 and self.trumpCard.getRankValue() > 7:
-                return True
-            elif selectedCard.getRankValue() == 2 and self.trumpCard.getRankValue() <= 7: 
-                return True
-            else:
-                return False
+        if selectedCard is None:
+            print("NONE TYPE!")
+        else:
+            if selectedCard.getSuit() == self.trumpCard.getSuit(): # Same String?
+                if selectedCard.getRankValue() == 7 and self.trumpCard.getRankValue() > 7:
+                    return True
+                elif selectedCard.getRankValue() == 2 and self.trumpCard.getRankValue() <= 7: 
+                    return True
+                else:
+                    return False
 
     def cardSwap(self, oPlayer):
         """Action to swap the trump card to for a hand card."""
-        theSwapCard = self.trumpCard
-        self.trumpCard = oPlayer.popCardFromHand()
+        
+        theSwapToHandCard = self.trumpCard # Old trump
+        self.trumpCard = oPlayer.popCardFromHand() # New Trump
+        # print(type(self.trumpCard))
+        # New Trump attributres
         self.trumpCard.setLoc(Game.TRUMP_LOC)
         self.trumpCard.setRotation(-90)
-        oPlayer.cardSwap(theSwapCard)
 
+        # New card on hand
+        oPlayer.cardSwap(theSwapToHandCard)
 
     def draw(self):
         """Display cards to screen"""

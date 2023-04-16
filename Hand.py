@@ -77,7 +77,7 @@ class Hand():
         else:
             selectedCard = self.oCard
             return selectedCard
-
+        
     def popCardFromHand(self):
         """This method pops a card from the hand."""
         if self.oCard is None:
@@ -85,9 +85,12 @@ class Hand():
         else:
             oCardIndex = self.cardList.index(self.oCard)
             selectedCard = self.cardList.pop(oCardIndex)
+            # Card is not selected any more
+            selectedCard.seToCardClickedToFalse()
+            self.enableAllCards = True
             self._retriveId(selectedCard)
             return selectedCard
-
+        
     def cardSwap(self, oCard):
             HAND_LOCATION_DICT = Hand.HAND_LOCATION_DICT
             # Set ID to car using ID card slots
@@ -110,21 +113,18 @@ class Hand():
 
             # After card is swapped, make all cards clickable
             self.enableAllCards = True
-            self.oCardClicked = False # Not sure if needed
-            self.oCard = None # Not sure if needed
-
+            self.oCardClicked = False
+            self.oCard = None
+            
     def enterTrick(self):
         """Place card in the middle of the board."""
         # We pop card from hand, return card
         oCardIndex = self.cardList.index(self.oCard)
         oTrickCard = self.cardList.pop(oCardIndex)
+        self.oCard.seToCardClickedToFalse()
         self.enableAllCards = True
-        self.oCardClicked = False # Not sure if needed
-        self.oCard = None # Not sure if needed
-
         # Snapshot the slot the card was in
         self._retriveId(oTrickCard)
-        
         return oTrickCard
 
     def _retriveId(self, oCard):
@@ -150,7 +150,6 @@ class Hand():
         # Check if the clicked card has be declicked         
         else:
             if self.oCard.handleEvent(event):
-                        # Error may be that pygame is detecting one click as two clicks after trick finishes running.
                         self.oCardClicked = self.oCard.getOcardClicked()
                         self.enableAllCards = True
                         self.oCard = None

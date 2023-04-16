@@ -10,7 +10,6 @@ class Card(ABC):
     def __init__(self, window, cardName=None):
         self.window = window
         self.cardName = cardName
-        print(self.cardName)
         fileName = "test_images/" + self.cardName + ".jpg"
         self.images = pygwidgets.ImageCollection(window, (0, 0),
                                                 {'front': fileName,
@@ -23,6 +22,9 @@ class Card(ABC):
 
     def getOcardClicked(self):
         return self.oCardClicked
+    
+    def seToCardClickedToFalse(self):
+         self.oCardClicked = False
     
     def setCardId(self, iD):
         """Card remembers a number to recognize its place in the hand."""
