@@ -190,8 +190,6 @@ class Game():
             if self.trickButton.handleEvent(event):
                 self.enterTrick(oPlayer)
                 
-
-
     def isCardSwappable(self, oPlayer):
         """
         Function access the player's selected card and compares it with the trump card.

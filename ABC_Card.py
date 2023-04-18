@@ -68,7 +68,7 @@ class Card(ABC):
     def deSelectCard(self):
             self.images.moveY(25) # Return to original position
 
-    def seCardClickedToFalse(self):
+    def setCardClickedToFalse(self):
          self.oCardClicked = False
 
     def handleEvent(self, event):
