@@ -23,9 +23,6 @@ class Card(ABC):
     def getOcardClicked(self):
         return self.oCardClicked
     
-    def seToCardClickedToFalse(self):
-         self.oCardClicked = False
-    
     def setCardId(self, iD):
         """Card remembers a number to recognize its place in the hand."""
         self.cardId = iD
@@ -70,6 +67,9 @@ class Card(ABC):
     
     def deSelectCard(self):
             self.images.moveY(25) # Return to original position
+
+    def seToCardClickedToFalse(self):
+         self.oCardClicked = False
 
     def handleEvent(self, event):
         """Returns a bool if card is clicked and moves upwards if the card was clicked."""

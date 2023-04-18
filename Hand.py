@@ -121,7 +121,8 @@ class Hand():
         # We pop card from hand, return card
         oCardIndex = self.cardList.index(self.oCard)
         oTrickCard = self.cardList.pop(oCardIndex)
-        self.oCard.seToCardClickedToFalse()
+        # self.oCard.seToCardClickedToFalse()
+        self.oCardClicked = False
         self.enableAllCards = True
         # Snapshot the slot the card was in
         self._retriveId(oTrickCard)

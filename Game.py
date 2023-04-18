@@ -107,7 +107,7 @@ class Game():
             # No one has a trump card, the 1st card on the board leads as trump
             else:
                 trumpCard = self.trickList[0]['oCard']
-                # Compare player's trump cards to the main trump card
+                # Compare player's leading trump cards to the main trump card
                 isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == trumpCard.getSuit()
                 isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == trumpCard.getSuit()
 
@@ -130,11 +130,6 @@ class Game():
             self.setPotList()
             print("End of Battle!")
 
-
-
-
-
-
     def setPotList(self):
         """Gives turnPlayer the spoils of war. As in the winning cards."""
         cardsAndOwners = []
@@ -154,7 +149,6 @@ class Game():
         oCard = self.oDeck.drawCard()
         oPlayer.drawCard(oCard)
 
-
     def handleEvent(self, event):
         """Handles pygame events and buttons"""
         for oPlayer in self.playerList:
@@ -163,7 +157,6 @@ class Game():
             # Check if player can draw
             if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
                 # But if the player clicks a card, for testing it can battle
-                # self.trickButton.disable() -----------------------
                 if self.trickList:
                     self.drawCardButton.disable()
                 else:
@@ -181,7 +174,6 @@ class Game():
 
                 if self.isCardSwappable(oPlayer):
                     self.swapButton.enable()
-                    
                 else:
                     self.swapButton.disable()
 
@@ -196,8 +188,9 @@ class Game():
             
             # Check for trick button
             if self.trickButton.handleEvent(event):
-                # Enter the battle phase
-                self.enterTrick(oPlayer)         
+                self.enterTrick(oPlayer)
+                
+
 
     def isCardSwappable(self, oPlayer):
         """
