@@ -1,5 +1,4 @@
 import pygwidgets
-import random
 from BriscaDeck import *
 
 class Game():
