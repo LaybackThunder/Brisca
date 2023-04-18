@@ -86,7 +86,7 @@ class Hand():
             oCardIndex = self.cardList.index(self.oCard)
             selectedCard = self.cardList.pop(oCardIndex)
             # Card is not selected any more
-            selectedCard.seToCardClickedToFalse()
+            selectedCard.setCardClickedToFalse()
             self.enableAllCards = True
             self._retriveId(selectedCard)
             return selectedCard
@@ -117,13 +117,13 @@ class Hand():
             self.oCard = None
             
     def enterTrick(self):
-        """Place card in the middle of the board."""
+        """Place card in the middle of the board and wait to battle."""
         # We pop card from hand, return card
         oCardIndex = self.cardList.index(self.oCard)
         oTrickCard = self.cardList.pop(oCardIndex)
-        # self.oCard.seToCardClickedToFalse()
-        self.oCardClicked = False
         self.enableAllCards = True
+        self.oCard = None
+        self.oCardClicked = False
         # Snapshot the slot the card was in
         self._retriveId(oTrickCard)
         return oTrickCard
