@@ -35,32 +35,29 @@ class Hand():
         Adds card to player's hand.
         If none; return no card error.
         """
-        if oCard == None:
-            print("No card was added.")
+        HAND_LOCATION_DICT = Hand.HAND_LOCATION_DICT
+        # Reveal card to Player
+        oCard.reveal() 
+
+        # Set ID to car using ID card slots
+        iDCounter = 0
+        if self.iDCardSlots:
+                iDCounter = self.iDCardSlots.pop(0)
+                oCard.setCardId(iDCounter)    
         else:
-            HAND_LOCATION_DICT = Hand.HAND_LOCATION_DICT
-            # Reveal card to Player
-            oCard.reveal() 
-
-            # Set ID to car using ID card slots
-            iDCounter = 0
-            if self.iDCardSlots:
-                    iDCounter = self.iDCardSlots.pop(0)
-                    oCard.setCardId(iDCounter)    
-            else:
-                # The initial way to setting cards up with an ID
-                for i in range(len(self.cardList)): # If for loop is empty it won't loop
-                    iDCounter += 1
-                    oCard.setCardId(iDCounter) 
+            # The initial way to setting cards up with an ID
+            for i in range(len(self.cardList)): # If for loop is empty it won't loop
+                iDCounter += 1
+                oCard.setCardId(iDCounter) 
             
-            # Add card to hand
-            # By defult oCard has an iD of 0
-            self.cardList.insert(oCard.getCardId(), oCard)
+        # Add card to hand
+        # By defult oCard has an iD of 0
+        self.cardList.insert(oCard.getCardId(), oCard)
 
-            # Give card display coordinates based of card iD
-            self.cardList[oCard.getCardId()].setLoc(
-                     HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
-                     )
+        # Give card display coordinates based of card iD
+        self.cardList[oCard.getCardId()].setLoc(
+                    HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
+                    )
 
     def getLengthCardsOnHand(self):
         """Returns the total number of cards on hand."""

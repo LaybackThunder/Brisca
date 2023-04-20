@@ -77,7 +77,7 @@ class Player(ABC):
     def cardSwap(self, oCard):
         self.oHand.cardSwap(oCard)
 
-    def drawCard(self, oCard=None):
+    def drawCard(self, oCard):
         """
         Adds card to player's hand.
         If none; return no card error.

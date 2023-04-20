@@ -81,29 +81,52 @@ class Game():
         # Enter battle phase
         if len(self.trickList) == 2:
 
-            # Compare player's trump cards to the main trump card
-            isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == self.trumpCard.getSuit()
-            isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == self.trumpCard.getSuit()
-            print("Battle!\n")
+            if self.trumpCard != None:
 
-            # A player has a trump card
-            if isPlayer1Trump and isPlayer2Trump: 
-                self.battleStep()
+                # Compare player's trump cards to the main trump card
+                isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == self.trumpCard.getSuit()
+                isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == self.trumpCard.getSuit()
+                print("Battle!\n")
+
+                # Both players have a trump card
+                if isPlayer1Trump and isPlayer2Trump: 
+                    self.battleStep()
+             
+                # A player has a trump card
+                elif isPlayer1Trump or isPlayer2Trump:   
+                    if isPlayer1Trump:
+                        print("-------You WIN!\n")
+                        self.trickList[0]['oPlayer'].setTurnPlayerTrue() # Player 1 is turn player
+                        self.trickList[1]['oPlayer'].setTurnPlayerFalse()
+                        self.playerList = [self.trickList[0]['oPlayer']] # Test 
+                    else:
+                        print("-------You LOSE!")
+                        self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
+                        self.trickList[0]['oPlayer'].setTurnPlayerFalse()
+                        self.playerList = [self.trickList[1]['oPlayer']] # Test 
             
-            # Both players have a trump card 
-            elif isPlayer1Trump or isPlayer2Trump:   
-                if isPlayer1Trump:
-                    print("-------You WIN!\n")
-                    self.trickList[0]['oPlayer'].setTurnPlayerTrue() # Player 1 is turn player
-                    self.trickList[1]['oPlayer'].setTurnPlayerFalse()
-                    self.playerList = [self.trickList[0]['oPlayer']] # Test 
+                # No one has a trump card, the 1st card on the board leads as trump
                 else:
-                    print("-------You LOSE!")
-                    self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
-                    self.trickList[0]['oPlayer'].setTurnPlayerFalse()
-                    self.playerList = [self.trickList[1]['oPlayer']] # Test 
-            
-            # No one has a trump card, the 1st card on the board leads as trump
+                    trumpCard = self.trickList[0]['oCard']
+                    # Compare player's leading trump cards to the main trump card
+                    isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == trumpCard.getSuit()
+                    isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == trumpCard.getSuit()
+
+                    if isPlayer1Trump and isPlayer2Trump:
+                        self.battleStep()
+
+                    else:
+                        if isPlayer1Trump:
+                            print("-------You WIN!\n")
+                            self.trickList[0]['oPlayer'].setTurnPlayerTrue() # Player 1 is turn player
+                            self.trickList[1]['oPlayer'].setTurnPlayerFalse()
+                            self.playerList = [self.trickList[0]['oPlayer']] # Test 
+                        else:
+                            print("-------You LOSE!")
+                            self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
+                            self.trickList[0]['oPlayer'].setTurnPlayerFalse()
+                            self.playerList = [self.trickList[1]['oPlayer']] # Test
+
             else:
                 trumpCard = self.trickList[0]['oCard']
                 # Compare player's leading trump cards to the main trump card
@@ -124,7 +147,7 @@ class Game():
                         self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
                         self.trickList[0]['oPlayer'].setTurnPlayerFalse()
                         self.playerList = [self.trickList[1]['oPlayer']] # Test
-                    
+
             # Transfer trickCards to winner's potCards
             self.setPotList()
             print("End of Battle!")
@@ -146,8 +169,15 @@ class Game():
     def drawCard(self, oPlayer):
         """Player draws a card."""
         oCard = self.oDeck.drawCard()
-        oPlayer.drawCard(oCard)
+        
+        if oCard == None:
+            oCard = self.trumpCard
+            self.trumpCard = None
+            oPlayer.drawCard(oCard)
 
+        else:
+            oPlayer.drawCard(oCard)
+            
     def handleEvent(self, event):
         """Handles pygame events and buttons"""
         for oPlayer in self.playerList:
@@ -195,16 +225,16 @@ class Game():
         The method Returns a bool.
         """
         selectedCard = oPlayer.getSelectedCardfromHand()
-        if selectedCard is None:
-            print("NONE TYPE!")
-        else:
-            if selectedCard.getSuit() == self.trumpCard.getSuit(): # Same String?
-                if selectedCard.getRankValue() == 7 and self.trumpCard.getRankValue() > 7:
-                    return True
-                elif selectedCard.getRankValue() == 2 and self.trumpCard.getRankValue() <= 7: 
-                    return True
-                else:
-                    return False
+        if self.trumpCard == None:
+            return False
+
+        elif selectedCard.getSuit() == self.trumpCard.getSuit(): # Same String?
+            if selectedCard.getRankValue() == 7 and self.trumpCard.getRankValue() > 7:
+                return True
+            elif selectedCard.getRankValue() == 2 and self.trumpCard.getRankValue() <= 7: 
+                return True
+            else:
+                return False
 
     def cardSwap(self, oPlayer):
         """Action to swap the trump card to for a hand card."""
@@ -227,7 +257,9 @@ class Game():
         self.drawCardButton.draw()
 
         # Game elements
-        if self.trumpCard:
+        if self.trumpCard == None:
+            pass
+        else:
             self.trumpCard.draw()
         
         if self.trickList: 
@@ -240,3 +272,9 @@ class Game():
 
         # for ghostCard in self.ghostHandList:
             # ghostCard.draw()
+
+
+"""
+Draw the trump card when all cards have been drawn from the deck.
+LEFT OFF!
+"""

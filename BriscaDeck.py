@@ -34,15 +34,15 @@ class BriscaDeck(Deck):
 
     def drawCard(self):
         """ Card is drawn from the deck: 
-            Returns an obj Card or False (no more cards).
+            Returns an obj Card or None if there are no more cards.
         """
         # Checks to see if there are any cards
         if len(self.playingDeckList) == 0:
-            print('Ha! No more cards, go and get a life!')
-            return False
+            return None
         # Returns one card from the top of the deck
-        oCard = self.playingDeckList.pop()
-        return oCard
+        else:
+            oCard = self.playingDeckList.pop()
+            return oCard
     
     def addCardToDeck(self, oCard, loc):
         """conceal oCard and Put it back into the deck"""
