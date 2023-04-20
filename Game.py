@@ -183,13 +183,17 @@ class Game():
         for oPlayer in self.playerList:
 
             # If your hand isn't full you can't battle for now (TEST)
-            # Check if player can draw
+            # Check if player can draw. But if the player clicks a card, for testing it can battle
             if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
-                # But if the player clicks a card, for testing it can battle
                 if self.trickList:
                     self.drawCardButton.disable()
-                else:
+
+                elif self.oDeck.isThereADeck() or self.trumpCard: 
                     self.drawCardButton.enable() 
+                
+                else: # After no cards left to draw draw button is disabled regardless of hand size
+                    self.drawCardButton.disable()
+
             else:
                 self.drawCardButton.disable()
 

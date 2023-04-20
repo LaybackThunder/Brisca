@@ -22,6 +22,13 @@ class BriscaDeck(Deck):
         # Deck's location on the display is added
         for oCard in self.playingDeckList:
             oCard.setLoc(loc)
+    
+    def isThereADeck(self):
+        """Returns bool after identifying if there is a deck or not."""
+        if len(self.playingDeckList) > 0:
+            return True
+        else:
+            return False 
 
     def shuffle(self):
         # Copy the starting deck and save it in the playing deck list
