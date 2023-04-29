@@ -5,12 +5,12 @@ from abc import ABC
 # Card is now an abstract base class
 class Card(ABC):
 
-    BACK_OF_CARD_IMAGE = pygame.image.load('test_images/back-side.jpg')
+    BACK_OF_CARD_IMAGE = pygame.image.load('images/back-side.jpg')
     
     def __init__(self, window, cardName=None):
         self.window = window
         self.cardName = cardName
-        fileName = "test_images/" + self.cardName + ".jpg"
+        fileName = "images/" + self.cardName + ".jpg"
         self.images = pygwidgets.ImageCollection(window, (0, 0),
                                                 {'front': fileName,
                                                 'back': Card.BACK_OF_CARD_IMAGE}, 'back')

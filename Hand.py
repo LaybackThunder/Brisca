@@ -28,7 +28,12 @@ class Hand():
 
     def getHandEnableAllCardsBool(self):
          """After a trick, all cards should be clickable."""
-         print(f"Enable all cards is: {self.enableAllCards}.")
+         #print(f"Enable all cards is: {self.enableAllCards}.")
+         return self.enableAllCards
+
+    def getCardClick(self):
+        """Returns a bool of card's click status."""
+        return self.oCardClicked
 
     def drawCard(self, oCard):
         """
@@ -129,7 +134,7 @@ class Hand():
         """Obtains the oCard's iD and assigns it to self.iDCardSlots"""
         self.iDCardSlots.append(oCard.getCardId())
         self.iDCardSlots.sort() 
-
+    
     # Polymorphism section 
     def handleEvent(self, event):
         """
@@ -145,7 +150,11 @@ class Hand():
                             self.oCardClicked = self.oCard.getOcardClicked() # Assign click (True)
                             self.enableAllCards = False
                             return self.oCardClicked # Return value and exit method
-        # Check if the clicked card has be declicked         
+        # Check if the clicked card has be declicked  
+
+        elif self.oCard == None: # oCard is none at the begining of the code's run.
+             pass
+
         else:
             if self.oCard.handleEvent(event):
                         self.oCardClicked = self.oCard.getOcardClicked()

@@ -47,7 +47,8 @@ class Player(ABC):
         self.oHand.enableAllHandCards()
 
     def getHandEnableAllCardsBool(self):
-        self.oHand.getHandEnableAllCardsBool()
+        """Returns bool."""
+        return self.oHand.getHandEnableAllCardsBool()
         
     def enterTrick(self):
         """Place card in the middle of the board."""
@@ -70,6 +71,11 @@ class Player(ABC):
         selectedCard = self.oHand.getSelectedCardfromHand()
         return selectedCard
     
+    def getCardClick(self):
+        """Returns a bool of card's click status."""
+        oCardClick = self.oHand.getCardClick()
+        return oCardClick
+
     def popCardFromHand(self):
         oCard = self.oHand.popCardFromHand()
         return oCard

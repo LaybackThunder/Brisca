@@ -7,9 +7,9 @@ class Game():
     DECK_LOC = (860, 360)
     TRUMP_LOC = (750, 360)
 
-    GHOST_HAND_Y_LOCATION = 650
-    GHOST_HAND_LOC_LIST = [(300, GHOST_HAND_Y_LOCATION), (500, GHOST_HAND_Y_LOCATION)]
-    GHOST_OBJ_Card = None # ----> Ghost player on hold; code later
+    #GHOST_HAND_Y_LOCATION = 650
+    #GHOST_HAND_LOC_LIST = [(300, GHOST_HAND_Y_LOCATION), (500, GHOST_HAND_Y_LOCATION)]
+    #GHOST_OBJ_Card = None # ----> Ghost player on hold; code later
 
     TRICK_CARDS_LOC_Y = 360
     TRICK_LOCATION_LIST = [(250, TRICK_CARDS_LOC_Y), (500, TRICK_CARDS_LOC_Y)]
@@ -27,7 +27,7 @@ class Game():
 
         self.trickList = [] # Where cards battle
         self.dealerPot = [] # When there is a tie, the dealer holds cards
-        self.ghostHandList = [] # Holds cards for ghost player
+        # self.ghostHandList = [] # Holds cards for ghost player
 
         self.drawCardButton = pygwidgets.TextButton(window, (140, 840),
                                     'Draw', width=100, height=45)
@@ -65,6 +65,25 @@ class Game():
         else: # If players end in a tie: cards return to deck
             print("-------TIE/n")
             tie = True
+
+    def _clickOnCard(self, oPlayer, event):
+        """When a card gets clicked it does stuff"""
+
+        # Gameplay options after a card is selected
+        if oPlayer.handleEvent(event):   
+                         
+            self.trickButton.enable()
+
+            if self.isCardSwappable(oPlayer):
+                    self.swapButton.enable()
+            else:
+                self.swapButton.disable()
+
+        # Gameplay options after a card is deselected
+        else:
+            # Battle (trick) ability unavailable
+            self.trickButton.disable()
+            self.swapButton.disable()
 
     # Polymorphism section 
     def enterTrick(self, oPlayer) :
@@ -177,52 +196,50 @@ class Game():
 
         else:
             oPlayer.drawCard(oCard)
-            
+
     def handleEvent(self, event):
         """Handles pygame events and buttons"""
         for oPlayer in self.playerList:
-
-            # If your hand isn't full you can't battle for now (TEST)
             # Check if player can draw. But if the player clicks a card, for testing it can battle
             if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
-                if self.trickList:
+
+                if self.trickList: # As long as one card is in the battle phase draw is disabled
                     self.drawCardButton.disable()
 
-                elif self.oDeck.isThereADeck() or self.trumpCard: 
-                    self.drawCardButton.enable() 
+                elif self.trumpCard != None: # As long as there is a trump card drawing is possible
+                    self.drawCardButton.enable()
+                    oPlayer.disableAllHandCards()
                 
-                else: # After no cards left to draw draw button is disabled regardless of hand size
+                else: # After no cards left to draw, the draw button is disabled regardless of hand size
                     self.drawCardButton.disable()
+                    oPlayer.enableAllHandCards()
 
-            else:
-                self.drawCardButton.disable()
+                    # card is selected ; disable all hand cards
+                    oCardClick = oPlayer.getCardClick()    
+                    if oCardClick: 
+                        oPlayer.disableAllHandCards()
 
+            else: # After HAND_LIMIT is reached draw button is disabled
+                self.drawCardButton.disable() 
+            
+            # Gameplay options after a card is selected or deselected
+            self._clickOnCard(oPlayer, event)
+            
             # Draw button enabled for testing when game starts
             if self.drawCardButton.handleEvent(event):
                 self.drawCard(oPlayer) 
 
-            # Gameplay options after a card is selected
-            if oPlayer.handleEvent(event):
-                self.trickButton.enable()
+                if oPlayer.getLengthCardsOnHand() == Game.HAND_LIMIT:
+                    oPlayer.enableAllHandCards()
 
-                if self.isCardSwappable(oPlayer):
-                    self.swapButton.enable()
-                else:
-                    self.swapButton.disable()
-
-            # Gameplay options after a card is deselected
-            else:
-                # Battle (trick) ability unavailable
-                self.trickButton.disable()
-                self.swapButton.disable()
-            
+            # Check for swap button
             if self.swapButton.handleEvent(event):
                 self.cardSwap(oPlayer)
             
             # Check for trick button
             if self.trickButton.handleEvent(event):
                 self.enterTrick(oPlayer)
-                
+
     def isCardSwappable(self, oPlayer):
         """
         Function access the player's selected card and compares it with the trump card.
@@ -279,6 +296,6 @@ class Game():
 
 
 """
-Draw the trump card when all cards have been drawn from the deck.
+If there are crads to draw, the cards in hand are disabled 
 LEFT OFF!
 """

@@ -14,12 +14,13 @@ WINDOW_WIDTH = 1100
 WINDOW_HEIGHT = 900
 FRAMES_PER_SECOND = 30 
 
+# 'Coins', 'Cups', 'Clubs'
+
 # Brisca Deck Constants
-# , 'Coins', 'Cups', 'Clubs'
-# '6':[6, 0], '7':[7, 0], 'Jack':[10, 2], 'Knight':[11, 3], 'King':[12, 10], 'Ace':[14, 11]
 SUIT_TUPLE = ('Swords',)
 # Deck example: '2' is rank, value is list [rankValue, rankPoints] of rank
-BRISCA_DICT = {'2':[2, 0], '3':[13, 10], '4':[4, 0], '5':[5, 0],}
+BRISCA_DICT = {'2':[2, 0], '3':[13, 10], '4':[4, 0], '5':[5, 0], '6':[6, 0], '7':[7, 0]} 
+               #, 'Jack':[10, 2], 'Knight':[11, 3], 'King':[12, 10], 'Ace':[14, 11]}
 
 # 3 - Initialize the world
 pygame.init()
@@ -28,7 +29,7 @@ window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # 4 - Load assets: image(s), sounds,  etc.
 background = pygwidgets.Image(window, (0, 0),
-                                'test_images/background.jpg')
+                                'images/background.jpg')
 
 newGameButton = pygwidgets.TextButton(window, (880, 840),
                                     'New Game', width=100, height=45)
