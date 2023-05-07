@@ -150,11 +150,8 @@ class Hand():
                             self.oCardClicked = self.oCard.getOcardClicked() # Assign click (True)
                             self.enableAllCards = False
                             return self.oCardClicked # Return value and exit method
-        # Check if the clicked card has be declicked  
-
         elif self.oCard == None: # oCard is none at the begining of the code's run.
              pass
-
         else:
             if self.oCard.handleEvent(event):
                         self.oCardClicked = self.oCard.getOcardClicked()

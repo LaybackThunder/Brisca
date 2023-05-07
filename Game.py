@@ -188,13 +188,14 @@ class Game():
         if oCard == None:
             oCard = self.trumpCard
             self.trumpCard = None
+            oCard.setRotation(90)
             oPlayer.drawCard(oCard)
 
         else:
             oPlayer.drawCard(oCard)
 
     def handleEvent(self, event):
-        """Handles pygame events and buttons"""
+        """Handles mouse and keyboard events."""
         for oPlayer in self.playerList:
             # Checks conditions to allow player to draw.
             if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
