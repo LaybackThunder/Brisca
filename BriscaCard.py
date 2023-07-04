@@ -12,6 +12,8 @@ class BriscaCard(Card):
         briscaCardName = rank + " of " + suit
         super().__init__(window, cardName=briscaCardName)
     
+    # Polymorphism section 
+    
     def getSuit(self):
         return self.suit
     

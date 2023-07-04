@@ -84,10 +84,7 @@ class Player(ABC):
         self.oHand.cardSwap(oCard)
 
     def drawCard(self, oCard):
-        """
-        Adds card to player's hand.
-        If none; return no card error.
-        """
+        """Adds card to player's hand. If none; return no card error."""
         self.oHand.drawCard(oCard)
 
     def handleEvent(self, event):

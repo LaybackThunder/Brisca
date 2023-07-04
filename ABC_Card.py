@@ -2,12 +2,13 @@ import pygame
 import pygwidgets
 from abc import ABC
 
-# Card is now an abstract base class
+# Card is an abstract base class design for a generic playing card.
 class Card(ABC):
 
     BACK_OF_CARD_IMAGE = pygame.image.load('images/back-side.jpg')
     
     def __init__(self, window, cardName=None):
+        """Initialize playing card attributes and passing it window properties."""
         self.window = window
         self.cardName = cardName
         fileName = "images/" + self.cardName + ".jpg"
@@ -59,13 +60,15 @@ class Card(ABC):
         self.images.replace('front')
 
     def draw(self):
-        """Display Image on screen."""
+        """Display image on screen."""
         self.images.draw()
 
     def cardSelected(self):
+            """Card moves up 25 pixels."""
             self.images.moveY(-25) # Move card 25 pixels up the screen to id selcted card
     
     def deSelectCard(self):
+            """Card moves down 25 pixels."""
             self.images.moveY(25) # Return to original position
 
     def setCardClickedToFalse(self):

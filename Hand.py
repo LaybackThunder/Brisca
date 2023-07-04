@@ -28,21 +28,28 @@ class Hand():
 
     def getHandEnableAllCardsBool(self):
          """After a trick, all cards should be clickable."""
-         #print(f"Enable all cards is: {self.enableAllCards}.")
          return self.enableAllCards
 
     def getCardClick(self):
         """Returns a bool of card's click status."""
         return self.oCardClicked
 
+
+
+
+
+
+
+
+
+
+
+
+
     def drawCard(self, oCard):
-        """
-        Adds card to player's hand.
-        If none; return no card error.
-        """
-        HAND_LOCATION_DICT = Hand.HAND_LOCATION_DICT
-        # Reveal card to Player
-        oCard.reveal() 
+        """Adds card to player's hand. If none; return no card error."""
+        
+        oCard.reveal() # Reveal card to Player
 
         # Set ID to car using ID card slots
         iDCounter = 0
@@ -61,8 +68,20 @@ class Hand():
 
         # Give card display coordinates based of card iD
         self.cardList[oCard.getCardId()].setLoc(
-                    HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
+                    Hand.HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
                     )
+
+
+
+
+
+
+
+
+
+
+
+
 
     def getLengthCardsOnHand(self):
         """Returns the total number of cards on hand."""
@@ -126,7 +145,7 @@ class Hand():
         self.enableAllCards = True
         self.oCard = None
         self.oCardClicked = False
-        # Snapshot the slot the card was in
+        # Snapshot the slot the card was in to add new card in that slot
         self._retriveId(oTrickCard)
         return oTrickCard
 
