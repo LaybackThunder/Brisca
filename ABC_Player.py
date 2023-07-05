@@ -85,7 +85,7 @@ class Player(ABC):
 
     def drawCard(self, oCard):
         """Adds card to player's hand. If none; return no card error."""
-        self.oHand.drawCard(oCard)
+        self.oHand._drawCard(oCard)
 
     def handleEvent(self, event):
         """Returns a bool if any card on hand was clicked."""

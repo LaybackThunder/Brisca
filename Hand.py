@@ -15,7 +15,7 @@ class Hand():
     def __init__(self, window):
         self.window = window
         self.cardList = [] # Holds all the cards on hand
-        self.iDCardSlots = [] # Remembers where cards are on hand
+        self.iDCardSlots = [] # Remembers where cards are on hand; holds location ids
         self.oCard = None
         self.enableAllCards = True
         self.oCardClicked = False
@@ -34,54 +34,48 @@ class Hand():
         """Returns a bool of card's click status."""
         return self.oCardClicked
 
-
-
-
-
-
-
-
-
-
-
-
-
-    def drawCard(self, oCard):
-        """Adds card to player's hand. If none; return no card error."""
+    def setCardId(self, oCard):
+        """
+        Set card's id and add it to self.iDCardSlots; 
+        holds location of cards id.  
+        """
         
-        oCard.reveal() # Reveal card to Player
-
-        # Set ID to car using ID card slots
         iDCounter = 0
-        if self.iDCardSlots:
-                iDCounter = self.iDCardSlots.pop(0)
-                oCard.setCardId(iDCounter)    
-        else:
-            # The initial way to setting cards up with an ID
-            for i in range(len(self.cardList)): # If for loop is empty it won't loop
-                iDCounter += 1
-                oCard.setCardId(iDCounter) 
-            
-        # Add card to hand
-        # By defult oCard has an iD of 0
-        self.cardList.insert(oCard.getCardId(), oCard)
+        try:
+            # Initially both conditions will be false;
 
+            # no cards on hand = no ids currently identified
+            if self.iDCardSlots:
+                    iDCounter = self.iDCardSlots.pop(0)
+                    oCard.setCardId(iDCounter)    
+
+            elif self.cardList:
+                # The initial way to setting the first card of the game with an ID
+                for i in range(len(self.cardList)): # If for loop is empty it won't loop
+                    iDCounter += 1
+                    oCard.setCardId(iDCounter)
+        except:
+             print(f"Check your lists and local variables for errors: \n\
+                    iDCounter\n {iDCounter}\n\
+                    iDcardSlots\n {self.iDCardSlots}\n\
+                    cardList\n {self.cardList}\n")
+             
+    def addCardToHand(self, oCard):
+         self.cardList.insert(oCard.getCardId(), oCard)
+
+    def setHandCorrdinatesForDisplay(self, oCard):
         # Give card display coordinates based of card iD
         self.cardList[oCard.getCardId()].setLoc(
                     Hand.HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
                     )
 
-
-
-
-
-
-
-
-
-
-
-
+    def _drawCard(self, oCard):
+        """Adds card to player's hand. If none; return no card error."""
+        
+        oCard.reveal() # Reveal card to Player
+        self.setCardId(oCard) # Give card an id; by defult oCard has an iD of 0
+        self.addCardToHand(oCard) # Player has a card in hand via a list
+        self.setHandCorrdinatesForDisplay(oCard) # Give card display coordinates based of card iD
 
     def getLengthCardsOnHand(self):
         """Returns the total number of cards on hand."""
