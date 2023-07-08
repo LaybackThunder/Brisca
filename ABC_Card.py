@@ -24,9 +24,9 @@ class Card(ABC):
     def getOcardClicked(self):
         return self.oCardClicked
     
-    def setCardId(self, iD):
+    def setCardId(self, iDCounter):
         """Card remembers a number to recognize its place in the hand."""
-        self.cardId = iD
+        self.cardId = iDCounter
 
     def setLoc(self, loc):
         self.images.setLoc(loc)

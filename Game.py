@@ -205,16 +205,16 @@ class Game():
 
                 elif self.trumpCard != None: # As long as there is a trump card drawing is possible
                     self.drawCardButton.enable()
-                    oPlayer.disableAllHandCards()
+                    oPlayer.disableAllCardsOnHand()
                 
                 else: # After no cards left to draw, the draw button is disabled regardless of hand size
                     self.drawCardButton.disable()
-                    oPlayer.enableAllHandCards()
+                    oPlayer.enableAllCardsOnHand()
 
                     # card is selected ; disable all hand cards
                     oCardClick = oPlayer.getCardClick()    
                     if oCardClick: 
-                        oPlayer.disableAllHandCards()
+                        oPlayer.disableAllCardsOnHand()
             else: # After HAND_LIMIT is reached draw button is disabled
                 self.drawCardButton.disable() 
             
@@ -225,7 +225,7 @@ class Game():
             if self.drawCardButton.handleEvent(event):
                 self.drawCard(oPlayer) 
                 if oPlayer.getLengthCardsOnHand() == Game.HAND_LIMIT:
-                    oPlayer.enableAllHandCards()
+                    oPlayer.enableAllCardsOnHand()
 
             # Check for swap button
             if self.swapButton.handleEvent(event):

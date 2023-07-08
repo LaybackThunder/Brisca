@@ -40,15 +40,11 @@ class Player(ABC):
 
     # Polymorphism section
 
-    def disableAllHandCards(self):
-        self.oHand.disableAllHandCards()
+    def disableAllCardsOnHand(self):
+        self.oHand.disableAllCardsOnHand()
     
-    def enableAllHandCards(self):
-        self.oHand.enableAllHandCards()
-
-    def getHandEnableAllCardsBool(self):
-        """Returns bool."""
-        return self.oHand.getHandEnableAllCardsBool()
+    def enableAllCardsOnHand(self):
+        self.oHand.enableAllCardsOnHand()
         
     def enterTrick(self):
         """Place card in the middle of the board."""

@@ -1,12 +1,13 @@
 
 
 class Hand():
+
     # slot 0 is left side of hand. 
     # slot 1 is middle side of hand.
     # slot 2 is right side of hand.
     HAND_Y_LOC = 650
     HAND_LOCATION_DICT = {
-         # "HAND_SLOT_EXAMPLE":[card identifier in the hand, (CARD LOCATION ON SCREEN)]
+         # HAND_SLOT_EXAMPLE:[card identifier in the hand, (CARD LOCATION ON SCREEN)]
          "HAND_SLOT0": (300, HAND_Y_LOC), 
          "HAND_SLOT1": (500, HAND_Y_LOC), 
          "HAND_SLOT2": (700, HAND_Y_LOC)
@@ -17,18 +18,18 @@ class Hand():
         self.cardList = [] # Holds all the cards on hand
         self.iDCardSlots = [] # Remembers where cards are on hand; holds location ids
         self.oCard = None
-        self.enableAllCards = True
+        self.clickableHand = True
         self.oCardClicked = False
 
-    def disableAllHandCards(self):
-         self.enableAllCards = False
+    def disableAllCardsOnHand(self):
+        """Disables all cards on hand to avoid being click able.""" 
+         
+        self.clickableHand = False
     
-    def enableAllHandCards(self):
-         self.enableAllCards = True
+    def enableAllCardsOnHand(self):
+        """Enables all cards on hand to be click able.""" 
 
-    def getHandEnableAllCardsBool(self):
-         """After a trick, all cards should be clickable."""
-         return self.enableAllCards
+        self.clickableHand = True
 
     def getCardClick(self):
         """Returns a bool of card's click status."""
@@ -56,9 +57,9 @@ class Hand():
                     oCard.setCardId(iDCounter)
         except:
              print(f"Check your lists and local variables for errors: \n\
-                    iDCounter\n {iDCounter}\n\
-                    iDcardSlots\n {self.iDCardSlots}\n\
-                    cardList\n {self.cardList}\n")
+                    iDCounter (Int): {iDCounter}\n\
+                    iDcardSlots (List): {self.iDCardSlots}\n\
+                    cardList (List): {self.cardList}\n")
              
     def addCardToHand(self, oCard):
          self.cardList.insert(oCard.getCardId(), oCard)
@@ -84,28 +85,70 @@ class Hand():
     def getCardsOnhand(self):
         """Returns cards on hand."""
         return self.cardList
-
+    
     def getSelectedCardfromHand(self):
         """This method tells us which card did the player select."""
-        if self.oCard is None:
-              print("Object is None Type.")
-        else:
+        try:
             selectedCard = self.oCard
             return selectedCard
-        
+        except:
+            if self.oCard is None:
+                print("Object is None Type.")
+            else:
+                 print("Unknown error: Check logic and/or syntax.")
+
+
+
+
+
+# ----------------CURRENTLY WORKIN ON!-----------------------------
+
+# currently refactoring.
+
+
+# REVIEW popCardFromHand one more time!!!!!!!!!!!!!!!!!!!!
+
     def popCardFromHand(self):
-        """This method pops a card from the hand."""
-        if self.oCard is None:
-              print("Object is None Type.")
-        else:
+        """This method retrives a card from the hand and returns the card."""
+        try: 
+            # Identify card's index.
             oCardIndex = self.cardList.index(self.oCard)
+            # Use index to pop card object from the hand
             selectedCard = self.cardList.pop(oCardIndex)
-            # Card is not selected any more
-            selectedCard.setCardClickedToFalse()
-            self.enableAllCards = True
+
+            # Enables other cards on hand to be selected
+            self.enableAllCardsOnHand()
+            # Selected card is set, not clickled, a.k.a False
+            self.setCardClickedToFalse(selectedCard)
+            # retrives selected card's iD. 
+            # Id is reassiged to a drawn or swaped card.
             self._retriveId(selectedCard)
+
+            # Card left the hand
             return selectedCard
+
+        except:
+            if self.oCard is None:
+                print("Object is None Type.")
+    
         
+     
+# ----------------CURRENTLY WORKIN ON!-----------------------------
+# Change _retriveID to match what it does which is retrive and sort iDcardSlots; should I, maybe? 
+
+ 
+    def _retriveId(self, oCard):
+        """
+        Obtains an oCard's iD and assigns it to self.iDCardSlots.
+        By re assigning old iDs we can tell new card where to go in the hand.
+        iDCardSlots is sorted by numercial order: low to high values.
+        """
+        self.iDCardSlots.append(oCard.getCardId())
+        self.iDCardSlots.sort() 
+
+# ----------------CURRENTLY WORKIN ON!-----------------------------   
+
+
     def cardSwap(self, oCard):
             HAND_LOCATION_DICT = Hand.HAND_LOCATION_DICT
             # Set ID to car using ID card slots
@@ -127,7 +170,7 @@ class Hand():
                      )
 
             # After card is swapped, make all cards clickable
-            self.enableAllCards = True
+            self.clickableHand = True
             self.oCardClicked = False
             self.oCard = None
             
@@ -136,19 +179,19 @@ class Hand():
         # We pop card from hand, return card
         oCardIndex = self.cardList.index(self.oCard)
         oTrickCard = self.cardList.pop(oCardIndex)
-        self.enableAllCards = True
+        self.clickableHand = True
         self.oCard = None
         self.oCardClicked = False
         # Snapshot the slot the card was in to add new card in that slot
         self._retriveId(oTrickCard)
         return oTrickCard
 
-    def _retriveId(self, oCard):
-        """Obtains the oCard's iD and assigns it to self.iDCardSlots"""
-        self.iDCardSlots.append(oCard.getCardId())
-        self.iDCardSlots.sort() 
-    
     # Polymorphism section 
+
+    def setCardClickedToFalse(self, selectedCard):
+            """Card set to not selected; GUI buttons do not interact with card no more."""
+            selectedCard.setCardClickedToFalse()
+
     def handleEvent(self, event):
         """
         Returns a bool if any card on hand was clicked.
@@ -156,19 +199,19 @@ class Hand():
         Enables all cards once selected card is deselcted.
         """
         # Check if cards can be clicked
-        if self.enableAllCards:
+        if self.clickableHand:
             for oCard in self.cardList:
                 if oCard.handleEvent(event): # Has card been clicked now?
                             self.oCard = oCard # Remember Ocard
                             self.oCardClicked = self.oCard.getOcardClicked() # Assign click (True)
-                            self.enableAllCards = False
+                            self.clickableHand = False
                             return self.oCardClicked # Return value and exit method
         elif self.oCard == None: # oCard is none at the begining of the code's run.
              pass
         else:
             if self.oCard.handleEvent(event):
                         self.oCardClicked = self.oCard.getOcardClicked()
-                        self.enableAllCards = True
+                        self.clickableHand = True
                         self.oCard = None
 
         # Return value and exit method
