@@ -72,7 +72,7 @@ class Card(ABC):
             self.images.moveY(25) # Return to original position
 
     def setCardClickedToFalse(self):
-         self.oCardClicked = False
+        self.oCardClicked = False
 
     def handleEvent(self, event):
         """Returns a bool if card is clicked and moves upwards if the card was clicked."""

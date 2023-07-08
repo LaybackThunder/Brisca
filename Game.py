@@ -254,17 +254,18 @@ class Game():
                 return False
 
     def cardSwap(self, oPlayer):
-        """Action to swap the trump card to for a hand card."""
+        """Action to swap the trump card with hand card."""
         
-        theSwapToHandCard = self.trumpCard # Old trump
-        self.trumpCard = oPlayer.popCardFromHand() # New Trump
-        # print(type(self.trumpCard))
+        swapTrump2Hand = self.trumpCard # Old trump
+        newTrump = oPlayer._popCardFromHand() # New Trump
+        self.trumpCard = newTrump # set new trump
+
         # New Trump attributres
         self.trumpCard.setLoc(Game.TRUMP_LOC)
         self.trumpCard.setRotation(-90)
 
         # New card on hand
-        oPlayer.cardSwap(theSwapToHandCard)
+        oPlayer.cardSwap(swapTrump2Hand)
 
     def draw(self):
         """Display cards to screen"""

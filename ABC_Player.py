@@ -72,11 +72,16 @@ class Player(ABC):
         oCardClick = self.oHand.getCardClick()
         return oCardClick
 
-    def popCardFromHand(self):
-        oCard = self.oHand.popCardFromHand()
+    def _popCardFromHand(self):
+        """
+        This method retrives a card from the hand and returns the selected card 
+        as the new trump card.
+        """
+        oCard = self.oHand._popCardFromHand()
         return oCard
 
     def cardSwap(self, oCard):
+        """Action to swap the trump card with hand card."""
         self.oHand.cardSwap(oCard)
 
     def drawCard(self, oCard):

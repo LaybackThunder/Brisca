@@ -19,7 +19,12 @@ class Hand():
         self.iDCardSlots = [] # Remembers where cards are on hand; holds location ids
         self.oCard = None
         self.clickableHand = True
-        self.oCardClicked = False
+
+
+        # ----------------CURRENTLY WORKIN ON!-----------------------------
+        # Remove oCardClicked attribute; reason is oCard can be use to track its bool
+        self.oCardClicked = False 
+        # ----------------CURRENTLY WORKIN ON!-----------------------------
 
     def disableAllCardsOnHand(self):
         """Disables all cards on hand to avoid being click able.""" 
@@ -34,32 +39,6 @@ class Hand():
     def getCardClick(self):
         """Returns a bool of card's click status."""
         return self.oCardClicked
-
-    def setCardId(self, oCard):
-        """
-        Set card's id and add it to self.iDCardSlots; 
-        holds location of cards id.  
-        """
-        
-        iDCounter = 0
-        try:
-            # Initially both conditions will be false;
-
-            # no cards on hand = no ids currently identified
-            if self.iDCardSlots:
-                    iDCounter = self.iDCardSlots.pop(0)
-                    oCard.setCardId(iDCounter)    
-
-            elif self.cardList:
-                # The initial way to setting the first card of the game with an ID
-                for i in range(len(self.cardList)): # If for loop is empty it won't loop
-                    iDCounter += 1
-                    oCard.setCardId(iDCounter)
-        except:
-             print(f"Check your lists and local variables for errors: \n\
-                    iDCounter (Int): {iDCounter}\n\
-                    iDcardSlots (List): {self.iDCardSlots}\n\
-                    cardList (List): {self.cardList}\n")
              
     def addCardToHand(self, oCard):
          self.cardList.insert(oCard.getCardId(), oCard)
@@ -97,19 +76,55 @@ class Hand():
             else:
                  print("Unknown error: Check logic and/or syntax.")
 
+    def retriveCardId(self, oCard):
+            """
+            Get the oCard's iD and assigns it to self.iDCardSlots.
+            By re assigning old iDs we can tell new card where to go in the hand.
+            iDCardSlots is sorted by numercial order to avoid erros.
+            """
+            self.iDCardSlots.append(oCard.getCardId())
+            self.iDCardSlots.sort() 
 
+    def setCardId(self, oCard):
+            """
+            Set card's id and add it to self.iDCardSlots; 
+            holds location of cards id.  
+            """
+            
+            iDCounter = 0
+            try:
+                # Initially both conditions will be false;
+                # no cards on hand = no ids currently identified
+                if self.iDCardSlots:
+                        iDCounter = self.iDCardSlots.pop(0)
+                        oCard.setCardId(iDCounter)    
+
+                elif self.cardList:
+                    # The initial way to setting the first card of the game with an ID
+                    for i in range(len(self.cardList)): # If for loop is empty it won't loop
+                        iDCounter += 1
+                        oCard.setCardId(iDCounter)
+            except:
+                print(f"Check your lists and local variables for errors: \n\
+                        iDCounter (Int): {iDCounter}\n\
+                        iDcardSlots (List): {self.iDCardSlots}\n\
+                        cardList (List): {self.cardList}\n")
 
 
 
 # ----------------CURRENTLY WORKIN ON!-----------------------------
 
-# currently refactoring.
+# Check if _popCardFromHand can be user in multiple methods !!!!!!!!!!!!!!!!!!!!
 
+    def _popCardFromHand(self):
+        """
+        This method retrives a card from the hand and returns the selected card 
+        as the new trump card or for selcted card to enter a trick.
 
-# REVIEW popCardFromHand one more time!!!!!!!!!!!!!!!!!!!!
-
-    def popCardFromHand(self):
-        """This method retrives a card from the hand and returns the card."""
+        # NOTE: For now it only is used to interact to 
+                swap trump cards and to enter a trick.
+                Coing to clean code, it messy and complex.
+        """
         try: 
             # Identify card's index.
             oCardIndex = self.cardList.index(self.oCard)
@@ -118,11 +133,13 @@ class Hand():
 
             # Enables other cards on hand to be selected
             self.enableAllCardsOnHand()
+
             # Selected card is set, not clickled, a.k.a False
             self.setCardClickedToFalse(selectedCard)
+
             # retrives selected card's iD. 
             # Id is reassiged to a drawn or swaped card.
-            self._retriveId(selectedCard)
+            self.retriveCardId(selectedCard)
 
             # Card left the hand
             return selectedCard
@@ -131,66 +148,58 @@ class Hand():
             if self.oCard is None:
                 print("Object is None Type.")
     
-        
+# -------------------------CURRENTLY WORKIN ON!-----------------------------     
      
-# ----------------CURRENTLY WORKIN ON!-----------------------------
-# Change _retriveID to match what it does which is retrive and sort iDcardSlots; should I, maybe? 
-
- 
-    def _retriveId(self, oCard):
-        """
-        Obtains an oCard's iD and assigns it to self.iDCardSlots.
-        By re assigning old iDs we can tell new card where to go in the hand.
-        iDCardSlots is sorted by numercial order: low to high values.
-        """
-        self.iDCardSlots.append(oCard.getCardId())
-        self.iDCardSlots.sort() 
-
-# ----------------CURRENTLY WORKIN ON!-----------------------------   
-
+    # currently refactoring.
 
     def cardSwap(self, oCard):
-            HAND_LOCATION_DICT = Hand.HAND_LOCATION_DICT
-            # Set ID to car using ID card slots
-            iDCounter = 0
-            if self.iDCardSlots:
-                    iDCounter = self.iDCardSlots.pop(0)
-                    oCard.setCardId(iDCounter)
+        """Takes trump card and adds it to the hand."""
             
-            # Add card to hand
-            # By defult oCard has an iD of 0
-            self.cardList.insert(oCard.getCardId(), oCard)
+        HAND_LOCATION_DICT = Hand.HAND_LOCATION_DICT
 
-            # Rotate card to 0 degrees
-            oCard.setRotation(90)
+        # Set ID to car using ID card slots
+        self.setCardId(oCard)
+            
+        # Add card to hand;
+        # by defult oCard has an iD of 0
+        self.cardList.insert(oCard.getCardId(), oCard)
 
-            # Give card display coordinates based of card iD
-            self.cardList[oCard.getCardId()].setLoc(
-                     HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
-                     )
+        # Rotate card to 0 degrees
+        oCard.setRotation(90)
 
-            # After card is swapped, make all cards clickable
-            self.clickableHand = True
-            self.oCardClicked = False
-            self.oCard = None
+        # Access hand;
+        # Give card display coordinates mapped by card iD
+        self.cardList[oCard.getCardId()].setLoc(
+                    HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
+                    )
+
+        # After card is swapped, make all cards clickable
+        self.enableAllCardsOnHand()
+        # Tell the current oCard it has ben unclicked
+        self.setCardClickedToFalse(oCard)
+        # Empty place holder
+        self.oCard = None
+
+# -------------------------CURRENTLY WORKIN ON!-----------------------------        
             
     def enterTrick(self):
-        """Place card in the middle of the board and wait to battle."""
-        # We pop card from hand, return card
-        oCardIndex = self.cardList.index(self.oCard)
-        oTrickCard = self.cardList.pop(oCardIndex)
-        self.clickableHand = True
+        """
+            Take card from hand. 
+            Returns oCard to be a trick card to enter battle. 
+        """
+        oTrickCard = self._popCardFromHand()
         self.oCard = None
-        self.oCardClicked = False
-        # Snapshot the slot the card was in to add new card in that slot
-        self._retriveId(oTrickCard)
+
         return oTrickCard
 
     # Polymorphism section 
 
     def setCardClickedToFalse(self, selectedCard):
             """Card set to not selected; GUI buttons do not interact with card no more."""
-            selectedCard.setCardClickedToFalse()
+            #NOTE: self.oCardClicked is ued to tell the handleEvent how to haddle button configurations.
+
+            selectedCard.setCardClickedToFalse() # Tells oCard that it is false
+            self.oCardClicked = False # Tells hand that oCard has been set to false
 
     def handleEvent(self, event):
         """
