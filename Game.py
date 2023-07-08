@@ -38,8 +38,9 @@ class Game():
         self.trickButton = pygwidgets.TextButton(window, (20, 840),
                                     'Trick', width=100, height=45)
         
+        # This is the swap trump button
         self.swapButton = pygwidgets.TextButton(window, (20, 780),
-                                    'Swap', width=100, height=45)
+                                    'Swap Trump', width=100, height=45)
         self.swapButton.disable()
         self.trickButton.disable()
 
@@ -75,7 +76,7 @@ class Game():
         if oPlayer.handleEvent(event):          
             self.trickButton.enable()
 
-            if self.isCardSwappable(oPlayer) and self.trickCount <= self.penultimate_trick: # -------------------TEST for single player
+            if self.isTrumpCardSwappable(oPlayer) and self.trickCount <= self.penultimate_trick: # -------------------TEST for single player
                     self.swapButton.enable()
             else:
                 self.swapButton.disable()
@@ -229,14 +230,14 @@ class Game():
 
             # Check for swap button
             if self.swapButton.handleEvent(event):
-                self.cardSwap(oPlayer)
+                self.trumpSwap(oPlayer)
             
             # Check for trick button
             if self.trickButton.handleEvent(event):
                 self.enterTrick(oPlayer) # Enter the battle arena of death! Muahahaha!
                 self.trickCount += 1 # ----------------------------------------------------TEST for single player
 
-    def isCardSwappable(self, oPlayer):
+    def isTrumpCardSwappable(self, oPlayer):
         """
         Function access the player's selected card and compares it with the trump card.
         The method Returns a bool.
@@ -253,7 +254,7 @@ class Game():
             else:
                 return False
 
-    def cardSwap(self, oPlayer):
+    def trumpSwap(self, oPlayer):
         """Action to swap the trump card with hand card."""
         
         swapTrump2Hand = self.trumpCard # Old trump
@@ -265,7 +266,7 @@ class Game():
         self.trumpCard.setRotation(-90)
 
         # New card on hand
-        oPlayer.cardSwap(swapTrump2Hand)
+        oPlayer.trumpSwap(swapTrump2Hand)
 
     def draw(self):
         """Display cards to screen"""

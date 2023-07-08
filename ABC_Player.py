@@ -80,9 +80,9 @@ class Player(ABC):
         oCard = self.oHand._popCardFromHand()
         return oCard
 
-    def cardSwap(self, oCard):
+    def trumpSwap(self, oCard):
         """Action to swap the trump card with hand card."""
-        self.oHand.cardSwap(oCard)
+        self.oHand.trumpSwap(oCard)
 
     def drawCard(self, oCard):
         """Adds card to player's hand. If none; return no card error."""

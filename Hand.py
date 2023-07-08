@@ -19,12 +19,8 @@ class Hand():
         self.iDCardSlots = [] # Remembers where cards are on hand; holds location ids
         self.oCard = None
         self.clickableHand = True
+        self.oCardClicked = False # Used in parallel with oCard's self.oCardClicked.
 
-
-        # ----------------CURRENTLY WORKIN ON!-----------------------------
-        # Remove oCardClicked attribute; reason is oCard can be use to track its bool
-        self.oCardClicked = False 
-        # ----------------CURRENTLY WORKIN ON!-----------------------------
 
     def disableAllCardsOnHand(self):
         """Disables all cards on hand to avoid being click able.""" 
@@ -39,9 +35,13 @@ class Hand():
     def getCardClick(self):
         """Returns a bool of card's click status."""
         return self.oCardClicked
-             
+    
+    # ----------------CURRENTLY WORKIN ON!-----------------------------
+
     def addCardToHand(self, oCard):
          self.cardList.insert(oCard.getCardId(), oCard)
+    
+    # ----------------CURRENTLY WORKIN ON!-----------------------------
 
     def setHandCorrdinatesForDisplay(self, oCard):
         # Give card display coordinates based of card iD
@@ -60,10 +60,19 @@ class Hand():
     def getLengthCardsOnHand(self):
         """Returns the total number of cards on hand."""
         return len(self.cardList)
+    
+
+    
+    # ----------------CURRENTLY WORKIN ON!-----------------------------
 
     def getCardsOnhand(self):
         """Returns cards on hand."""
+        # NOTE: Fix method name's camel case
         return self.cardList
+    # ----------------CURRENTLY WORKIN ON!-----------------------------
+
+
+
     
     def getSelectedCardfromHand(self):
         """This method tells us which card did the player select."""
@@ -152,40 +161,29 @@ class Hand():
      
     # currently refactoring.
 
-    def cardSwap(self, oCard):
+    def trumpSwap(self, oCard):
         """Takes trump card and adds it to the hand."""
             
         HAND_LOCATION_DICT = Hand.HAND_LOCATION_DICT
 
-        # Set ID to car using ID card slots
-        self.setCardId(oCard)
-            
-        # Add card to hand;
-        # by defult oCard has an iD of 0
-        self.cardList.insert(oCard.getCardId(), oCard)
-
-        # Rotate card to 0 degrees
-        oCard.setRotation(90)
-
-        # Access hand;
+        self.setCardId(oCard) # Set ID to car using ID card slots
+        self.addCardToHand(oCard) # Add card to hand
+        oCard.setRotation(90) # Rotate card upside-up
         # Give card display coordinates mapped by card iD
         self.cardList[oCard.getCardId()].setLoc(
                     HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
                     )
 
-        # After card is swapped, make all cards clickable
-        self.enableAllCardsOnHand()
-        # Tell the current oCard it has ben unclicked
-        self.setCardClickedToFalse(oCard)
-        # Empty place holder
-        self.oCard = None
+        self.enableAllCardsOnHand() # After card is swapped, make all cards clickable
+        self.setCardClickedToFalse(oCard) # Tell the current oCard it has ben unclicked
+        self.oCard = None # Empty place holder
 
 # -------------------------CURRENTLY WORKIN ON!-----------------------------        
             
     def enterTrick(self):
         """
             Take card from hand. 
-            Returns oCard to be a trick card to enter battle. 
+            Returns an oCard to be a trick card; a card that will battle. 
         """
         oTrickCard = self._popCardFromHand()
         self.oCard = None
