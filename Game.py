@@ -94,138 +94,98 @@ class Game():
             self.trickButton.disable()
             self.swapButton.disable()
 
+    # Polymorphism section
 
+    def _preEnterTrick(self, oPlayer):
+        """Prepare player's card to enter battle"""
 
+        trickIndex = len(self.trickList) # Get trickList index to identify location on the board
+        oTrickCard = oPlayer.enterTrick() # Retrieve player's choosen card to enter battle (trick)
+        # Identify player and its choosen card for battle
+        playerAndCard = {'oPlayer': oPlayer, 
+                         'oCard': oTrickCard} 
 
+        # Set location using trickIndex to map trick card on the board 
+        oTrickCard.setLoc((Game.TRICK_LOCATION_LIST[trickIndex]))
 
-    # Polymorphism section 
+        # Add playerAndCard to the trick list to do battle
+        self.trickList.append(playerAndCard)
 
- # -------------------------------------------------------------------------------------------
+    def compareTrumpCard(self):
+        """Check player's cards and id which is a trump card."""
+        
+        if self.trumpCard != None:
+            # Compare player's trump cards to the main trump card
+            isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == self.trumpCard.getSuit()
+            isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == self.trumpCard.getSuit()
+        else:
+            trumpCard = self.trickList[0]['oCard']
+            # Compare player's leading trump cards to the main trump card
+            isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == trumpCard.getSuit()
+            isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == trumpCard.getSuit()
 
+        trumpValuesListPerPlayer = [isPlayer1Trump, isPlayer2Trump]
+
+        return trumpValuesListPerPlayer 
+
+    def identifyWinningTrumpCard(self, isPlayer1Trump, isPlayer2Trump):
+        """
+        Identify which card is the 1st trump card on the board.
+        Player1 is turn player.
+        Player2 is follow on player.
+        """
+        print("Battle!\n")
+
+        # Both players have a trump card
+        if isPlayer1Trump and isPlayer2Trump: 
+            self.battleStep()
+
+        # A player has a trump card
+        elif isPlayer1Trump or isPlayer2Trump:   
+            if isPlayer1Trump:
+                print("-------You WIN!\n")
+                self.trickList[0]['oPlayer'].setTurnPlayerTrue() # Player 1 is turn player
+                self.trickList[1]['oPlayer'].setTurnPlayerFalse()
+                self.playerList = [self.trickList[0]['oPlayer']] # Test 
+            else:
+                print("-------You LOSE!")
+                self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
+                self.trickList[0]['oPlayer'].setTurnPlayerFalse()
+                self.playerList = [self.trickList[1]['oPlayer']] # Test 
+
+    def _battlePhase(self):
+        """This method identifies who is the winner of the trick"""
+
+        trumpValuesListPerPlayer = self.compareTrumpCard()
+        self.identifyWinningTrumpCard(trumpValuesListPerPlayer[0], trumpValuesListPerPlayer[1])
 
     def enterTrick(self, oPlayer):
         """Place card in the middle of the board and battle."""
 
-        # Retrieve player's card and trickList index
-        oTrickCard = oPlayer.enterTrick()
-        trickIndex = len(self.trickList)
+        self._preEnterTrick(oPlayer) # Player and card set-up
 
-        # Identify player and its choosen card for battle
-        playerAndCard = {'oPlayer': oPlayer, 'oCard': oTrickCard}
-
-        # Set location to map trick card on the board 
-        oTrickCard.setLoc((Game.TRICK_LOCATION_LIST[trickIndex]))
-
-        # Add playerAndCArd to the trick list to battle
-        self.trickList.append(playerAndCard)
-
-
- # -------------------------------------------------------------------------------------------
-
-        # Enter battle phase
+        # Enter battle phase if there are two cards in the trick list
         if len(self.trickList) == 2:
-
-            if self.trumpCard != None:
-                # Compare player's trump cards to the main trump card
-                isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == self.trumpCard.getSuit()
-                isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == self.trumpCard.getSuit()
-                print("Battle!\n")
-
-                # Both players have a trump card
-                if isPlayer1Trump and isPlayer2Trump: 
-                    self.battleStep()
-
-                # A player has a trump card
-                elif isPlayer1Trump or isPlayer2Trump:   
-                    if isPlayer1Trump:
-                        print("-------You WIN!\n")
-                        self.trickList[0]['oPlayer'].setTurnPlayerTrue() # Player 1 is turn player
-                        self.trickList[1]['oPlayer'].setTurnPlayerFalse()
-                        self.playerList = [self.trickList[0]['oPlayer']] # Test 
-                    else:
-                        print("-------You LOSE!")
-                        self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
-                        self.trickList[0]['oPlayer'].setTurnPlayerFalse()
-                        self.playerList = [self.trickList[1]['oPlayer']] # Test 
-
-
- # -------------------------------------------------------------------------------------------
-
-
-                # No one has a trump card, the 1st card on the board leads as trump
-                else:
-                    trumpCard = self.trickList[0]['oCard']
-                    # Compare player's leading trump cards to the main trump card
-                    isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == trumpCard.getSuit()
-                    isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == trumpCard.getSuit()
-
-                    if isPlayer1Trump and isPlayer2Trump:
-                        self.battleStep()
-
-                    else:
-                        if isPlayer1Trump:
-                            print("-------You WIN!\n")
-                            self.trickList[0]['oPlayer'].setTurnPlayerTrue() # Player 1 is turn player
-                            self.trickList[1]['oPlayer'].setTurnPlayerFalse()
-                            self.playerList = [self.trickList[0]['oPlayer']] # Test 
-                        else:
-                            print("-------You LOSE!")
-                            self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
-                            self.trickList[0]['oPlayer'].setTurnPlayerFalse()
-                            self.playerList = [self.trickList[1]['oPlayer']] # Test
-
-
- # -------------------------------------------------------------------------------------------
-
-
-            else:
-                trumpCard = self.trickList[0]['oCard']
-                # Compare player's leading trump cards to the main trump card
-                isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == trumpCard.getSuit()
-                isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == trumpCard.getSuit()
-
-                if isPlayer1Trump and isPlayer2Trump:
-                    self.battleStep()
-
-                else:
-                    if isPlayer1Trump:
-                        print("-------You WIN!\n")
-                        self.trickList[0]['oPlayer'].setTurnPlayerTrue() # Player 1 is turn player
-                        self.trickList[1]['oPlayer'].setTurnPlayerFalse()
-                        self.playerList = [self.trickList[0]['oPlayer']] # Test 
-                    else:
-                        print("-------You LOSE!")
-                        self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
-                        self.trickList[0]['oPlayer'].setTurnPlayerFalse()
-                        self.playerList = [self.trickList[1]['oPlayer']] # Test
-            # Transfer trickCards to winner's potCards
-            self.setPotList()
+            self._battlePhase()
+            self.setPotList() # Transfer trickCards to winner's pot (potCards)
             print("End of Battle!")
 
 
- # -------------------------------------------------------------------------------------------
+ # --------------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
+ # Currently refactoring
 
     def setPotList(self):
         """Gives turnPlayer the spoils of war. As in the winning cards."""
+        # NOTE: use while loop, because we are modifying a list
         cardsAndOwners = []
-        for i in self.trickList.copy(): # Copy, because we are modifying list.
+        for i in self.trickList[:]: # Copy, because we are modifying list.
             index = self.trickList.index(i)
             cardAndOwner = self.trickList.pop(index)
             cardsAndOwners.append(cardAndOwner)
-        self.playerList[0].setPotList(cardsAndOwners)    
+        self.playerList[0].setPotList(cardsAndOwners)   
+
+ # -------------------------------------------------------------------------------- 
 
     def getPotList(self):
         """Prints the name of every card in the turnPlayer's potList."""

@@ -43,6 +43,9 @@ class Hand():
                     Hand.HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
                     )
 
+
+
+
     def enterTrick(self):
         """
             Take card from hand. 
@@ -52,6 +55,9 @@ class Hand():
         self.oCard = None
 
         return oTrickCard
+
+
+
 
     def getLengthCardsOnHand(self):
         """Returns the total number of cards on hand."""
@@ -107,6 +113,9 @@ class Hand():
                         iDcardSlots (List): {self.iDCardSlots}\n\
                         cardList (List): {self.cardList}\n")
 
+
+
+
     def _popCardFromHand(self):
         """
         This method retrives a card from the hand and returns the selected card 
@@ -119,11 +128,15 @@ class Hand():
             self.enableAllCardsOnHand() # Enables other cards on hand to be selected
             self.setCardClickedToFalse(selectedCard) # Selected card is set to unclickled, a.k.a False
             self.retriveCardId(selectedCard) # Obtain selected card's iD; Id is reassiged to a drawn or swaped card.
+            
             return selectedCard # Card left the hand; (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ peace the fuck out!
 
         except:
             if self.oCard is None:
                 print("Object is None Type.")
+
+
+
 
     def _trumpSwap(self, oCard):
         """Takes trump card and adds it to the hand."""

@@ -47,11 +47,17 @@ class Player(ABC):
     def enableAllCardsOnHand(self):
         self.oHand.enableAllCardsOnHand()
         
+
+
+
     def enterTrick(self):
         """Place card in the middle of the board."""
         # Asks had to give card, return card.
         oTrickCard = self.oHand.enterTrick()
         return oTrickCard
+    
+
+    
 
     def getLengthCardsOnHand(self):
         """Returns the total number of cards on hand."""
