@@ -176,14 +176,13 @@ class Game():
  # Currently refactoring
 
     def setPotList(self):
-        """Gives turnPlayer the spoils of war. As in the winning cards."""
-        # NOTE: use while loop, because we are modifying a list
+        """Gives turnPlayer the spoils of war, as in the winner gets the cards."""
+        # While loop is used, because we are modifying a list
         cardsAndOwners = []
-        for i in self.trickList[:]: # Copy, because we are modifying list.
-            index = self.trickList.index(i)
-            cardAndOwner = self.trickList.pop(index)
+        while self.trickList:
+            cardAndOwner = self.trickList.pop(0)
             cardsAndOwners.append(cardAndOwner)
-        self.playerList[0].setPotList(cardsAndOwners)   
+        self.playerList[0].setPotList(cardsAndOwners)  
 
  # -------------------------------------------------------------------------------- 
 
