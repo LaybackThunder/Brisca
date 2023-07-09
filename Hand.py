@@ -7,11 +7,11 @@ class Hand():
     # slot 2 is right side of hand.
     HAND_Y_LOC = 650
     HAND_LOCATION_DICT = {
-         # HAND_SLOT_EXAMPLE:[card identifier in the hand, (CARD LOCATION ON SCREEN)]
-         "HAND_SLOT0": (300, HAND_Y_LOC), 
-         "HAND_SLOT1": (500, HAND_Y_LOC), 
-         "HAND_SLOT2": (700, HAND_Y_LOC)
-         }
+                        # HAND_SLOT_EXAMPLE:[card identifier in the hand, (CARD LOCATION ON SCREEN)]
+                        "HAND_SLOT0": (300, HAND_Y_LOC), 
+                        "HAND_SLOT1": (500, HAND_Y_LOC), 
+                        "HAND_SLOT2": (700, HAND_Y_LOC)
+                        }
 
     def __init__(self, window):
         self.window = window
@@ -38,13 +38,10 @@ class Hand():
          self.cardList.insert(oCard.getCardId(), oCard)
     
     def setHandCorrdinatesForDisplay(self, oCard):
-        # Give card display coordinates based of card iD
+        # Give card display coordinates for the hand based of card iD
         self.cardList[oCard.getCardId()].setLoc(
                     Hand.HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
                     )
-
-
-
 
     def enterTrick(self):
         """
@@ -55,9 +52,6 @@ class Hand():
         self.oCard = None
 
         return oTrickCard
-
-
-
 
     def getLengthCardsOnHand(self):
         """Returns the total number of cards on hand."""
@@ -113,9 +107,6 @@ class Hand():
                         iDcardSlots (List): {self.iDCardSlots}\n\
                         cardList (List): {self.cardList}\n")
 
-
-
-
     def _popCardFromHand(self):
         """
         This method retrives a card from the hand and returns the selected card 
@@ -135,18 +126,13 @@ class Hand():
             if self.oCard is None:
                 print("Object is None Type.")
 
-
-
-
     def _trumpSwap(self, oCard):
         """Takes trump card and adds it to the hand."""
             
-        HAND_LOCATION_DICT = Hand.HAND_LOCATION_DICT
-
         self.setCardId(oCard) # Set id cordinates for the swaped trump card  
         self.addCardToHand(oCard) # Add swaped trump card to hand
         oCard.setRotation(90) # Rotate trump card upside-up to match the other cards in hand
-        self.setHandCorrdinatesForDisplay(self, oCard) # Give card display coordinates mapped by card iD
+        self.setHandCorrdinatesForDisplay(oCard) # Give card display coordinates mapped by card iD
         self.enableAllCardsOnHand() # After card is swapped, make all cards in hand clickable
         self.setCardClickedToFalse(oCard) # The oCard place holder, has been unclicked
         self.oCard = None # Empty place holder       

@@ -170,11 +170,6 @@ class Game():
             self.setPotList() # Transfer trickCards to winner's pot (potCards)
             print("End of Battle!")
 
-
- # --------------------------------------------------------------------------------
-
- # Currently refactoring
-
     def setPotList(self):
         """Gives turnPlayer the spoils of war, as in the winner gets the cards."""
         # While loop is used, because we are modifying a list
@@ -184,8 +179,6 @@ class Game():
             cardsAndOwners.append(cardAndOwner)
         self.playerList[0].setPotList(cardsAndOwners)  
 
- # -------------------------------------------------------------------------------- 
-
     def getPotList(self):
         """Prints the name of every card in the turnPlayer's potList."""
         potList = self.playerList[0].getPotList()
@@ -193,40 +186,62 @@ class Game():
 
     def drawCard(self, oPlayer):
         """Player draws a card."""
+
+        # Assigned oCard the top card from the deck.
         oCard = self.oDeck.drawCard()
         
+        # Deck is empty, draw the trump card as your last card.
         if oCard == None:
             oCard = self.trumpCard
             self.trumpCard = None
             oCard.setRotation(90)
             oPlayer.drawCard(oCard)
 
-        else:
+        else: # Deck is not empty, player drew a card from it.
             oPlayer.drawCard(oCard)
 
-    def handleEvent(self, event):
-        """Handles mouse and keyboard events."""
-        for oPlayer in self.playerList:
-            # Checks conditions to allow player to draw.
-            if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
+    def _checkIfPlayerCanDraw(self, oPlayer):
+        """
+        Checks conditions to enable or disable draw button.
+        Conditions influence card behavior.
+        """
 
-                if self.trickList: # As long as one card is in the battle phase draw is disabled
-                    self.drawCardButton.disable()
+        if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
+            if self.trickList: 
+                # As long as one card is in the battle phase, draw is disabled
+                self.drawCardButton.disable()
 
-                elif self.trumpCard != None: # As long as there is a trump card drawing is possible
-                    self.drawCardButton.enable()
-                    oPlayer.disableAllCardsOnHand()
+            elif self.trumpCard != None: 
+                # As long as there is a trump card drawing is possible
+                self.drawCardButton.enable()
+                # Keeps player from triggering a card's behavior when clicked
+                oPlayer.disableAllCardsOnHand()  
                 
-                else: # After no cards left to draw, the draw button is disabled regardless of hand size
-                    self.drawCardButton.disable()
-                    oPlayer.enableAllCardsOnHand()
+                
+            else: # When deck is empty and there is no trump card to draw, do below
+                self.drawCardButton.disable() # Desibale draw button
+                oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
 
-                    # card is selected ; disable all hand cards
-                    oCardClick = oPlayer.getCardClick()    
-                    if oCardClick: 
-                        oPlayer.disableAllCardsOnHand()
-            else: # After HAND_LIMIT is reached draw button is disabled
-                self.drawCardButton.disable() 
+                # Card is selected ; disable all hand cards
+                oCardClick = oPlayer.getCardClick()    
+                if oCardClick: 
+                    oPlayer.disableAllCardsOnHand()
+                         
+        else: # After HAND_LIMIT is reached draw button is disabled
+            self.drawCardButton.disable() 
+
+# --------------------------------------------------------------------------------
+
+    def handleEvent(self, event):
+        """Handles mouse and keyboard events when triggering card behavior."""
+        for oPlayer in self.playerList:
+
+            # Checks conditions to enable or disable draw button
+            self._checkIfPlayerCanDraw(oPlayer)
+
+# --------------------------------------------------------------------------------
+
+            # Currently refactoring
             
             # Gameplay options after a card is selected or deselected
             self._clickOnCard(oPlayer, event)
@@ -244,7 +259,11 @@ class Game():
             # Check for trick button
             if self.trickButton.handleEvent(event):
                 self.enterTrick(oPlayer) # Enter the battle arena of death! Muahahaha!
-                self.trickCount += 1 # ----------------------------------------------------TEST for single player
+                self.trickCount += 1 # -------------------------TEST for single player
+
+
+# --------------------------------------------------------------------------------
+
 
     def isTrumpCardSwappable(self, oPlayer):
         """

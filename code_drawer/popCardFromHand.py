@@ -1,30 +1,33 @@
-#def popCardFromHand(self):
-"""
-    def popCardFromHand(self):
-        # This method retrives a card from the hand and returns the value.
-        if self.oCard is None:
-              print("Object is None Type.")
-        else:
-            # Identify card's index & us it to retrive card bject from the hand.
-            oCardIndex = self.cardList.index(self.oCard)
-            selectedCard = self.cardList.pop(oCardIndex)
+ def handleEvent(self, event):
+        """Handles mouse and keyboard events when triggering card behavior."""
+        for oPlayer in self.playerList:
 
-            # Card is not selected any more.
-            selectedCard.setCardClickedToFalse()
+            # Checks conditions to allow player to draw.
+            if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
 
-            # Other cards on hand can be clicked.
-            self.enableAllCards = True
+                if self.trickList: 
+                    # As long as one card is in the battle phase, draw is disabled
+                    self.drawCardButton.disable()
 
-            # retrives selected card's iD for iD reassigment when drawing a card.
-            self._retriveId(selectedCard)
+                elif self.trumpCard != None: 
+                    # As long as there is a trump card drawing is possible
+                    self.drawCardButton.enable()
+                    # Keeps player from triggering a card's behavior when clicked
+                    oPlayer.disableAllCardsOnHand()  
+                
+                
+                else: # When deck is empty and there is no trump card to draw, do below
+                    self.drawCardButton.disable() # Desibale draw button
+                    oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
 
-            # Card left the hand
-            return selectedCard 
-"""
+                    # Card is selected ; disable all hand cards
+                    oCardClick = oPlayer.getCardClick()    
+                    if oCardClick: 
+                        oPlayer.disableAllCardsOnHand()
 
-a = 1
-b = a
-a = 2
+# --------------------------------------------------------------------------------
+                         
+            else: # After HAND_LIMIT is reached draw button is disabled
+                self.drawCardButton.disable() 
 
-print(b)
-print(a)
+# --------------------------------------------------------------------------------
