@@ -12,6 +12,7 @@ class Player(ABC):
         self.oHand = Hand(window)
 
     def getTurnPlayer(self):
+        """Return player ID"""
         print(f"Turn player's iD is {self.turnPlayerId}.") # testing
         return self.turnPlayer
 
@@ -28,7 +29,7 @@ class Player(ABC):
             self.turnPlayer = False 
 
     def setPotList(self, cardsAndOwners):
-        """Retrive oCard from trickList and add them to potList."""
+        """Retrive oCard from trickList and add them to the player's potList."""
         # {'oPlayer': oPlayer, 'oCard': oTrickCard}
         for cardAndOwner in cardsAndOwners:
             oCard = cardAndOwner.pop('oCard')
@@ -59,7 +60,7 @@ class Player(ABC):
 
     def getCardsOnHand(self):
         """Returns cards on hand."""
-        cardList = self.oHand.getCardsOnhand()
+        cardList = self.oHand.getCardsOnHand()
         return cardList
 
     def getSelectedCardfromHand(self):
@@ -74,15 +75,14 @@ class Player(ABC):
 
     def _popCardFromHand(self):
         """
-        This method retrives a card from the hand and returns the selected card 
-        as the new trump card.
+        This method retrives a card from the hand and returns the selected.
         """
         oCard = self.oHand._popCardFromHand()
         return oCard
 
-    def trumpSwap(self, oCard):
-        """Action to swap the trump card with hand card."""
-        self.oHand.trumpSwap(oCard)
+    def _trumpSwap(self, oCard):
+        """Action to swap the trump card for a 7 or 2 hand card."""
+        self.oHand._trumpSwap(oCard)
 
     def drawCard(self, oCard):
         """Adds card to player's hand. If none; return no card error."""

@@ -75,17 +75,21 @@ class Card(ABC):
         self.oCardClicked = False
 
     def handleEvent(self, event):
-        """Returns a bool if card is clicked and moves upwards if the card was clicked."""
+        """
+        Returns a bool if card is clicked or unclicked.
+        Card moves upwards if the card was clicked.
+        When card is unclicked, it moves downwards. 
+        """
         if self.images.handleEvent(event):
-                if self.oCardClicked == False:
-                    self.oCardClicked = True # To avoid moving it up for every click
-                    self.cardSelected() # Moves upwards
-                    return True
+            if self.oCardClicked == False:
+                self.oCardClicked = True # To avoid moving it up for every click
+                self.cardSelected() # Moves upwards
+                return True
                     
-                elif self.oCardClicked: # It was de-selected (clicked again)
-                    self.oCardClicked = False # Now it can be clicked to move up
-                    self.deSelectCard() # Moves back to position
-                    return True
+            elif self.oCardClicked: # It was de-selected (clicked again)
+                self.oCardClicked = False # Now it can be clicked to move up
+                self.deSelectCard() # Moves back to position (downwards)
+                return True
 
 
 

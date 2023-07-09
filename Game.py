@@ -3,23 +3,24 @@ from BriscaDeck import *
 
 class Game():
 
+    # Class variables
     HAND_LIMIT = 3
     DECK_LOC = (860, 360)
     TRUMP_LOC = (750, 360)
-
-    #GHOST_HAND_Y_LOCATION = 650
-    #GHOST_HAND_LOC_LIST = [(300, GHOST_HAND_Y_LOCATION), (500, GHOST_HAND_Y_LOCATION)]
-    #GHOST_OBJ_Card = None # ----> Ghost player on hold; code later
-
     TRICK_CARDS_LOC_Y = 360
-    TRICK_LOCATION_LIST = [(250, TRICK_CARDS_LOC_Y), (500, TRICK_CARDS_LOC_Y)]
+    # TRICK_LOCATION_LIST cordinates (x, y)
+    TRICK_LOCATION_LIST = [(250, TRICK_CARDS_LOC_Y), 
+                           (500, TRICK_CARDS_LOC_Y)]
 
     def __init__(self, window, player, SUIT, BRISCA_DICT):
-        """Initializing data and objects."""
+        """Initializing attributes."""
+
         self.window = window
-        self.oDeck = BriscaDeck(self.window, Game.DECK_LOC, SUIT, RANK_VALUE_DICT=BRISCA_DICT)
+        self.oDeck = BriscaDeck(self.window, Game.DECK_LOC, 
+                                SUIT, RANK_VALUE_DICT=BRISCA_DICT)
         self.playerList = [player]
 
+        # NOTE: After all players have drawn, set trump card from deck.
         self.trumpCard = self.oDeck.drawCard()
         self.trumpCard.reveal() 
         self.trumpCard.setLoc(Game.TRUMP_LOC)
@@ -30,17 +31,14 @@ class Game():
 
         self.trickList = [] # Where cards battle
         self.dealerPot = [] # When there is a tie, the dealer holds cards
-        # self.ghostHandList = [] # Holds cards for ghost player
 
-        self.drawCardButton = pygwidgets.TextButton(window, (140, 840),
-                                    'Draw', width=100, height=45)
-
-        self.trickButton = pygwidgets.TextButton(window, (20, 840),
-                                    'Trick', width=100, height=45)
-        
+        self.drawCardButton = pygwidgets.TextButton(window, (140, 840), 'Draw', 
+                                                    width=100, height=45)
+        self.trickButton = pygwidgets.TextButton(window, (20, 840), 'Trick', 
+                                                 width=100, height=45)
         # This is the swap trump button
-        self.swapButton = pygwidgets.TextButton(window, (20, 780),
-                                    'Swap Trump', width=100, height=45)
+        self.swapButton = pygwidgets.TextButton(window, (20, 780), 'Swap Trump', 
+                                                width=100, height=45)
         self.swapButton.disable()
         self.trickButton.disable()
 
@@ -49,8 +47,16 @@ class Game():
         Calculates which oTrickCard wins the battle step.
         Sets a turnPlayer by comparing the highest value card.
         """
-        player1 = self.trickList[0]['oPlayer']
-        player2 = self.trickList[1]['oPlayer']
+        player1 = self.trickList[0]['oPlayer'] # player1 is turn player
+        player2 = self.trickList[1]['oPlayer'] # player2 is follow on player
+        self.calculateTrick(player1, player2)
+
+    def calculateTrick(self, player1, player2):
+        """
+        Calculate which card has the highest point value.
+        Player1 is turn player.
+        Player2 is follow on player.
+        """
         player1CardValue = self.trickList[0]['oCard'].getRankValue()
         player2CardValue = self.trickList[1]['oCard'].getRankValue()
 
@@ -59,43 +65,62 @@ class Game():
             player1.setTurnPlayerTrue() # Player1 will have the bool to draw firs
             player2.setTurnPlayerFalse()
             self.playerList = [player1] # Player arrangement decides who draws first
-            
-        elif player1CardValue < player2CardValue:
+                
+        else:
             print("-------You LOSE!")
             player2.setTurnPlayerTrue() # Player2 will have the bool to draw first
             player1.setTurnPlayerFalse()
             self.playerList = [player1] # Player arrangement decides who draws first
 
-        else: # If players end in a tie: cards return to deck
-            print("-------TIE/n")
-            tie = True
+        #else: # If players end in a tie: cards return to deck
+            #print("-------TIE/n")
+            #tie = True
 
     def _clickOnCard(self, oPlayer, event):
-        """When a card gets clicked it does stuff"""
-        # Gameplay options after a card is selected
+        """When a card gets clicked or declicked it offers a few game mechanics."""
+
+        # GUI options after a card is selected
         if oPlayer.handleEvent(event):          
             self.trickButton.enable()
 
-            if self.isTrumpCardSwappable(oPlayer) and self.trickCount <= self.penultimate_trick: # -------------------TEST for single player
+            # Is current selected card swappable and is not the penultimate trick? 
+            if self.isTrumpCardSwappable(oPlayer) and self.trickCount <= self.penultimate_trick: # TEST for single player
                     self.swapButton.enable()
             else:
                 self.swapButton.disable()
-        # Gameplay options after a card is deselected
+        # GUI options after a card is deselected
         else:
             # Battle (trick) ability unavailable
             self.trickButton.disable()
             self.swapButton.disable()
 
+
+
+
+
     # Polymorphism section 
-    def enterTrick(self, oPlayer) :
+
+ # -------------------------------------------------------------------------------------------
+
+
+    def enterTrick(self, oPlayer):
         """Place card in the middle of the board and battle."""
+
         # Retrieve player's card and trickList index
         oTrickCard = oPlayer.enterTrick()
         trickIndex = len(self.trickList)
-        # Prep for battle: identify card and owner
+
+        # Identify player and its choosen card for battle
         playerAndCard = {'oPlayer': oPlayer, 'oCard': oTrickCard}
+
+        # Set location to map trick card on the board 
         oTrickCard.setLoc((Game.TRICK_LOCATION_LIST[trickIndex]))
+
+        # Add playerAndCArd to the trick list to battle
         self.trickList.append(playerAndCard)
+
+
+ # -------------------------------------------------------------------------------------------
 
         # Enter battle phase
         if len(self.trickList) == 2:
@@ -122,7 +147,11 @@ class Game():
                         self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
                         self.trickList[0]['oPlayer'].setTurnPlayerFalse()
                         self.playerList = [self.trickList[1]['oPlayer']] # Test 
-            
+
+
+ # -------------------------------------------------------------------------------------------
+
+
                 # No one has a trump card, the 1st card on the board leads as trump
                 else:
                     trumpCard = self.trickList[0]['oCard']
@@ -144,6 +173,11 @@ class Game():
                             self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
                             self.trickList[0]['oPlayer'].setTurnPlayerFalse()
                             self.playerList = [self.trickList[1]['oPlayer']] # Test
+
+
+ # -------------------------------------------------------------------------------------------
+
+
             else:
                 trumpCard = self.trickList[0]['oCard']
                 # Compare player's leading trump cards to the main trump card
@@ -167,6 +201,22 @@ class Game():
             # Transfer trickCards to winner's potCards
             self.setPotList()
             print("End of Battle!")
+
+
+ # -------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def setPotList(self):
         """Gives turnPlayer the spoils of war. As in the winning cards."""
@@ -230,7 +280,7 @@ class Game():
 
             # Check for swap button
             if self.swapButton.handleEvent(event):
-                self.trumpSwap(oPlayer)
+                self._trumpSwap(oPlayer)
             
             # Check for trick button
             if self.trickButton.handleEvent(event):
@@ -254,7 +304,7 @@ class Game():
             else:
                 return False
 
-    def trumpSwap(self, oPlayer):
+    def _trumpSwap(self, oPlayer):
         """Action to swap the trump card with hand card."""
         
         swapTrump2Hand = self.trumpCard # Old trump
@@ -266,7 +316,7 @@ class Game():
         self.trumpCard.setRotation(-90)
 
         # New card on hand
-        oPlayer.trumpSwap(swapTrump2Hand)
+        oPlayer._trumpSwap(swapTrump2Hand)
 
     def draw(self):
         """Display cards to screen"""
