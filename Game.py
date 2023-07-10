@@ -76,6 +76,10 @@ class Game():
             #print("-------TIE/n")
             #tie = True
 
+# --------------------------------------------------------------------------------
+
+# Currently refactoring
+
     def _clickOnCard(self, oPlayer, event):
         """When a card gets clicked or declicked it offers a few game mechanics."""
 
@@ -88,11 +92,14 @@ class Game():
                     self.swapButton.enable()
             else:
                 self.swapButton.disable()
+
         # GUI options after a card is deselected
         else:
             # Battle (trick) ability unavailable
             self.trickButton.disable()
             self.swapButton.disable()
+
+# --------------------------------------------------------------------------------
 
     # Polymorphism section
 
@@ -159,17 +166,6 @@ class Game():
         trumpValuesListPerPlayer = self.compareTrumpCard()
         self.identifyWinningTrumpCard(trumpValuesListPerPlayer[0], trumpValuesListPerPlayer[1])
 
-    def enterTrick(self, oPlayer):
-        """Place card in the middle of the board and battle."""
-
-        self._preEnterTrick(oPlayer) # Player and card set-up
-
-        # Enter battle phase if there are two cards in the trick list
-        if len(self.trickList) == 2:
-            self._battlePhase()
-            self.setPotList() # Transfer trickCards to winner's pot (potCards)
-            print("End of Battle!")
-
     def setPotList(self):
         """Gives turnPlayer the spoils of war, as in the winner gets the cards."""
         # While loop is used, because we are modifying a list
@@ -183,22 +179,6 @@ class Game():
         """Prints the name of every card in the turnPlayer's potList."""
         potList = self.playerList[0].getPotList()
         return potList
-
-    def drawCard(self, oPlayer):
-        """Player draws a card."""
-
-        # Assigned oCard the top card from the deck.
-        oCard = self.oDeck.drawCard()
-        
-        # Deck is empty, draw the trump card as your last card.
-        if oCard == None:
-            oCard = self.trumpCard
-            self.trumpCard = None
-            oCard.setRotation(90)
-            oPlayer.drawCard(oCard)
-
-        else: # Deck is not empty, player drew a card from it.
-            oPlayer.drawCard(oCard)
 
     def _checkIfPlayerCanDraw(self, oPlayer):
         """
@@ -230,41 +210,6 @@ class Game():
         else: # After HAND_LIMIT is reached draw button is disabled
             self.drawCardButton.disable() 
 
-# --------------------------------------------------------------------------------
-
-    def handleEvent(self, event):
-        """Handles mouse and keyboard events when triggering card behavior."""
-        for oPlayer in self.playerList:
-
-            # Checks conditions to enable or disable draw button
-            self._checkIfPlayerCanDraw(oPlayer)
-
-# --------------------------------------------------------------------------------
-
-            # Currently refactoring
-            
-            # Gameplay options after a card is selected or deselected
-            self._clickOnCard(oPlayer, event)
-            
-            # Checks for button click; enable all cards if hand is full
-            if self.drawCardButton.handleEvent(event):
-                self.drawCard(oPlayer) 
-                if oPlayer.getLengthCardsOnHand() == Game.HAND_LIMIT:
-                    oPlayer.enableAllCardsOnHand()
-
-            # Check for swap button
-            if self.swapButton.handleEvent(event):
-                self._trumpSwap(oPlayer)
-            
-            # Check for trick button
-            if self.trickButton.handleEvent(event):
-                self.enterTrick(oPlayer) # Enter the battle arena of death! Muahahaha!
-                self.trickCount += 1 # -------------------------TEST for single player
-
-
-# --------------------------------------------------------------------------------
-
-
     def isTrumpCardSwappable(self, oPlayer):
         """
         Function access the player's selected card and compares it with the trump card.
@@ -274,13 +219,43 @@ class Game():
         if self.trumpCard == None:
             return False
 
-        elif selectedCard.getSuit() == self.trumpCard.getSuit(): # Same String?
+        elif selectedCard.getSuit() == self.trumpCard.getSuit():
             if selectedCard.getRankValue() == 7 and self.trumpCard.getRankValue() > 7:
                 return True
             elif selectedCard.getRankValue() == 2 and self.trumpCard.getRankValue() <= 7: 
                 return True
             else:
                 return False
+
+    def _checkForButtonClick(self, oPlayer, event):
+        """Checks for what buttons got click."""
+
+        # Check for draw button
+        if self.drawCardButton.handleEvent(event):
+            self.drawCard(oPlayer) 
+            if oPlayer.getLengthCardsOnHand() == Game.HAND_LIMIT:
+                # Enable all cards if hand is full
+                oPlayer.enableAllCardsOnHand()
+
+        # Check for swap button
+        if self.swapButton.handleEvent(event):
+            self._trumpSwap(oPlayer)
+            
+        # Check for trick button
+        if self.trickButton.handleEvent(event):
+            self.enterTrick(oPlayer) # Enter the battle arena of death! Muahahaha!
+            self.trickCount += 1 # -------------------------TEST for single player
+
+    def handleEvent(self, event):
+        """Handles mouse and keyboard events when triggering card behavior."""
+
+        for oPlayer in self.playerList:    
+            # Checks conditions to enable or disable draw button
+            self._checkIfPlayerCanDraw(oPlayer)
+            # Checks for GUI behaviour after a card is selected or deselected.
+            self._clickOnCard(oPlayer, event)
+            # Checks which buttons where clicked to induct an action.  
+            self._checkForButtonClick(oPlayer, event)    
 
     def _trumpSwap(self, oPlayer):
         """Action to swap the trump card with hand card."""
@@ -295,6 +270,33 @@ class Game():
 
         # New card on hand
         oPlayer._trumpSwap(swapTrump2Hand)
+
+    def enterTrick(self, oPlayer):
+        """Place card in the middle of the board and battle."""
+
+        self._preEnterTrick(oPlayer) # Player and card set-up
+
+        # Enter battle phase if there are two cards in the trick list
+        if len(self.trickList) == 2:
+            self._battlePhase()
+            self.setPotList() # Transfer trickCards to winner's pot (potCards)
+            print("End of Battle!")
+
+    def drawCard(self, oPlayer):
+        """Player draws a card."""
+
+        # Assigned oCard the top card from the deck.
+        oCard = self.oDeck.drawCard()
+        
+        # Deck is empty, draw the trump card as your last card.
+        if oCard == None:
+            oCard = self.trumpCard
+            self.trumpCard = None
+            oCard.setRotation(90)
+            oPlayer.drawCard(oCard)
+
+        else: # Deck is not empty, player drew a card from it.
+            oPlayer.drawCard(oCard)
 
     def draw(self):
         """Display cards to screen"""

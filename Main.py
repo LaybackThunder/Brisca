@@ -72,11 +72,9 @@ while True:
     background.draw()
 
     # 10 - Draw the window elements
-    # Draw remaining user interface components
     newGameButton.draw()
     quitButton.draw()
-    # Draw Game elements
-    oGame.draw()
+    oGame.draw() # Draw Game elements
 
     # 11 - Update the window
     pygame.display.update()
