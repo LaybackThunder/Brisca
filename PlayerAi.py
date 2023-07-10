@@ -8,6 +8,6 @@ class PlayerAi(Player):
                            (500, GHOST_HAND_Y_LOCATION)]
     GHOST_OBJ_Card = None # Ghost player on hold; code later
 
-    def __init__(self, window):
-        super().__init__(window)
+    def __init__(self, window, turnPlayer, playerId):
+        super().__init__(window, turnPlayer, playerId)
         self.ghostHandList = [] # Holds cards for ghost player

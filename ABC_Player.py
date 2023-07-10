@@ -4,10 +4,10 @@ from abc import ABC
 # Card is now an abstract base class
 class Player(ABC):
 
-    def __init__(self, window):
+    def __init__(self, window, turnplayer, playerId):
         self.window = window
-        self.turnPlayer = False
-        self.playerId = 0 # testing
+        self.turnPlayer = turnplayer # testing (NEW)
+        self.playerId = playerId # testing (NEW)
         self.potList = []
         self.oHand = Hand(window)
 

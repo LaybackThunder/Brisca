@@ -12,13 +12,14 @@ class Game():
     TRICK_LOCATION_LIST = [(250, TRICK_CARDS_LOC_Y), 
                            (500, TRICK_CARDS_LOC_Y)]
 
-    def __init__(self, window, player, SUIT, BRISCA_DICT):
+    def __init__(self, window, players, SUIT, BRISCA_DICT):
         """Initializing attributes."""
-
         self.window = window
         self.oDeck = BriscaDeck(self.window, Game.DECK_LOC, 
                                 SUIT, RANK_VALUE_DICT=BRISCA_DICT)
-        self.playerList = [player]
+        
+        self.playerList = players # -----> Adding players to list. NEW!
+        
         self.trumpCard = self.oDeck.drawCard()
         self.trumpCard.reveal() 
         self.trumpCard.setLoc(Game.TRUMP_LOC)
@@ -27,8 +28,7 @@ class Game():
         self.penultimate_trick = 4 # ------------------------------------------------------TEST for single player
         self.trickList = [] # Where cards battle
         self.dealerPot = [] # When there is a tie, the dealer holds cards
-        self.drawCardButton = pygwidgets.TextButton(window, (140, 840), 'Draw', 
-                                                    width=100, height=45)
+        # self.drawCardButton = pygwidgets.TextButton(window, (140, 840), 'Draw', width=100, height=45)
         self.trickButton = pygwidgets.TextButton(window, (20, 840), 'Trick', 
                                                  width=100, height=45)
         # This is the swap trump button
@@ -169,36 +169,6 @@ class Game():
         potList = self.playerList[0].getPotList()
         return potList
 
-    def _checkIfPlayerCanDraw(self, oPlayer):
-        """
-        Checks conditions to enable or disable draw button.
-        Conditions influence card behavior.
-        """
-
-        if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
-            if self.trickList: 
-                # As long as one card is in the battle phase, draw is disabled
-                self.drawCardButton.disable()
-
-            elif self.trumpCard != None: 
-                # As long as there is a trump card drawing is possible
-                self.drawCardButton.enable()
-                # Keeps player from triggering a card's behavior when clicked
-                oPlayer.disableAllCardsOnHand()  
-                
-                
-            else: # When deck is empty and there is no trump card to draw, do below
-                self.drawCardButton.disable() # Desibale draw button
-                oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
-
-                # Card is selected ; disable all hand cards
-                oCardClick = oPlayer.getCardClick()    
-                if oCardClick: 
-                    oPlayer.disableAllCardsOnHand()
-                         
-        else: # After HAND_LIMIT is reached draw button is disabled
-            self.drawCardButton.disable() 
-
     def isTrumpCardSwappable(self, oPlayer):
         """
         Function access the player's selected card and compares it with the trump card.
@@ -220,11 +190,11 @@ class Game():
         """Checks for what buttons got click."""
 
         # Check for draw button
-        if self.drawCardButton.handleEvent(event):
-            self.drawCard(oPlayer) 
-            if oPlayer.getLengthCardsOnHand() == Game.HAND_LIMIT:
+        #if self.drawCardButton.handleEvent(event):
+            #self.drawCard(oPlayer) 
+            #if oPlayer.getLengthCardsOnHand() == Game.HAND_LIMIT:
                 # Enable all cards if hand is full
-                oPlayer.enableAllCardsOnHand()
+                #oPlayer.enableAllCardsOnHand()
 
         # Check for swap button
         if self.swapButton.handleEvent(event):
@@ -271,28 +241,13 @@ class Game():
             self.setPotList() # Transfer trickCards to winner's pot (potCards)
             print("End of Battle!")
 
-    def drawCard(self, oPlayer):
-        """Player draws a card."""
-
-        # Assigned oCard the top card from the deck.
-        oCard = self.oDeck.drawCard()
-        
-        # Deck is empty, draw the trump card as your last card.
-        if oCard == None:
-            oCard = self.trumpCard
-            self.trumpCard = None
-            oCard.setRotation(90)
-            oPlayer.drawCard(oCard)
-
-        else: # Deck is not empty, player drew a card from it.
-            oPlayer.drawCard(oCard)
-
     def draw(self):
-        """Display cards to screen"""
+        """Display elements to screen."""
+
         # GUI components
         self.swapButton.draw()
         self.trickButton.draw()
-        self.drawCardButton.draw()
+        #self.drawCardButton.draw()
 
         # Game elements
         if self.trumpCard == None:
@@ -310,3 +265,62 @@ class Game():
 
         # for ghostCard in self.ghostHandList:
             # ghostCard.draw()
+
+
+
+    def _checkIfPlayerCanDraw(self, oPlayer):
+        """
+        Checks conditions to enable or disable draw button.
+        Conditions influence card behavior.
+        """
+
+        if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
+            if self.trickList: 
+                # As long as one card is in the battle phase, draw is disabled
+                #self.drawCardButton.disable()
+                print("You can't draw, because of the trick.")
+
+            elif self.trumpCard != None: 
+                # As long as there is a trump card drawing is possible
+                # self.drawCardButton.enable()
+                self.drawCard(oPlayer) # draw automatically
+                # Keeps player from triggering a card's behavior when clicked
+                oPlayer.disableAllCardsOnHand()  
+                
+                
+            else: # When deck is empty and there is no trump card to draw, do below
+                # self.drawCardButton.disable() # Desibale draw button
+                print("You can't draw, because of their is no deck and trump.")
+                oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
+
+                # Card is selected ; disable all hand cards
+                oCardClick = oPlayer.getCardClick()    
+                if oCardClick: 
+                    oPlayer.disableAllCardsOnHand()
+                         
+        else: # After HAND_LIMIT is reached draw button is disabled
+            # self.drawCardButton.disable() 
+            print("You have reach you hand limit")
+            oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
+
+    def drawCard(self, oPlayer):
+        """Player draws a card."""
+
+        # Assigned oCard the top card from the deck.
+        oCard = self.oDeck.drawCard()
+        
+        # Deck is empty, draw the trump card as your last card.
+        if oCard == None:
+            oCard = self.trumpCard
+            self.trumpCard = None
+            oCard.setRotation(90)
+            oPlayer.drawCard(oCard)
+
+        else: # Deck is not empty, player drew a card from it.
+            oPlayer.drawCard(oCard)
+
+
+
+
+
+

@@ -7,6 +7,7 @@ from pygame.locals import *
 import sys
 import pygwidgets
 from Player import *
+from PlayerAi import *
 from Game import *
 
 # 2 - Define constants
@@ -43,8 +44,11 @@ quitButton = pygwidgets.TextButton(window, (990, 840),
                                     'Quit', width=100, height=45)
 
 # 5 - Initialize variables
-oPlayer = Player(window)
-oGame = Game(window, oPlayer, SUIT=SUIT_TUPLE, BRISCA_DICT=BRISCA_DICT)
+oAiPlayer = PlayerAi(window, False, 1) # ------> NEW!
+oPlayer = Player(window, True, 0) # ------> NEW!
+oPlayers = [oPlayer] # ------> NEW!
+
+oGame = Game(window, oPlayers, SUIT=SUIT_TUPLE, BRISCA_DICT=BRISCA_DICT)
 
 # 6 - Loop forever 
 while True:
@@ -60,8 +64,10 @@ while True:
         
         # Check for new game
         if newGameButton.handleEvent(event):
-            oPlayer = Player(window)
-            oGame = Game(window, oPlayer, SUIT=SUIT_TUPLE, BRISCA_DICT=BRISCA_DICT)
+            oPlayer = Player(window, True, 0) # ------> NEW!
+            oAiPlayer = PlayerAi(window, False, 1) # ------> NEW!
+            oPlayers = [oPlayer]
+            oGame = Game(window, oPlayers, SUIT=SUIT_TUPLE, BRISCA_DICT=BRISCA_DICT)
         
         # Check events to play game
         oGame.handleEvent(event)
