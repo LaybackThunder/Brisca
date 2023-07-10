@@ -19,19 +19,14 @@ class Game():
         self.oDeck = BriscaDeck(self.window, Game.DECK_LOC, 
                                 SUIT, RANK_VALUE_DICT=BRISCA_DICT)
         self.playerList = [player]
-
-        # NOTE: After all players have drawn, set trump card from deck.
         self.trumpCard = self.oDeck.drawCard()
         self.trumpCard.reveal() 
         self.trumpCard.setLoc(Game.TRUMP_LOC)
         self.trumpCard.setRotation(-90)
-
         self.trickCount = 0 # ------------------------------------------------------------ TEST for single player
         self.penultimate_trick = 4 # ------------------------------------------------------TEST for single player
-
         self.trickList = [] # Where cards battle
         self.dealerPot = [] # When there is a tie, the dealer holds cards
-
         self.drawCardButton = pygwidgets.TextButton(window, (140, 840), 'Draw', 
                                                     width=100, height=45)
         self.trickButton = pygwidgets.TextButton(window, (20, 840), 'Trick', 
@@ -76,10 +71,6 @@ class Game():
             #print("-------TIE/n")
             #tie = True
 
-# --------------------------------------------------------------------------------
-
-# Currently refactoring
-
     def _clickOnCard(self, oPlayer, event):
         """When a card gets clicked or declicked it offers a few game mechanics."""
 
@@ -98,8 +89,6 @@ class Game():
             # Battle (trick) ability unavailable
             self.trickButton.disable()
             self.swapButton.disable()
-
-# --------------------------------------------------------------------------------
 
     # Polymorphism section
 
