@@ -189,13 +189,6 @@ class Game():
     def _checkForButtonClick(self, oPlayer, event):
         """Checks for what buttons got click."""
 
-        # Check for draw button
-        #if self.drawCardButton.handleEvent(event):
-            #self.drawCard(oPlayer) 
-            #if oPlayer.getLengthCardsOnHand() == Game.HAND_LIMIT:
-                # Enable all cards if hand is full
-                #oPlayer.enableAllCardsOnHand()
-
         # Check for swap button
         if self.swapButton.handleEvent(event):
             self._trumpSwap(oPlayer)
@@ -209,7 +202,7 @@ class Game():
         """Handles mouse and keyboard events when triggering card behavior."""
 
         for oPlayer in self.playerList:    
-            # Checks conditions to enable or disable draw button
+            # Checks conditions to enable or disable automatic draw
             self._checkIfPlayerCanDraw(oPlayer)
             # Checks for GUI behaviour after a card is selected or deselected.
             self._clickOnCard(oPlayer, event)
@@ -247,7 +240,6 @@ class Game():
         # GUI components
         self.swapButton.draw()
         self.trickButton.draw()
-        #self.drawCardButton.draw()
 
         # Game elements
         if self.trumpCard == None:
@@ -266,31 +258,24 @@ class Game():
         # for ghostCard in self.ghostHandList:
             # ghostCard.draw()
 
-
-
     def _checkIfPlayerCanDraw(self, oPlayer):
         """
-        Checks conditions to enable or disable draw button.
+        Checks conditions to enable or disable automatic drawing.
         Conditions influence card behavior.
         """
 
         if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
+
             if self.trickList: 
-                # As long as one card is in the battle phase, draw is disabled
-                #self.drawCardButton.disable()
-                print("You can't draw, because of the trick.")
+                # As long as one card is in the trick list, skip block
+                pass
 
             elif self.trumpCard != None: 
                 # As long as there is a trump card drawing is possible
-                # self.drawCardButton.enable()
                 self.drawCard(oPlayer) # draw automatically
-                # Keeps player from triggering a card's behavior when clicked
-                oPlayer.disableAllCardsOnHand()  
-                
-                
-            else: # When deck is empty and there is no trump card to draw, do below
-                # self.drawCardButton.disable() # Desibale draw button
-                print("You can't draw, because of their is no deck and trump.")
+                oPlayer.disableAllCardsOnHand() # Keeps player from triggering a card's behavior when clicked
+
+            else: # You can't draw, because their is no deck and trump
                 oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
 
                 # Card is selected ; disable all hand cards
@@ -298,10 +283,14 @@ class Game():
                 if oCardClick: 
                     oPlayer.disableAllCardsOnHand()
                          
-        else: # After HAND_LIMIT is reached draw button is disabled
-            # self.drawCardButton.disable() 
+        else: # After HAND_LIMIT is reached automatic drawing is disabled
             print("You have reach you hand limit")
             oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
+
+            # Card is selected ; disable all hand cards
+            oCardClick = oPlayer.getCardClick()    
+            if oCardClick: 
+                oPlayer.disableAllCardsOnHand()
 
     def drawCard(self, oPlayer):
         """Player draws a card."""
