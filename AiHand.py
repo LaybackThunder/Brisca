@@ -1,9 +1,14 @@
 from ABC_Hand import Hand
 
-class Hand(Hand):
-    """This class simulates a human player's hand."""
 
-    HAND_Y_LOC = 650
+"""Currently:
+Figure out how to modify the handleEvent().   
+"""
+
+class AiHand(Hand):
+
+    # Class variables
+    HAND_Y_LOCATION = 200
 
     def __init__(self, window):
         """Initialize hand attributes."""
@@ -14,9 +19,7 @@ class Hand(Hand):
                                 "HAND_SLOT2": (700, Hand.HAND_Y_LOC)  # slot 2 is right side of hand.
                                 }
         super.__init__(window, self.HAND_LOCATION_DICT)
-
-    # Polymorphism section 
-
+    
     def handleEvent(self, event):
         """
         Returns a bool if any card on hand was clicked.

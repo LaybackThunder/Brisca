@@ -1,15 +1,14 @@
-from Hand import *
 from abc import ABC
 
 # Card is now an abstract base class
 class Player(ABC):
 
-    def __init__(self, window, turnplayer, playerId):
+    def __init__(self, window, turnplayer):
         self.window = window
-        self.turnPlayer = turnplayer # testing (NEW)
-        self.playerId = playerId # testing (NEW)
+        # Add playerId in the future to identify host and players.
+        self.turnPlayer = turnplayer
         self.potList = []
-        self.oHand = Hand(window)
+        # self.oHand = Hand(window) Making player and Ai scripts get their hands
 
     def getTurnPlayer(self):
         """Return player ID"""

@@ -71,25 +71,6 @@ class Game():
             #print("-------TIE/n")
             #tie = True
 
-    def _clickOnCard(self, oPlayer, event):
-        """When a card gets clicked or declicked it offers a few game mechanics."""
-
-        # GUI options after a card is selected
-        if oPlayer.handleEvent(event):          
-            self.trickButton.enable()
-
-            # Is current selected card swappable and is not the penultimate trick? 
-            if self.isTrumpCardSwappable(oPlayer) and self.trickCount <= self.penultimate_trick: # TEST for single player
-                    self.swapButton.enable()
-            else:
-                self.swapButton.disable()
-
-        # GUI options after a card is deselected
-        else:
-            # Battle (trick) ability unavailable
-            self.trickButton.disable()
-            self.swapButton.disable()
-
     # Polymorphism section
 
     def _preEnterTrick(self, oPlayer):
@@ -186,29 +167,6 @@ class Game():
             else:
                 return False
 
-    def _checkForButtonClick(self, oPlayer, event):
-        """Checks for what buttons got click."""
-
-        # Check for swap button
-        if self.swapButton.handleEvent(event):
-            self._trumpSwap(oPlayer)
-            
-        # Check for trick button
-        if self.trickButton.handleEvent(event):
-            self.enterTrick(oPlayer) # Enter the battle arena of death! Muahahaha!
-            self.trickCount += 1 # -------------------------TEST for single player
-
-    def handleEvent(self, event):
-        """Handles mouse and keyboard events when triggering card behavior."""
-
-        for oPlayer in self.playerList:    
-            # Checks conditions to enable or disable automatic draw
-            self._checkIfPlayerCanDraw(oPlayer)
-            # Checks for GUI behaviour after a card is selected or deselected.
-            self._clickOnCard(oPlayer, event)
-            # Checks which buttons where clicked to induct an action.  
-            self._checkForButtonClick(oPlayer, event)    
-
     def _trumpSwap(self, oPlayer):
         """Action to swap the trump card with hand card."""
         
@@ -258,6 +216,43 @@ class Game():
         # for ghostCard in self.ghostHandList:
             # ghostCard.draw()
 
+    def drawCard(self, oPlayer):
+        """Player draws a card."""
+
+        # Assigned oCard the top card from the deck.
+        oCard = self.oDeck.drawCard()
+        
+        # Deck is empty, draw the trump card as your last card.
+        if oCard == None:
+            oCard = self.trumpCard
+            self.trumpCard = None
+            oCard.setRotation(90)
+            oPlayer.drawCard(oCard)
+
+        else: # Deck is not empty, player drew a card from it.
+            oPlayer.drawCard(oCard)
+
+
+
+
+
+# ----------------------------------------------------------------------------------------
+
+# Working on AI
+
+    def handleEvent(self, event):
+        """Handles mouse and keyboard events when triggering card behavior."""
+
+        for oPlayer in self.playerList:    
+            # Checks conditions to enable or disable automatic draw
+            self._checkIfPlayerCanDraw(oPlayer)
+            # Checks for GUI behaviour after a card is selected or deselected.
+            self._clickOnCard(oPlayer, event)
+            # Checks which buttons where clicked to induct an action.  
+            self._checkForButtonClick(oPlayer, event)    
+
+# ----------------------------------------------------------------------------------------
+
     def _checkIfPlayerCanDraw(self, oPlayer):
         """
         Checks conditions to enable or disable automatic drawing.
@@ -292,21 +287,40 @@ class Game():
             if oCardClick: 
                 oPlayer.disableAllCardsOnHand()
 
-    def drawCard(self, oPlayer):
-        """Player draws a card."""
+    def _clickOnCard(self, oPlayer, event):
+        """When a card gets clicked or declicked it offers a few game mechanics."""
 
-        # Assigned oCard the top card from the deck.
-        oCard = self.oDeck.drawCard()
-        
-        # Deck is empty, draw the trump card as your last card.
-        if oCard == None:
-            oCard = self.trumpCard
-            self.trumpCard = None
-            oCard.setRotation(90)
-            oPlayer.drawCard(oCard)
+        # GUI options after a card is selected
+        if oPlayer.handleEvent(event):          
+            self.trickButton.enable()
 
-        else: # Deck is not empty, player drew a card from it.
-            oPlayer.drawCard(oCard)
+            # Is current selected card swappable and is not the penultimate trick? 
+            if self.isTrumpCardSwappable(oPlayer) and self.trickCount <= self.penultimate_trick: # TEST for single player
+                    self.swapButton.enable()
+            else:
+                self.swapButton.disable()
+
+        # GUI options after a card is deselected
+        else:
+            # Battle (trick) ability unavailable
+            self.trickButton.disable()
+            self.swapButton.disable()
+
+    def _checkForButtonClick(self, oPlayer, event):
+        """Checks for what buttons got click."""
+
+        # Check for swap button
+        if self.swapButton.handleEvent(event):
+            self._trumpSwap(oPlayer)
+            
+        # Check for trick button
+        if self.trickButton.handleEvent(event):
+            self.enterTrick(oPlayer) # Enter the battle arena of death! Muahahaha!
+            self.trickCount += 1 # -------------------------TEST for single player
+
+
+
+
 
 
 
