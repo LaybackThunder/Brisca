@@ -1,6 +1,6 @@
-from ABC_Hand import Hand
+from ABC_Hand import *
 
-class Hand(Hand):
+class HumanHand(ABC_Hand):
     """This class simulates a human player's hand."""
 
     HAND_Y_LOC = 650
@@ -9,20 +9,18 @@ class Hand(Hand):
         """Initialize hand attributes."""
         self.HAND_LOCATION_DICT = {
                                 # g.e. [HAND_SLOTX is location iD key, (CARD LOCATION ON SCREEN) is value]
-                                "HAND_SLOT0": (300, Hand.HAND_Y_LOC), # slot 0 is left side of hand. 
-                                "HAND_SLOT1": (500, Hand.HAND_Y_LOC), # slot 1 is middle side of hand.
-                                "HAND_SLOT2": (700, Hand.HAND_Y_LOC)  # slot 2 is right side of hand.
+                                "HAND_SLOT0": (300, HumanHand.HAND_Y_LOC), # slot 0 is left side of hand. 
+                                "HAND_SLOT1": (500, HumanHand.HAND_Y_LOC), # slot 1 is middle side of hand.
+                                "HAND_SLOT2": (700, HumanHand.HAND_Y_LOC)  # slot 2 is right side of hand.
                                 }
-        super.__init__(window, self.HAND_LOCATION_DICT)
-
-    # Polymorphism section 
+        super().__init__(window, self.HAND_LOCATION_DICT)
 
     def handleEvent(self, event):
-        """
-        Returns a bool if any card on hand was clicked.
+        """ Returns a bool if any card on hand was clicked.
         Disable all cards not selected. 
         Enables all cards once selected card is deselcted.
         """
+       
         # Check if cards can be clicked
         if self.clickableHand:
             for oCard in self.cardList:

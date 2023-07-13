@@ -29,10 +29,10 @@ class Game():
         self.trickList = [] # Where cards battle
         self.dealerPot = [] # When there is a tie, the dealer holds cards
         # self.drawCardButton = pygwidgets.TextButton(window, (140, 840), 'Draw', width=100, height=45)
-        self.trickButton = pygwidgets.TextButton(window, (20, 840), 'Trick', 
+        self.trickButton = pygwidgets.TextButton(window, (20, 630), 'Trick', 
                                                  width=100, height=45)
         # This is the swap trump button
-        self.swapButton = pygwidgets.TextButton(window, (20, 780), 'Swap Trump', 
+        self.swapButton = pygwidgets.TextButton(window, (20, 580), 'Swap Trump', 
                                                 width=100, height=45)
         self.swapButton.disable()
         self.trickButton.disable()
@@ -243,13 +243,22 @@ class Game():
     def handleEvent(self, event):
         """Handles mouse and keyboard events when triggering card behavior."""
 
-        for oPlayer in self.playerList:    
-            # Checks conditions to enable or disable automatic draw
-            self._checkIfPlayerCanDraw(oPlayer)
-            # Checks for GUI behaviour after a card is selected or deselected.
-            self._clickOnCard(oPlayer, event)
-            # Checks which buttons where clicked to induct an action.  
-            self._checkForButtonClick(oPlayer, event)    
+        for oPlayer in self.playerList: 
+            # Is current player AI or human?
+
+            if oPlayer.isObjHumanOrRobot():
+                # Human actions only!
+
+                # Checks conditions to enable or disable automatic draw
+                self._checkIfPlayerCanDraw(oPlayer)
+                # Checks for GUI behaviour after a card is selected or deselected.
+                self._clickOnCard(oPlayer, event)
+                # Checks which buttons where clicked to induct an action.  
+                self._checkForButtonClick(oPlayer, event)
+                
+            else:
+                # Ai actions only
+                print("Player is not human!") 
 
 # ----------------------------------------------------------------------------------------
 

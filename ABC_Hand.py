@@ -9,7 +9,7 @@ The purpuse is to give players and AI functionality that do the same thing,
 but implemented differently.   
 """
 
-class Hand(ABC):
+class ABC_Hand(ABC):
     """Currently:
     All methods meet the needs of a human player's hand.
     """
@@ -158,13 +158,7 @@ class Hand(ABC):
         for oCard in self.cardList:
             oCard.draw()
 
-    @ abstractmethod
-    def handleEvent(self, event):
-        """
-        Returns a bool if any card on hand was clicked.
-        Disable all cards not selected. 
-        Enables all cards once selected card is deselcted.
-        """
-        # Check if cards can be clicked
-        # Return value and exit method   
+    @abstractmethod
+    def handleEvent(self, event): 
+        raise NotImplementedError
     

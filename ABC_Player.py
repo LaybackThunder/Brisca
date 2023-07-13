@@ -1,14 +1,19 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 # Card is now an abstract base class
-class Player(ABC):
+class ABC_Player(ABC):
 
-    def __init__(self, window, turnplayer):
+    def __init__(self, window, turnplayer, isPlayerHuman, oHand):
         self.window = window
         # Add playerId in the future to identify host and players.
         self.turnPlayer = turnplayer
         self.potList = []
-        # self.oHand = Hand(window) Making player and Ai scripts get their hands
+        self.isPlayerHuman = isPlayerHuman # Bool, true = Yes, false = no
+        self.oHand = oHand
+
+    def isObjHumanOrRobot(self):
+        """Returns true for human or false for robot."""
+        return self.isPlayerHuman
 
     def getTurnPlayer(self):
         """Return player ID"""
@@ -87,11 +92,10 @@ class Player(ABC):
         """Adds card to player's hand. If none; return no card error."""
         self.oHand._drawCard(oCard)
 
-    def handleEvent(self, event):
-        """Returns a bool if any card on hand was clicked."""
-        oCardClicked = self.oHand.handleEvent(event)
-        return oCardClicked
-    
     def draw(self):
         """Display hand on screen."""
         self.oHand.draw()
+
+    @abstractmethod
+    def handleEvent(self, event):
+        raise NotImplementedError 

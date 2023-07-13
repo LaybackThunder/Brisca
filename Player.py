@@ -1,9 +1,14 @@
-from ABC_Player import Player
-from Hand import *
+from ABC_Player import *
+from HumanHand import *
 
-class Player(Player):
+class Player(ABC_Player):
+    """Class simulates a human player."""
 
-    def __init__(self, window):
-        super().__init__(window)
-        self.humanPlayer = True
-        self.oHand = Hand(window) # Id draw (display imgs) doesn't work check classes for fidelity.
+    def __init__(self, window, isTurnPlayer, isPlayerHuman):
+        self.oHand = HumanHand(window)
+        super().__init__(window, isTurnPlayer, isPlayerHuman, self.oHand)
+    
+    def handleEvent(self, event):
+        """Returns a bool if any card on hand was clicked."""
+        oCardClicked = self.oHand.handleEvent(event)
+        return oCardClicked

@@ -1,46 +1,30 @@
-from ABC_Hand import Hand
+from ABC_Hand import *
 
 
 """Currently:
 Figure out how to modify the handleEvent().   
 """
 
-class AiHand(Hand):
+class AIHand(ABC_Hand):
 
     # Class variables
-    HAND_Y_LOCATION = 200
+    HAND_Y_LOC = 200
 
     def __init__(self, window):
         """Initialize hand attributes."""
         self.HAND_LOCATION_DICT = {
                                 # g.e. [HAND_SLOTX is location iD key, (CARD LOCATION ON SCREEN) is value]
-                                "HAND_SLOT0": (300, Hand.HAND_Y_LOC), # slot 0 is left side of hand. 
-                                "HAND_SLOT1": (500, Hand.HAND_Y_LOC), # slot 1 is middle side of hand.
-                                "HAND_SLOT2": (700, Hand.HAND_Y_LOC)  # slot 2 is right side of hand.
+                                "HAND_SLOT0": (300, AIHand.HAND_Y_LOC), # slot 0 is left side of hand. 
+                                "HAND_SLOT1": (500, AIHand.HAND_Y_LOC), # slot 1 is middle side of hand.
+                                "HAND_SLOT2": (700, AIHand.HAND_Y_LOC)  # slot 2 is right side of hand.
                                 }
-        super.__init__(window, self.HAND_LOCATION_DICT)
+        super().__init__(window, self.HAND_LOCATION_DICT)
     
-    def handleEvent(self, event):
-        """
-        Returns a bool if any card on hand was clicked.
-        Disable all cards not selected. 
-        Enables all cards once selected card is deselcted.
-        """
-        # Check if cards can be clicked
-        if self.clickableHand:
-            for oCard in self.cardList:
-                if oCard.handleEvent(event): # Has card been clicked now?
-                            self.oCard = oCard # Remember Ocard
-                            self.oCardClicked = self.oCard.getOcardClicked() # Assign click (True)
-                            self.clickableHand = False
-                            return self.oCardClicked # Return value and exit method
-        elif self.oCard == None: # oCard is none at the begining of the code's run.
-             pass
-        else:
-            if self.oCard.handleEvent(event):
-                        self.oCardClicked = self.oCard.getOcardClicked()
-                        self.clickableHand = True
-                        self.oCard = None
 
-        # Return value and exit method
-        return self.oCardClicked     
+    def automateCardClick(self):
+        """Ai selects the first card in the list from left to right."""
+        pass
+
+    def handleEvent(self, event):
+        print("Robot Hand event")
+        event = event  
