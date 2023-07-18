@@ -17,7 +17,7 @@ class ABC_Player(ABC):
 
     def getTurnPlayer(self):
         """Return player ID"""
-        print(f"Turn player's iD is {self.turnPlayerId}.") # testing
+        #print(f"Turn player's iD is {self.turnPlayerId}.") # testing
         return self.turnPlayer
 
     def setTurnPlayerTrue(self):
@@ -32,11 +32,11 @@ class ABC_Player(ABC):
         else:
             self.turnPlayer = False 
 
-    def setPotList(self, cardsAndOwners):
+    def setPotList(self, oCards):
         """Retrive oCard from trickList and add them to the player's potList."""
-        # {'oPlayer': oPlayer, 'oCard': oTrickCard}
-        for cardAndOwner in cardsAndOwners:
-            oCard = cardAndOwner.pop('oCard')
+
+        while oCards:
+            oCard = oCards.pop(0)
             print(oCard.getName())
             self.potList.append(oCard)
     

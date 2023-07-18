@@ -43,36 +43,15 @@ newGameButton = pygwidgets.TextButton(window, (880, 630),
 quitButton = pygwidgets.TextButton(window, (990, 630),
                                     'Quit', width=100, height=45)
 
-
-
-
-
-
-
-
-
-
-
 # ---------------------------------------------------------------------------
 
 # 5 - Initialize variables
-oAiPlayer = PlayerAi(window, isTurnPlayer=False, isPlayerHuman=False) # ------> NEW!
-oPlayer = Player(window, isTurnPlayer=True, isPlayerHuman=True) # ------> NEW!
-oPlayers = [oPlayer, oAiPlayer] # ------> NEW!
+oAiPlayer = PlayerAi(window, isTurnPlayer=False, isPlayerHuman=False)
+oPlayer = Player(window, isTurnPlayer=True, isPlayerHuman=True) 
+oPlayers = [oPlayer, oAiPlayer]
 oGame = Game(window, oPlayers, SUIT=SUIT_TUPLE, BRISCA_DICT=BRISCA_DICT)
 
 # ---------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
 # 6 - Loop forever 
 while True:
 

@@ -3,7 +3,7 @@ from ABC_Hand import *
 class HumanHand(ABC_Hand):
     """This class simulates a human player's hand."""
 
-    HAND_Y_LOC = 650
+    HAND_Y_LOC = 450
 
     def __init__(self, window):
         """Initialize hand attributes."""

@@ -27,4 +27,4 @@ class AIHand(ABC_Hand):
 
     def handleEvent(self, event):
         print("Robot Hand event")
-        event = event  
+        pass  
