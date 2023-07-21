@@ -7,7 +7,7 @@ class Game():
     HAND_LIMIT = 3
     DECK_LOC = (860, 220)
     TRUMP_LOC = (750, 220)
-    TRICK_CARDS_LOC_Y = 200
+    TRICK_CARDS_LOC_Y = 230
     # TRICK_LOCATION_LIST cordinates (x, y)
     TRICK_LOCATION_LIST = [(250, TRICK_CARDS_LOC_Y), 
                            (500, TRICK_CARDS_LOC_Y)]
@@ -88,9 +88,10 @@ class Game():
         
         if self.trickList: # Player's can see their cards in the trick zone.
             for cardAndOwner in self.trickList:
-                cardAndOwner['oCard'].draw()
                 # Without line of code below the player's can see their hands when in a trick
                 cardAndOwner['oPlayer'].draw()
+                # Player's can see their trick card
+                cardAndOwner['oCard'].draw()
 
         for oPlayer in self.playerList:
             oPlayer.draw()
@@ -115,6 +116,7 @@ class Game():
 
         else: # Deck is not empty, player drew a card from it.
             oPlayer.drawCard(oCard)
+    
 
 
 
@@ -137,11 +139,71 @@ class Game():
             elif oPlayer.isObjHumanOrRobot() != human and oPlayer.getTurnPlayer() == True:
                 # is Ai turn player?
                 print("--Robot is now turn player--")
+                self._robotHandleEvents(oPlayer, event)
+                
                 # Work In progress
             # ------------------------------------ Pending to be work on --------------------------
+    
+    def _robotHandleEvents(self, oPlayer, event):
+       """Method helper to give Ai instructions to do specific actions."""
+       self._checkIfAIPlayerCanDraw(oPlayer) 
+       if event:
+           pass
+
+
+    def _checkIfAIPlayerCanDraw(self, oPlayer):
+        """
+        Checks conditions to enable or disable automatic drawing.
+        Conditions influence card behavior.
+        """
+
+        if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
+            print("In")
+
+            if self.trickList: 
+                # As long as one card is in the trick list, skip block
+                pass
+
+            if self.trumpCard != None: 
+                # As long as there is a trump card drawing is possible
+                self.drawCard(oPlayer) # draw automatically
+                oPlayer.disableAllCardsOnHand() # Keeps player from triggering a card's behavior when clicked
+
+                if oPlayer.isObjHumanOrRobot() == False:
+                    print("Robot drew")
+
+            else: # You can't draw, because their is no deck and trump
+                oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
+
+                # Card is selected ; disable all hand cards
+                oCardClick = oPlayer.getCardClick()    
+                if oCardClick: 
+                    oPlayer.disableAllCardsOnHand()
+                         
+        else: # After HAND_LIMIT is reached automatic drawing is disabled
+            # print("You have reach you hand limit")
+            oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
+
+            # Card is selected ; disable all hand cards
+            oCardClick = oPlayer.getCardClick()    
+            if oCardClick: 
+                oPlayer.disableAllCardsOnHand()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # ----------------------- Human Player handleEvent stuff -------------------------------
-
     def _humanHandleEvents(self, oPlayer, event):
         """Method helper to house human actions."""
 
@@ -218,8 +280,7 @@ class Game():
             self.trickCount += 1 # -------------------------TEST for single player
 
 
-# --------------------------------------- Enter Trick for battle -------------------------
-
+# ---------------------------- Enter Trick for battle (Main Trick Methods) -----------------------------------
     def enterTrick(self, oPlayer):
         """Place card in the middle of the board and battle."""
 
@@ -281,7 +342,6 @@ class Game():
 
 
 # ------------------------ _preEnterTrick methods ----------------
-
     def popPlayerFromPlayerList(self, playerAndCard):
         """We pop the player. Then return the parameter as it came."""
         i = self.playerList.index(playerAndCard['oPlayer'])
@@ -304,8 +364,7 @@ class Game():
         self.playerList[0].setTurnPlayerTrue()
         
 
-# ------------------------ _battlePhase methods ----------------
-
+# ------------------------ _battlePhase methods ------------------
     # Checks who one the battlePhase()
     def _identifyTrickWinner(self, isPlayer1Trump, isPlayer2Trump):
         """
@@ -397,7 +456,7 @@ class Game():
         oCards = []
         for i in self.trickList[:]:
             index = self.trickList.index(i)
-            oCard = self.trickList[index]['oCard']
+            oCard = self.trickList[index].pop(['oCard'])
             oCards.append(oCard)
 
         self.playerList[0].setPotList(oCards)  
@@ -411,5 +470,5 @@ class Game():
 
         # Loop till there are no more trickPlayers in the trickList.
         while self.trickList:
-            trickPlayer = self.trickList.pop(0)
+            trickPlayer = self.trickList[0].pop(['oPlayer'])
             self.playerList.append(trickPlayer)

@@ -9,5 +9,8 @@ class PlayerAi(ABC_Player):
         super().__init__(window, isTurnPlayer, isPlayerHuman, self.oHand)
     
     def handleEvent(self, event):
-        print("I AM ROBOT!")
-        event = event
+        """Automatic actions take place here.
+        1) Draw automatically
+        2) Pick the first item in the handList
+        3) Enter the trick
+        """

@@ -12,3 +12,4 @@ class Player(ABC_Player):
         """Returns a bool if any card on hand was clicked."""
         oCardClicked = self.oHand.handleEvent(event)
         return oCardClicked
+    

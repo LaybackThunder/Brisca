@@ -35,15 +35,6 @@ class ABC_Hand(ABC):
     def getCardClick(self):
         """Returns a bool of card's click status."""
         return self.oCardClicked
-    
-    def addCardToHand(self, oCard):
-         self.cardList.insert(oCard.getCardId(), oCard)
-    
-    def setHandCorrdinatesForDisplay(self, oCard):
-        # Give card display coordinates for the hand based of card iD
-        self.cardList[oCard.getCardId()].setLoc(
-                    self.HAND_LOCATION_DICT["HAND_SLOT" + str(oCard.getCardId())]
-                    )
 
     def _popCardFromHand(self):
         """
@@ -104,29 +95,6 @@ class ABC_Hand(ABC):
             self.iDCardSlots.append(oCard.getCardId())
             self.iDCardSlots.sort() 
 
-    def setCardId(self, oCard):
-            """
-            Set a new id to oCard which maps a location for it to land in the hand.  
-            """
-            iDCounter = 0
-            try:
-                # Initially both conditions will be false;
-                # no cards on hand = no ids currently identified
-                if self.iDCardSlots:
-                        iDCounter = self.iDCardSlots.pop(0)
-                        oCard.setCardId(iDCounter)    
-
-                elif self.cardList:
-                    # The initial way to setting the 2nd card of the game with an ID
-                    for i in range(len(self.cardList)): # If for loop is empty it won't loop
-                        iDCounter += 1
-                        oCard.setCardId(iDCounter)
-            except:
-                print(f"Check your lists and local variables for errors: \n\
-                        iDCounter (Int): {iDCounter}\n\
-                        iDcardSlots (List): {self.iDCardSlots}\n\
-                        cardList (List): {self.cardList}\n")
-
     def _trumpSwap(self, oCard):
         """Takes trump card and adds it to the hand."""
             
@@ -137,26 +105,32 @@ class ABC_Hand(ABC):
         self.enableAllCardsOnHand() # After card is swapped, make all cards in hand clickable
         self.setCardClickedToFalse(oCard) # The oCard place holder, has been unclicked
         self.oCard = None # Empty place holder       
-            
-    def _drawCard(self, oCard):
-        """Adds card to player's hand. If none; return no card error."""
-        
-        oCard.reveal() # Reveal card to Player
-        self.setCardId(oCard) # Give card an id; by defult oCard has an iD of 0
-        self.addCardToHand(oCard) # Player has a card in hand via a list
-        self.setHandCorrdinatesForDisplay(oCard) # Give card display coordinates based of card iD
 
     def setCardClickedToFalse(self, selectedCard):
             """Card set to not selected; GUI buttons do not interact with card no more."""
             #NOTE: self.oCardClicked is ued to tell the handleEvent how to haddle button configurations.
 
             selectedCard.setCardClickedToFalse() # Tells oCard that it is false
-            self.oCardClicked = False # Tells hand that oCard has been set to false
+            self.oCardClicked = False # Tells hand that oCard has been set to false        
 
+    def addCardToHand(self, oCard):
+         self.cardList.insert(oCard.getCardId(), oCard)
+
+    @abstractmethod
+    def setHandCorrdinatesForDisplay(self, oCard):
+        raise NotImplementedError
+
+    @abstractmethod
+    def setCardId(self, oCard):
+        raise NotImplementedError
+
+    @abstractmethod
+    def _drawCard(self, oCard):
+        raise NotImplementedError
+
+    @abstractmethod
     def draw(self):
-        """Display cards on screen."""
-        for oCard in self.cardList:
-            oCard.draw()
+         raise NotImplementedError
 
     @abstractmethod
     def handleEvent(self, event): 
