@@ -35,31 +35,13 @@ class ABC_Hand(ABC):
     def getCardClick(self):
         """Returns a bool of card's click status."""
         return self.oCardClicked
-
-    def _popCardFromHand(self):
-        """
-        This method retrives a card from the hand and returns the selected card 
-        as the new trump card or for selcted card to enter a trick.
-        """
-        try: 
-            oCardIndex = self.cardList.index(self.oCard) # Identify card's index.
-            selectedCard = self.cardList.pop(oCardIndex) # Use index to pop oCard from the hand
-
-            self.enableAllCardsOnHand() # Enables other cards on hand to be selected
-            self.setCardClickedToFalse(selectedCard) # Selected card is set to unclickled, a.k.a False
-            self.retriveCardId(selectedCard) # Obtain selected card's iD; Id is reassiged to a drawn or swaped card.
-            
-            return selectedCard # Card left the hand; (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ peace the fuck out!
-
-        except:
-            if self.oCard is None:
-                print("Object is None Type.")
     
     def enterTrick(self):
         """
             Take card from hand. 
             Returns an oCard to be a trick card; a card that will battle. 
         """
+        
         oTrickCard = self._popCardFromHand()
         self.oCard = None
 
@@ -72,7 +54,6 @@ class ABC_Hand(ABC):
     def getCardsOnHand(self):
         """Returns a list of cards on hand."""
         # NOTE: This method is connected to Player class,
-        # but Game cass is not using it.
         return self.cardList
 
     def getSelectedCardfromHand(self):
@@ -117,6 +98,10 @@ class ABC_Hand(ABC):
          self.cardList.insert(oCard.getCardId(), oCard)
 
     @abstractmethod
+    def _popCardFromHand(self):
+        raise NotImplementedError
+
+    @abstractmethod
     def setHandCorrdinatesForDisplay(self, oCard):
         raise NotImplementedError
 
@@ -131,8 +116,3 @@ class ABC_Hand(ABC):
     @abstractmethod
     def draw(self):
          raise NotImplementedError
-
-    @abstractmethod
-    def handleEvent(self, event): 
-        raise NotImplementedError
-    

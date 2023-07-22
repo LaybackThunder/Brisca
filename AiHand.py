@@ -65,14 +65,6 @@ class AIHand(ABC_Hand):
                     self.HAND_LOCATION_DICT["HAND_SLOT" + str(oGhostCard.getCardId())]
                     )
 
-    def automateCardClick(self):
-        """Ai selects the first card in the list from left to right."""
-        pass
-
-    def handleEvent(self, event):
-        print("Robot Hand event")
-        pass  
-
     def draw(self):
         """Display cards on screen.
         # NOTE: Will the ghost card appears as the trick 
@@ -80,3 +72,20 @@ class AIHand(ABC_Hand):
         """
         for oCard in self.ghostHandList:
             oCard.draw() # Draw back of card
+            
+    # Experimenting with method
+    def _popCardFromHand(self):
+        """
+        This method retrives a card from the hand and returns the selected card 
+        as the new trump card or for selcted card to enter a trick.
+        """
+
+        selectedCard = self.cardList.pop(0) # Use index to pop oCard from the hand
+        
+        print(self.ghostHandList) # The print indicated that AI was drawing, but immidiatly play it's drawn card leading to the error
+
+        selectedghostCard = self.ghostHandList.pop(0)
+        self.retriveCardId(selectedghostCard) # Obtain selected card's iD; Id is reassiged to a drawn or swaped card.
+        del self.ghostHandList[0]
+        
+        return selectedCard # selectedCard left the hand; (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ peace the fuck out!

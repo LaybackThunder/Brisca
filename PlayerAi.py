@@ -8,9 +8,8 @@ class PlayerAi(ABC_Player):
         self.oHand = AIHand(window)
         super().__init__(window, isTurnPlayer, isPlayerHuman, self.oHand)
     
-    def handleEvent(self, event):
-        """Automatic actions take place here.
-        1) Draw automatically
-        2) Pick the first item in the handList
-        3) Enter the trick
+    def handleEvent(self):
+        """Ai selects the first card in the list from left to right.
+        Value is return and give to object Game.
         """
+        self.oHand.handleEvent()

@@ -54,6 +54,25 @@ class HumanHand(ABC_Hand):
                         iDcardSlots (List): {self.iDCardSlots}\n\
                         cardList (List): {self.cardList}\n")
 
+    def _popCardFromHand(self):
+        """
+        This method retrives a card from the hand and returns the selected card 
+        as the new trump card or for selcted card to enter a trick.
+        """
+        try: 
+            oCardIndex = self.cardList.index(self.oCard) # Identify card's index.
+            selectedCard = self.cardList.pop(oCardIndex) # Use index to pop oCard from the hand
+
+            self.enableAllCardsOnHand() # Enables other cards on hand to be selected
+            self.setCardClickedToFalse(selectedCard) # Selected card is set to unclickled, a.k.a False
+            self.retriveCardId(selectedCard) # Obtain selected card's iD; Id is reassiged to a drawn or swaped card.
+            
+            return selectedCard # Card left the hand; (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ peace the fuck out!
+
+        except:
+            if self.oCard is None:
+                print("Object is None Type.")
+
     def handleEvent(self, event):
         """ Returns a bool if any card on hand was clicked.
         Disable all cards not selected. 

@@ -53,8 +53,10 @@ class ABC_Player(ABC):
         
     def enterTrick(self):
         """Place card in the middle of the board."""
+
         # Asks had to give card, return card.
         oTrickCard = self.oHand.enterTrick()
+
         return oTrickCard    
 
     def getLengthCardsOnHand(self):
@@ -97,5 +99,5 @@ class ABC_Player(ABC):
         self.oHand.draw()
 
     @abstractmethod
-    def handleEvent(self, event):
+    def handleEvent(self):
         raise NotImplementedError 
