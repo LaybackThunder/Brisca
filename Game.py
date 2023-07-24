@@ -121,41 +121,80 @@ class Game():
 # Currently working here!
  
     def handleEvent(self, event):
-        """Depending on human vs AI behavior defers.
-       For humans: Mmethod Handles mouse and keyboard events when triggering card behavior.
-       Fo AI: It checks if it has cards on hand and directly plays a card.
+        """Human & AI behavior behavior.
+        Player draw automaticaly.
+        For humans: method handles mouse and keyboard events when triggering card behavior.
+        Fo AI: It checks if it has cards on hand and directly plays a card.
         """
 
         human = True
 
+        # Draw before you choose to enter a trick
+        self._playersDrawPahse(human)
+
+        # Players choose which card to enter a trick with
         for oPlayer in self.playerList[:]:
-     
+
             # Is current player AI or human?
+
+            # Human actions only!
             if oPlayer.isObjHumanOrRobot() == human and oPlayer.getTurnPlayer():
-                # Human actions only!
-                print("--Human inside loop--")
                 self._humanHandleEvents(oPlayer, event)
 
+            # AI actions only!
             elif oPlayer.isObjHumanOrRobot() != human and oPlayer.getTurnPlayer() == True:
-                # is Ai turn player?
-                print("--Robot is now turn player--")
                 self._AIHandleEvents(oPlayer)
    
-# ------------------------------------ Work In progress --------------------------         
-    
-    def _AIHandleEvents(self, oPlayer):
-        """Method helper to give Ai instructions to do specific actions."""
+
+# LEFT OFF -----> NOW WE MAKE PLAYERS BATTLE! 
+
+
+# ------------------------------------ All Players can draw --------------------------    
+    def _playersDrawPahse(self, human):
+        """Iterate playerList till all players have drawn.
+        The order on who draws first is determine by who is turnPlayer.
+        TurnPlayer draws first.
+        """
+
+        #  Create a local var to feed it a copy of playerList who should draw first.
+        drewPlayers = []
         
-        # AI can draw a card if possible
-        self._checkIfAIPlayerCanDraw(oPlayer) 
-        # AI enters trick if it has cards on hand
-        self._checkIfAIPlayerCanTrick(oPlayer)
+        # Draw untill all player have drawn
+        while self.playerList:
 
+            # Strip player from list to draw 
+            oPlayer = self.playerList.pop(0)
+            
+            # Human actions only!
+            if oPlayer.isObjHumanOrRobot() == human:
 
+                # Checks conditions to enable or disable automatic draw
+                self._checkIfPlayerCanDraw(oPlayer) 
 
+            # AI actions only!
+            elif oPlayer.isObjHumanOrRobot() != human:
+                
+                # AI can draw a card if possible
+                self._checkIfAIPlayerCanDraw(oPlayer) 
+            
+            # pop players to exit while loop after all players have drawn
+            popDrewPlayer = oPlayer
+            drewPlayers.append(popDrewPlayer)
+        
+        # Add player back to playerList
+        while drewPlayers:
+            popedPlayer = drewPlayers.pop(0)
+            self.playerList.append(popedPlayer)
+        
+        # All player have drawn
 
+# ----------------------- AI Player handleEvent stuff -------------------------------
+    def _AIHandleEvents(self, oPlayer):
+            """Method helper to give Ai instructions to do specific actions."""
+            
+            # AI enters trick if it has cards on hand
+            self._checkIfAIPlayerCanTrick(oPlayer)
 
-# ----------------------- AI Player handleEvent stuff -------------------------------'
     def _checkIfAIPlayerCanDraw(self, oPlayer):
         """
         Checks conditions to enable or disable automatic drawing.
@@ -163,7 +202,6 @@ class Game():
         """
 
         if oPlayer.getLengthCardsOnHand() < Game.HAND_LIMIT:
-            print("In")
 
             if self.trickList: 
                 # As long as one card is in the trick list, skip block
@@ -183,24 +221,21 @@ class Game():
         # Does AI have any cards left in its hand?
         aIHasCardsLeft = oPlayer.getCardsOnHand()
         
-        # 
         if aIHasCardsLeft == Game.HAND_LIMIT:
             # Enter the battle arena of death! Muahahaha!
             self.enterTrick(oPlayer)
         
+        # If cards are less then MAX and there are noi more cards to draw
         elif len(aIHasCardsLeft) < Game.HAND_LIMIT and self.trumpCard == None:
             self.enterTrick(oPlayer)
         
         elif aIHasCardsLeft == False:
             print("No cards on hand.")
 
-
 # ----------------------- Human Player handleEvent stuff -------------------------------
     def _humanHandleEvents(self, oPlayer, event):
         """Method helper to house human actions."""
-
-        # Checks conditions to enable or disable automatic draw
-        self._checkIfPlayerCanDraw(oPlayer)               
+              
         # Checks for GUI behaviour after a card is selected or deselected.
         self._clickOnCard(oPlayer, event)
         # Checks which buttons where clicked to induct an action.  
@@ -222,6 +257,7 @@ class Game():
                 # As long as there is a trump card drawing is possible
                 self.drawCard(oPlayer) # draw automatically
                 oPlayer.disableAllCardsOnHand() # Keeps player from triggering a card's behavior when clicked
+                print("Human drew.")
 
             else: # You can't draw, because their is no deck and trump
                 oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
@@ -355,6 +391,7 @@ class Game():
         
 
 # ------------------------ _battlePhase methods ------------------
+
     # Checks who one the battlePhase()
     def _identifyTrickWinner(self, isPlayer1Trump, isPlayer2Trump):
         """
