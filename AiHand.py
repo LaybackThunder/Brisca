@@ -80,12 +80,8 @@ class AIHand(ABC_Hand):
         as the new trump card or for selcted card to enter a trick.
         """
 
-        selectedCard = self.cardList.pop(0) # Use index to pop oCard from the hand
-        
-        print(self.ghostHandList) # The print indicated that AI was drawing, but immidiatly play it's drawn card leading to the error
-
         selectedghostCard = self.ghostHandList.pop(0)
         self.retriveCardId(selectedghostCard) # Obtain selected card's iD; Id is reassiged to a drawn or swaped card.
-        del self.ghostHandList[0]
         
+        selectedCard = self.cardList.pop(0) # Use index to pop oCard from the hand
         return selectedCard # selectedCard left the hand; (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ peace the fuck out!

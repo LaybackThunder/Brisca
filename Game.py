@@ -146,14 +146,15 @@ class Game():
                 self._AIHandleEvents(oPlayer)
    
 
-# LEFT OFF -----> NOW WE MAKE PLAYERS BATTLE! 
+# LEFT OFF -----> Fix bugs in editor; make AI cards visable when played and more bugs to come.
 
 
 # ------------------------------------ All Players can draw --------------------------    
     def _playersDrawPahse(self, human):
         """Iterate playerList till all players have drawn.
         The order on who draws first is determine by who is turnPlayer.
-        TurnPlayer draws first.
+        TurnPlayer draws first, then the player that follows.
+        Repeat till all players have 3 cards.
         """
 
         #  Create a local var to feed it a copy of playerList who should draw first.
@@ -221,8 +222,9 @@ class Game():
         # Does AI have any cards left in its hand?
         aIHasCardsLeft = oPlayer.getCardsOnHand()
         
-        if aIHasCardsLeft == Game.HAND_LIMIT:
+        if len(aIHasCardsLeft) == Game.HAND_LIMIT:
             # Enter the battle arena of death! Muahahaha!
+            print("AI entered trick!")
             self.enterTrick(oPlayer)
         
         # If cards are less then MAX and there are noi more cards to draw
@@ -231,6 +233,7 @@ class Game():
         
         elif aIHasCardsLeft == False:
             print("No cards on hand.")
+
 
 # ----------------------- Human Player handleEvent stuff -------------------------------
     def _humanHandleEvents(self, oPlayer, event):
@@ -307,7 +310,6 @@ class Game():
             self.enterTrick(oPlayer) # Enter the battle arena of death! Muahahaha!
             self.trickCount += 1 # -------------------------TEST for single player
 
-
 # ---------------------------- Enter Trick for battle (Main Trick Methods) -----------------------------------
     def enterTrick(self, oPlayer):
         """Place card in the middle of the board and battle."""
@@ -320,12 +322,12 @@ class Game():
             self._battlePhase()
             print("End of Battle!")
 
+            # Add players back to playerList
+            self.reAddPlayerstoPlayerList()
+
             # Transfer trickCards to winner's pot (potCards)
             self.setPotList() # ---------------------------------------> Currently working here
-            print("Winner got the spoils of WAR!")
-
-            # Add players back to playerList
-            self.reAddPlayerstoPlayerList() 
+            print("Winner got the spoils of WAR!") 
 
             for player in self.playerList: # Check if the player's are in the player List
                 print(f"{player.isObjHumanOrRobot()} is in the playerList.")
@@ -366,7 +368,6 @@ class Game():
             self._identifyTrickWinner(trumpValuesListPerPlayer[0], 
                                           trumpValuesListPerPlayer[1])
 
-
 # ------------------------ _preEnterTrick methods ----------------
     def popPlayerFromPlayerList(self, playerAndCard):
         """We pop the player. Then return the parameter as it came."""
@@ -387,9 +388,13 @@ class Game():
         playerAndCard['oPlayer'].setTurnPlayerFalse() 
 
     def setNewTurnPlayer(self):
-        self.playerList[0].setTurnPlayerTrue()
-        
+        """Once all players are not in playerList we exit the method with pass."""
 
+        if self.playerList:
+            self.playerList[0].setTurnPlayerTrue()
+        else:
+            pass
+  
 # ------------------------ _battlePhase methods ------------------
 
     # Checks who one the battlePhase()
@@ -483,9 +488,10 @@ class Game():
         oCards = []
         for i in self.trickList[:]:
             index = self.trickList.index(i)
-            oCard = self.trickList[index].pop(['oCard'])
-            oCards.append(oCard)
+            oPlayerNoCard = self.trickList.pop(index)
+            oCards.append(oPlayerNoCard['oCard'])
 
+        print(self.playerList) # --------------------------------------- CHECKING LIST AFTER A ROUND
         self.playerList[0].setPotList(oCards)  
 
     # Add playesr back to the playerList to starts a new round
@@ -497,5 +503,7 @@ class Game():
 
         # Loop till there are no more trickPlayers in the trickList.
         while self.trickList:
-            trickPlayer = self.trickList[0].pop(['oPlayer'])
-            self.playerList.append(trickPlayer)
+            # trickPlayer = self.trickList[0].pop(['oPlayer'])
+            trickPlayerTransfer = self.trickList.pop(0)
+            oPlayer = trickPlayerTransfer['oPlayer']
+            self.playerList.append(oPlayer)
