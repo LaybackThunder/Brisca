@@ -116,9 +116,8 @@ class Game():
 
         else: # Deck is not empty, player drew a card from it.
             oPlayer.drawCard(oCard)
-    
 
-# Currently working here!
+
  
     def handleEvent(self, event):
         """Human & AI behavior behavior.
@@ -223,16 +222,17 @@ class Game():
         aIHasCardsLeft = oPlayer.getCardsOnHand()
         
         if len(aIHasCardsLeft) == Game.HAND_LIMIT:
-            # Enter the battle arena of death! Muahahaha!
-            print("AI entered trick!")
-            self.enterTrick(oPlayer)
-        
-        # If cards are less then MAX and there are noi more cards to draw
-        elif len(aIHasCardsLeft) < Game.HAND_LIMIT and self.trumpCard == None:
+            # AI has enter the battle arena of death! Muahahaha!
             self.enterTrick(oPlayer)
         
         elif aIHasCardsLeft == False:
             print("No cards on hand.")
+        
+        # If cards are less then MAX and there are no more cards to draw
+        elif len(aIHasCardsLeft) < Game.HAND_LIMIT and self.trumpCard == None:
+            self.enterTrick(oPlayer)
+        
+
 
 
 # ----------------------- Human Player handleEvent stuff -------------------------------
@@ -352,6 +352,8 @@ class Game():
         transferPlayer = self.popPlayerFromPlayerList(playerAndCard)
         # Add player to trickList trickList
         self.addPlayerToTrickList(transferPlayer)
+        # Reveal oPlayer's card.
+        self.revealCard(transferPlayer)
         # End player's turn by chnaging it's turnPlayer var to False
         self.setTurnPlayerFalse(transferPlayer)
         # Pending player can now play their turn
@@ -375,7 +377,15 @@ class Game():
         self.playerList.pop(i)
         return playerAndCard
 
+    def revealCard(self, playerAndCard):
+        """Now you can see the front side of the card."""
+
+        playerAndCard['oCard'].reveal()
+
     def addPlayerToTrickList(self, playerAndCard):
+        """Adds player's to 
+        the trick list and other wait for a trick to begin or battle.
+        """
 
         # Add playerAndCard to the trick list to do battle
         self.trickList.append(playerAndCard)
@@ -396,7 +406,6 @@ class Game():
             pass
   
 # ------------------------ _battlePhase methods ------------------
-
     # Checks who one the battlePhase()
     def _identifyTrickWinner(self, isPlayer1Trump, isPlayer2Trump):
         """

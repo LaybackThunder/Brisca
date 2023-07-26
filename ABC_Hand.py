@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 
-
-
 """Currently:
 I am reading OOPython's inheritance chapter to refresh my knowledge 
 on the subject. I am currently creating a Hand abstract class. 
