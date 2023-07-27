@@ -79,8 +79,15 @@ class AIHand(ABC_Hand):
         This method retrives a card from the hand and returns the selected card 
         as the new trump card or for selcted card to enter a trick.
         """
+
+        # ----------------------- working --------------------------------------------
+
         print(self.ghostHandList) # --------- THIS shows ghost hand is empty
         selectedghostCard = self.ghostHandList.pop(0) # ---- AI pops after no more cards on hand. ISSUE!
+        
+        # ----------------------- working --------------------------------------------
+
+
 
 
 

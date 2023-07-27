@@ -22,17 +22,17 @@ class ABC_Player(ABC):
 
     def setTurnPlayerTrue(self):
         if self.turnPlayer:
-            print('Player is already turnPlayer (True)!')
+            pass
         else:
             self.turnPlayer = True
     
     def setTurnPlayerFalse(self):
         if self.turnPlayer == False:
-            print('Player is already NOT turnPlayer (False)!')
+            pass
         else:
             self.turnPlayer = False 
 
-    def setPotList(self, oCards):
+    def setPotList(self, oCards): # Does not print
         """Retrive oCard from trickList and add them to the player's potList."""
 
         while oCards:
@@ -97,7 +97,3 @@ class ABC_Player(ABC):
     def draw(self):
         """Display hand on screen."""
         self.oHand.draw()
-
-    @abstractmethod
-    def handleEvent(self):
-        raise NotImplementedError 

@@ -7,3 +7,9 @@ class PlayerAi(ABC_Player):
     def __init__(self, window, isTurnPlayer, isPlayerHuman):
         self.oHand = AIHand(window)
         super().__init__(window, isTurnPlayer, isPlayerHuman, self.oHand)
+    
+    #def handleEvent(self):
+        """Ai selects the first card in the list from left to right.
+        Value is return and give to object Game.
+        """
+        #self.oHand.handleEvent()
