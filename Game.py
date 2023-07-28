@@ -312,12 +312,16 @@ class Game():
             self._battlePhase()
             print("End of Trick!")
 
+            # Dealer obtains trick cards
+            self.dealerGetWinnings()
+
             # Add players back to playerList
             self.reAddPlayerstoPlayerList()
-            print(self.playerList) # --------------------------------------- CHECKING LIST AFTER A ROUND
+            # CHECKING WHO IS TURN PLAYER AFTER A ROUND
+            print(self.playerList) 
 
-            # Transfer trickCards to winner's pot (potCards)
-            self.setPotList() # ---------------------------------------> Currently working here
+            # Dealer(Game class) transfers trickCards to winner's pot (potCards)
+            self.setPotList()
  
         else:
             print("Waiting other player.")
@@ -357,7 +361,33 @@ class Game():
             self._identifyTrickWinner(trumpValuesListPerPlayer[0], 
                                         trumpValuesListPerPlayer[1])
 
-    # The winner gets the spoils of WAR
+
+
+
+    # Dealer gets trick cards
+    def dealerGetWinnings(self):
+        """Dealer obtains players trick cards.
+        refPlayerAndCard means that we are referencing to the object(dict)
+        """
+
+        for i in self.trickList[:]:
+            # the i is a dict ['oPlayer': oPlayer, 'oCard': oBriscaCard]
+            trickCardTransfer = i.pop('oCard')
+            self.dealerPot.append(trickCardTransfer)
+
+    # Add playesr back to the playerList to starts a new round
+    def reAddPlayerstoPlayerList(self):
+        """re-add players back to playerList.  
+        This means that players will be able to draw and battle again.
+        """
+
+        # Loop till there are no more trickPlayers in the trickList.
+        while self.trickList:
+            trickPlayerTransfer = self.trickList.pop(0)
+            oPlayer = trickPlayerTransfer['oPlayer']
+            self.playerList.append(oPlayer)
+
+    # The winner gets the spoils of WAR from the dealer
     def setPotList(self):
         """Gives turnPlayer the spoils of war, as in the winner gets the cards.
         I didn't use a while loop to iterate, because I wasn't going to...
@@ -365,26 +395,27 @@ class Game():
         """
 
         oCards = []
-        for i in self.trickList[:]:
-            index = self.trickList.index(i)
-            oPlayerNoCard = self.trickList.pop(index)
-            oCards.append(oPlayerNoCard['oCard'])
 
-        self.playerList[0].setPotList(oCards)  
+        while self.dealerPot:
+            oCard = self.dealerPot.pop(0)
+            print(f"The {oCard.getName()} is in the {self.playerList[0]} pot.")
+            # oCard is inside a dictionary
+            oCards.append(oCard) 
 
-    # Add playesr back to the playerList to starts a new round
-    def reAddPlayerstoPlayerList(self):
-        """re-add players back to playerList. 
-        This means that players will be able to draw and battle again.
-        Make trick (battle) winner turn player, that player will draw and play frist.
-        """
+        # Turn player adds their winnings from the last trick they played.
+        self.playerList[0].setPotList(oCards)
 
-        # Loop till there are no more trickPlayers in the trickList.
-        while self.trickList:
-            # trickPlayer = self.trickList[0].pop(['oPlayer'])
-            trickPlayerTransfer = self.trickList.pop(0)
-            oPlayer = trickPlayerTransfer['oPlayer']
-            self.playerList.append(oPlayer)
+
+
+
+
+
+
+
+
+
+
+
 
     def checkForGameOver(self):
         """Verify that players have played their last card:

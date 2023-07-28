@@ -37,7 +37,6 @@ class ABC_Player(ABC):
 
         while oCards:
             oCard = oCards.pop(0)
-            print(oCard.getName())
             self.potList.append(oCard)
     
     def getPotList(self):
