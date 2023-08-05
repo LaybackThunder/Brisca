@@ -19,16 +19,19 @@ class Game():
         self.oDeck = BriscaDeck(self.window, Game.DECK_LOC, 
                                 SUIT, RANK_VALUE_DICT=BRISCA_DICT)
         
-        self.playerList = players # -----> Adding players to list. NEW!
+        self.playerList = players
         self.trumpCard = self.oDeck.drawCard()
         self.trumpCard.reveal() 
         self.trumpCard.setLoc(Game.TRUMP_LOC)
         self.trumpCard.setRotation(-90)
-        self.trickCount = 0 # ------------------------------------------------------------ TEST for single player
-        self.penultimate_trick = 4 # ------------------------------------------------------TEST for single player
+        self.isPlayer1Trump = False
+        self.isPlayer2Trump = False
+        self.enterBattleStep = False
+        self.trickCount = 0
+        self.penultimate_trick = 16 # It takes 16 tricks to disable the swap feature
         self.trickList = [] # Where cards battle
         self.dealerPot = [] # When there is a tie, the dealer holds cards
-        # self.drawCardButton = pygwidgets.TextButton(window, (140, 840), 'Draw', width=100, height=45)
+        self.isGameOver = False
         self.trickButton = pygwidgets.TextButton(window, (20, 630), 'Trick', 
                                                  width=100, height=45)
         # This is the swap trump button
@@ -36,8 +39,22 @@ class Game():
                                                 width=100, height=45)
         self.swapButton.disable()
         self.trickButton.disable()
-        self.isGameOver = False
-   
+
+        # None Interactive Static UI 
+        
+        # Human UI points display (None = defult values)
+        self.humanPlayerPointsDisplay = pygwidgets.DisplayText(window, loc=(140, 590), 
+                                                                value=f'Points: 0', 
+                                                                fontName=None, fontSize=24, 
+                                                                width=None, height=None, 
+                                                                textColor=(255, 215, 0), # Gold color
+                                                                backgroundColor=None, justified='left', 
+                                                                nickname=None)
+            
+            # Game Over display
+            # Winner display
+            # Player Prompt: "Click new game to play again; click quit to exit game"
+
     def getPotList(self):
         """Prints the name of every card in the turnPlayer's potList."""
         potList = self.playerList[0].getPotList()
@@ -80,6 +97,7 @@ class Game():
         # GUI components
         self.swapButton.draw()
         self.trickButton.draw()
+        self.humanPlayerPointsDisplay.draw()
 
         # Game elements
         if self.trumpCard == None:
@@ -94,6 +112,7 @@ class Game():
                 # Player's can see their trick card
                 cardAndOwner['oCard'].draw()
 
+        # Players can see their cards while waiting to enter a trick.
         for oPlayer in self.playerList:
             oPlayer.draw()
 
@@ -115,32 +134,6 @@ class Game():
         else: # Deck is not empty, player drew a card from it.
             oPlayer.drawCard(oCard)
 
-    def handleEvent(self, event):
-        """Human & AI behavior behavior.
-        Player draw automaticaly.
-        For humans: method handles mouse and keyboard events when triggering card behavior.
-        Fo AI: It checks if it has cards on hand and directly plays a card.
-        """
-
-        human = True
-
-        # Draw before you choose to enter a trick
-        self._playersDrawPahse(human)
-
-        # Players choose which card to enter a trick with
-        for oPlayer in self.playerList[:]:
-
-            # Is current player AI or human?
-
-            # Human actions only!
-            if oPlayer.isObjHumanOrRobot() == human and oPlayer.getTurnPlayer():
-                self._humanHandleEvents(oPlayer, event)
-
-            # AI actions only!
-            elif oPlayer.isObjHumanOrRobot() != human and oPlayer.getTurnPlayer() == True:
-                self._AIHandleEvents(oPlayer)
-
-# ------------------------------------ All Players can draw --------------------------    
     def _playersDrawPahse(self, human):
         """Iterate playerList till all players have drawn.
         The order on who draws first is determine by who is turnPlayer.
@@ -179,6 +172,48 @@ class Game():
             self.playerList.append(popedPlayer)
         
         # All player have drawn
+
+    def handleEvent(self, event):
+        """Human & AI behavior behavior.
+        Player draw automaticaly.
+        For humans: method handles mouse and keyboard events when triggering card behavior.
+        Fo AI: It checks if it has cards on hand and directly plays a card.
+        """
+
+        human = True
+        self._playersDrawPahse(human) # Draw before you choose to enter a trick
+
+        for oPlayer in self.playerList[:]: # Players choose which card to enter a trick with
+
+            # Is current player AI or human?
+
+            # Human actions only!
+            if oPlayer.isObjHumanOrRobot() == human and oPlayer.getTurnPlayer():
+                self._humanHandleEvents(oPlayer, event)
+
+            # AI actions only!
+            elif oPlayer.isObjHumanOrRobot() != human and oPlayer.getTurnPlayer() == True:
+                self._AIHandleEvents(oPlayer)
+
+        # Should I update UI here?
+        # NO, just create a method helper and have Mian call Game.UIUpdate()
+        self.pointsUIUpdate()
+   
+    
+
+# ----------------------- UI Events -------------------------------
+    def _updateUI(self):
+        """Update Player's game UI elemnets."""
+
+        self.pointsUIUpdate()
+
+    def pointsUIUpdate(self):
+        """Method tells 'self.humanPlayerPointsDisplay' to update the human points in the window."""
+
+        for player in self.playerList:
+
+            if player.isObjHumanOrRobot():
+                self.humanPlayerPointsDisplay.setValue(f"Points: {player.getPoints()}")
 
 # ----------------------- AI Player handleEvent stuff -------------------------------
     def _AIHandleEvents(self, oPlayer):
@@ -260,7 +295,6 @@ class Game():
                     oPlayer.disableAllCardsOnHand()
                          
         else: # After HAND_LIMIT is reached automatic drawing is disabled
-            # print("You have reach you hand limit")
             oPlayer.enableAllCardsOnHand() # Allows player to play (click) any cards on hand
 
             # Card is selected ; disable all hand cards
@@ -317,10 +351,11 @@ class Game():
 
             # Add players back to playerList
             self.reAddPlayerstoPlayerList()
+
             # CHECKING WHO IS TURN PLAYER AFTER A ROUND
             print(self.playerList) 
 
-            # Dealer(Game class) transfers trickCards to winner's pot (potCards)
+            # Dealer(Game class) gives cards and calculates turnPlayer's turn
             self.setPotList()
  
         else:
@@ -328,7 +363,6 @@ class Game():
 
     def _preEnterTrick(self, oPlayer):
         """Prepare player's card to enter battle"""
-        # NOTE: Turn player is removed from player list.
 
         trickIndex = len(self.trickList) # Get trickList index to identify location on the board
         oTrickCard = oPlayer.enterTrick() # Retrieve player's choosen card to enter battle (trick) 
@@ -341,30 +375,12 @@ class Game():
         
         # Pop player from playerList
         transferPlayer = self.popPlayerFromPlayerList(playerAndCard)
-        # Add player to trickList trickList
-        self.addPlayerToTrickList(transferPlayer)
-        # Reveal oPlayer's card.
-        self.revealCard(transferPlayer)
-        # End player's turn by chnaging it's turnPlayer var to False
-        self.setTurnPlayerFalse(transferPlayer)
-        # Pending player can now play their turn
-        self.setNewTurnPlayer()
-
+        self.addPlayerToTrickList(transferPlayer)   # Add player to trickList trickList
+        self.revealCard(transferPlayer)             # Reveal oPlayer's card.
+        self.setTurnPlayerFalse(transferPlayer)     # End player's turn by changing it's turnPlayer var to False
+        self.setNewTurnPlayer()                     # Pending player can now play their turn
         # Players fight in the battlePhase()
-    
-    def _battlePhase(self):
-            """This method identifies who is the winner of the trick"""
 
-            # Retrive trumnp values per player
-            trumpValuesListPerPlayer = self.compareTrumpCard() 
-            # Id the winner of the trick
-            self._identifyTrickWinner(trumpValuesListPerPlayer[0], 
-                                        trumpValuesListPerPlayer[1])
-
-
-
-
-    # Dealer gets trick cards
     def dealerGetWinnings(self):
         """Dealer obtains players trick cards.
         refPlayerAndCard means that we are referencing to the object(dict)
@@ -375,11 +391,8 @@ class Game():
             trickCardTransfer = i.pop('oCard')
             self.dealerPot.append(trickCardTransfer)
 
-    # Add playesr back to the playerList to starts a new round
     def reAddPlayerstoPlayerList(self):
-        """re-add players back to playerList.  
-        This means that players will be able to draw and battle again.
-        """
+        """Add playesr back to the playerList to starts a new round"""
 
         # Loop till there are no more trickPlayers in the trickList.
         while self.trickList:
@@ -387,42 +400,22 @@ class Game():
             oPlayer = trickPlayerTransfer['oPlayer']
             self.playerList.append(oPlayer)
 
-    # The winner gets the spoils of WAR from the dealer
     def setPotList(self):
-        """Gives turnPlayer the spoils of war, as in the winner gets the cards.
-        I didn't use a while loop to iterate, because I wasn't going to...
-        remove
-        """
+        """Gives turnPlayer the spoils of war, as in the winner gets the cards."""
 
         oCards = []
+        turnPlayer = self.playerList[0]
 
         while self.dealerPot:
             oCard = self.dealerPot.pop(0)
-            print(f"The {oCard.getName()} is in the {self.playerList[0]} pot.")
+            # print(f"The {oCard.getName()} is in the {self.playerList[0]} pot.")
             # oCard is inside a dictionary
             oCards.append(oCard) 
-
+    
         # Turn player adds their winnings from the last trick they played.
-        self.playerList[0].setPotList(oCards)
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def checkForGameOver(self):
-        """Verify that players have played their last card:
-        1) Print each player's score
-        2) Print the winner
-        3) Whatever else lol.
-        """
+        turnPlayer.setPotList(oCards)
+        # Calculate turnPlayer's points
+        self.updatePlayerScore(turnPlayer)
 
 # ------------------------ _preEnterTrick methods ----------------
     def popPlayerFromPlayerList(self, playerAndCard):
@@ -459,88 +452,130 @@ class Game():
             self.playerList[0].setTurnPlayerTrue()
         else:
             pass
-  
-# ------------------------ _battlePhase methods ------------------
-    # Checks who one the battlePhase()
-    def _identifyTrickWinner(self, isPlayer1Trump, isPlayer2Trump):
-        """
-        Identify which player won and sets them to trunPlayer (True).
-        Player1 is turn player.
-        Player2 is follow on player.
-        """
-        print("Battle!\n")
-        self.caluculateTrump(isPlayer1Trump, isPlayer2Trump)
 
-    # Check if player's card is a trump using True or False
+# ------------------------ _battlePhase methods ------------------
+    def _battlePhase(self):
+            """This method identifies who is the winner of the trick"""
+
+            # Retrive trumnp values per player
+            self.compareTrumpCard() 
+            # Id the winner of the trick
+            self._identifyTrickWinner()
+            self.resetPlayerTrumps()
+   
     def compareTrumpCard(self):
-        """Return a list with bool values 
-        identifying if player's have a trump card or not.
-        """
+        """Identifying which player has a trump card."""
 
         # If there is a trump card on the game board 
         if self.trumpCard != None:
             # Compare player's trump cards to the main trump card; True or False
-            isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == self.trumpCard.getSuit()
-            isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == self.trumpCard.getSuit()
+            self.isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == self.trumpCard.getSuit()
+            self.isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == self.trumpCard.getSuit()
 
-        # else make the leading card in the trickList the trump card 
-        else:
-            trumpCard = self.trickList[0]['oCard']
-            # Compare player's leading trump cards to the main trump card
-            isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == trumpCard.getSuit()
-            isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == trumpCard.getSuit()
+            print("Player's trump:")
+            print(f"The player 1's {self.trickList[0]['oCard'].getName()} its trump is set to {self.isPlayer1Trump}.")
+            print(f"The player 2's {self.trickList[1]['oCard'].getName()} its trump is set to {self.isPlayer2Trump}\n.")
 
-        trumpValuesListPerPlayer = [isPlayer1Trump, isPlayer2Trump]
+            # Check if their both false; 
+            if self.isPlayer1Trump == False and self.isPlayer2Trump == False:
+                # leading card in the trickList is the leading trump card
+                self.leadingTrumpCard()
+                
+        else: # else make the leading card in the trickList the trump card
+            self.leadingTrumpCard()
+    
+    def leadingTrumpCard(self):
+        """First card in the trickList becomes trump card."""
+        trumpCard = self.trickList[0]['oCard']
+        print("Not trump card in trick!")
+        print(f"The leading trump card instead is {trumpCard.getName()}\n")
+        self.isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == trumpCard.getSuit()
+        self.isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == trumpCard.getSuit()
 
-        return trumpValuesListPerPlayer 
+    def _identifyTrickWinner(self):
+        """Identify which player won and sets it as the trunPlayer (True)."""
 
-    # Check if a player can win using a trump card or enter battleStep()
-    def caluculateTrump(self, isPlayer1Trump, isPlayer2Trump):
-
-        # Both players have a trump card
-        if isPlayer1Trump and isPlayer2Trump: 
+        self.caluculateTrump()        
+        if self.enterBattleStep: # Both players have a trump
+            print("Entered battle step")
             self.battleStep()
 
+    def caluculateTrump(self):
+        """Check if a player can win using a trump card or enter battleStep()"""
+
+        # Both players have a trump card
+        if self.isPlayer1Trump and self.isPlayer2Trump: 
+            self.enterBattleStep = True
+
         # A player has a trump card
-        elif isPlayer1Trump or isPlayer2Trump:   
+        elif self.isPlayer1Trump or self.isPlayer2Trump:
+            print("trump battle:\n")   
             
-            if isPlayer1Trump:    
+            if self.isPlayer1Trump:    
                 self.trickList[0]['oPlayer'].setTurnPlayerTrue() # Player 1 is turn player
                 self.trickList[1]['oPlayer'].setTurnPlayerFalse()
-                print(f"-------{self.trickList[0]['oCard'].getName()} WINs!\n")
+                print(f"Leading player WINs with the {self.trickList[0]['oCard'].getName()}!")
+                print(f"Follow on player LOST with the {self.trickList[1]['oCard'].getName()}!\n")
                
             else:
                 self.trickList[1]['oPlayer'].setTurnPlayerTrue() # Player 2 is turn player
                 self.trickList[0]['oPlayer'].setTurnPlayerFalse()
-                print(f"-------{self.trickList[0]['oCard'].getName()} LOST!\n")
+                print(f"Leading player LOST with the {self.trickList[0]['oCard'].getName()}!")
+                print(f"Follow on player WINs with the {self.trickList[1]['oCard'].getName()}!\n")
                 self.trickList.reverse() # This makes player 2 become player 1 for the next round
 
-    # If both players have the same trump card you've entered battleStep()
     def battleStep(self):
         """Calculates which is the highest oTrickCard value between the players."""
         player1 = self.trickList[0]['oPlayer'] # player1 is turn player
         player2 = self.trickList[1]['oPlayer'] # player2 is follow on player
         self.calculateTrick(player1, player2)
 
-    # After entering battleStep() compare card values. Highest rank wins
     def calculateTrick(self, player1, player2):
         """
         Calculate which card has the highest point value.
         Player1 is turn player. Player2 is follow on player.
         Winner is set as turnPlayer.
         """
+        print("Both players have trump card:\n")
+
         player1CardValue = self.trickList[0]['oCard'].getRankValue()
         player2CardValue = self.trickList[1]['oCard'].getRankValue()
 
         if player1CardValue > player2CardValue:
-            print(f"-------{self.trickList[0]['oCard'].getName()} WINs!")
-            print(f"-------{self.trickList[1]['oCard'].getName()} LOST!\n")
+            print(f"{self.trickList[0]['oPlayer']} with {self.trickList[0]['oCard'].getName()} WINs with a value of {player1CardValue}!")
+            print(f"{self.trickList[1]['oPlayer']} with {self.trickList[1]['oCard'].getName()} LOST with a value of {player2CardValue}!\n")
             player1.setTurnPlayerTrue() # Player1 will have the bool to draw firs
             player2.setTurnPlayerFalse()
                 
         else:
-            print(f"-------{self.trickList[1]['oCard'].getName()} WINs!")
-            print(f"-------{self.trickList[0]['oCard'].getName()} LOST!\n")
+            print(f"{self.trickList[1]['oPlayer']} with {self.trickList[1]['oCard'].getName()} WINs with a value of {player2CardValue}!")
+            print(f"{self.trickList[0]['oPlayer']} with {self.trickList[0]['oCard'].getName()} LOST with a value of {player1CardValue}!\n")
             player2.setTurnPlayerTrue() # Player2 will have the bool to draw first
             player1.setTurnPlayerFalse()
             self.trickList.reverse() # This makes player 2 become player 1 for the next round
+        
+        self.enterBattleStep = False # Reset enterBattleStep because the battle finished
+
+    def resetPlayerTrumps(self):
+        self.isPlayer1Trump = False
+        self.isPlayer2Trump = False
+
+    def updatePlayerScore(self, turnPlayer):
+        """If the player is human update it's score."""
+
+        turnPlayer.claculatePotCards()
+
+        if turnPlayer.isObjHumanOrRobot():
+            print(f"Your points total to {turnPlayer.getPoints()}")
+
+
+    # ---------------------------- Working on it ----------------------------
+    def checkForGameOver(self):
+        """Verify that players have played their last card:
+        1) Print each player's score
+        2) Print the winner
+        3) Whatever else lol.
+        """
+        pass
+
+    # ---------------------------- Working on it ----------------------------

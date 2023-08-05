@@ -15,10 +15,8 @@ WINDOW_WIDTH = 1100
 WINDOW_HEIGHT = 680
 FRAMES_PER_SECOND = 30 
 
-# 'Coins', 'Cups', 'Clubs'
-
 # Brisca Deck Constants
-SUIT_TUPLE = ('Swords',)
+SUIT_TUPLE = ('Swords', 'Coins', 'Cups', 'Clubs')
 # Deck example: '2' is rank, value is list [rankValue, rankPoints] of rank
 BRISCA_DICT = {
     '2':[2, 0], '3':[13, 10], 
@@ -66,15 +64,16 @@ while True:
         
         # Check for new game
         if newGameButton.handleEvent(event):
-            oAiPlayer = PlayerAi(window, isTurnPlayer=False, isPlayerHuman=False) # ------> NEW!
-            oPlayer = Player(window, isTurnPlayer=True, isPlayerHuman=True) # ------> NEW!
-            oPlayers = [oPlayer, oAiPlayer] # ------> NEW!
+            oAiPlayer = PlayerAi(window, isTurnPlayer=False, isPlayerHuman=False)
+            oPlayer = Player(window, isTurnPlayer=True, isPlayerHuman=True)
+            oPlayers = [oPlayer, oAiPlayer]
             oGame = Game(window, oPlayers, SUIT=SUIT_TUPLE, BRISCA_DICT=BRISCA_DICT)
         
         # Check events to play game
         oGame.handleEvent(event)
 
     # 8 - Do any "per frame" actions
+    oGame._updateUI()
 
     # 9 - Clear the window before drawing it again
     background.draw()

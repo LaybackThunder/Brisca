@@ -8,6 +8,7 @@ class ABC_Player(ABC):
         # Add playerId in the future to identify host and players.
         self.turnPlayer = turnplayer
         self.potList = []
+        self.points = 0
         self.isPlayerHuman = isPlayerHuman # Bool, true = Yes, false = no
         self.oHand = oHand
 
@@ -41,6 +42,21 @@ class ABC_Player(ABC):
     
     def getPotList(self):
         return self.potList
+
+    def claculatePotCards(self):
+        """Adds points to the current points"""
+
+        self.points = 0
+
+        for oCard in self.potList:
+
+            point = oCard.getRankPoints()
+            self.points = self.points + point
+            print(f"The {oCard.getName()} point value is {point}")
+
+    def getPoints(self):
+        """Return the total amount of points."""
+        return self.points
 
     # Polymorphism section
 
