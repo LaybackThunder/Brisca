@@ -33,34 +33,8 @@ class Game():
         self.dealerPot = [] # Dealer transfers trick cards to the trick winner
         self.isGameOver = False
         self.areHandsEmpty = []
-        self.trickButton = pygwidgets.TextButton(window, (20, 630), 'Trick', 
-                                                 width=100, height=45)
-        # This is the swap trump button
-        self.swapButton = pygwidgets.TextButton(window, (20, 580), 'Swap Trump', 
-                                                width=100, height=45)
-        self.swapButton.disable()
-        self.trickButton.disable()
-      
-        # Human UI points display (None = defult values)
-        self.humanPlayerPointsDisplay = pygwidgets.DisplayText(window, loc=(140, 590), 
-                                                                value=f'Points: 0', 
-                                                                fontName=None, fontSize=24, 
-                                                                width=None, height=None, 
-                                                                textColor=(255, 215, 0), # Gold color
-                                                                backgroundColor=None, justified='left', 
-                                                                nickname=None)
-        # Game Over display
-        self.gameOverDisplay = pygwidgets.DisplayText(window, loc=(500, 360), 
-                                                                value='Game Over', 
-                                                                fontName=None, fontSize=48, 
-                                                                width=None, height=None, 
-                                                                textColor=(255, 215, 0), # Gold color
-                                                                backgroundColor=None, justified='center', 
-                                                                nickname=None)
+        self._initUIElements(self.window)
             
-            
-            # Winner display
-            # Player Prompt: "Click new game to play again; click quit to exit game"
 
     def getPotList(self):
         """Prints the name of every card in the turnPlayer's potList."""
@@ -230,6 +204,34 @@ class Game():
 
             if player.isObjHumanOrRobot():
                 self.humanPlayerPointsDisplay.setValue(f"Points: {player.getPoints()}")
+
+    def _initUIElements(self, window):
+        """Init all UI elements"""
+
+        self.trickButton = pygwidgets.TextButton(window, (20, 630), 'Trick', 
+                                                 width=100, height=45)
+        # This is the swap trump button
+        self.swapButton = pygwidgets.TextButton(window, (20, 580), 'Swap Trump', 
+                                                width=100, height=45)
+        self.swapButton.disable()
+        self.trickButton.disable()
+      
+        # Human UI points display (None = defult values)
+        self.humanPlayerPointsDisplay = pygwidgets.DisplayText(window, loc=(140, 590), 
+                                                                value=f'Points: 0', 
+                                                                fontName=None, fontSize=24, 
+                                                                width=None, height=None, 
+                                                                textColor=(255, 215, 0), # Gold color
+                                                                backgroundColor=None, justified='left', 
+                                                                nickname=None)
+        # Game Over display
+        self.gameOverDisplay = pygwidgets.DisplayText(window, loc=(500, 360), 
+                                                                value='Game Over', 
+                                                                fontName=None, fontSize=48, 
+                                                                width=None, height=None, 
+                                                                textColor=(255, 215, 0), # Gold color
+                                                                backgroundColor=None, justified='center', 
+                                                                nickname=None)
 
 # ----------------------- AI Player handleEvent stuff -------------------------------
     def _AIHandleEvents(self, oPlayer):
@@ -586,6 +588,8 @@ class Game():
 
     
     # ---------------------------- Working on it ----------------------------
+
+    # ADD text display for winner and loser show their points
 
     def check4Winner(self):
 
