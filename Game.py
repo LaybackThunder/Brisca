@@ -30,8 +30,9 @@ class Game():
         self.trickCount = 0
         self.penultimate_trick = 16 # It takes 16 tricks to disable the swap feature
         self.trickList = [] # Where cards battle
-        self.dealerPot = [] # When there is a tie, the dealer holds cards
+        self.dealerPot = [] # Dealer transfers trick cards to the trick winner
         self.isGameOver = False
+        self.areHandsEmpty = []
         self.trickButton = pygwidgets.TextButton(window, (20, 630), 'Trick', 
                                                  width=100, height=45)
         # This is the swap trump button
@@ -39,9 +40,7 @@ class Game():
                                                 width=100, height=45)
         self.swapButton.disable()
         self.trickButton.disable()
-
-        # None Interactive Static UI 
-        
+      
         # Human UI points display (None = defult values)
         self.humanPlayerPointsDisplay = pygwidgets.DisplayText(window, loc=(140, 590), 
                                                                 value=f'Points: 0', 
@@ -50,8 +49,16 @@ class Game():
                                                                 textColor=(255, 215, 0), # Gold color
                                                                 backgroundColor=None, justified='left', 
                                                                 nickname=None)
+        # Game Over display
+        self.gameOverDisplay = pygwidgets.DisplayText(window, loc=(500, 360), 
+                                                                value='Game Over', 
+                                                                fontName=None, fontSize=48, 
+                                                                width=None, height=None, 
+                                                                textColor=(255, 215, 0), # Gold color
+                                                                backgroundColor=None, justified='center', 
+                                                                nickname=None)
             
-            # Game Over display
+            
             # Winner display
             # Player Prompt: "Click new game to play again; click quit to exit game"
 
@@ -65,6 +72,7 @@ class Game():
         Function access the player's selected card and compares it with the trump card.
         The method Returns a bool.
         """
+
         selectedCard = oPlayer.getSelectedCardfromHand()
         if self.trumpCard == None:
             return False
@@ -99,7 +107,7 @@ class Game():
         self.trickButton.draw()
         self.humanPlayerPointsDisplay.draw()
 
-        # Game elements
+        # Display the game's cards
         if self.trumpCard == None:
             pass
         else:
@@ -117,6 +125,9 @@ class Game():
             oPlayer.draw()
 
         self.oDeck.draw()
+
+        if self.isGameOver:
+            self.gameOverDisplay.draw()
 
     def drawCard(self, oPlayer):
         """Player draws a card."""
@@ -174,16 +185,18 @@ class Game():
         # All player have drawn
 
     def handleEvent(self, event):
-        """Human & AI behavior behavior.
+        """ Draw event, players' events & update points event
+        Human & AI behavior behavior.
         Player draw automaticaly.
         For humans: method handles mouse and keyboard events when triggering card behavior.
-        Fo AI: It checks if it has cards on hand and directly plays a card.
+        Fo AI: It checks if it has cards on hand and directly plays the most left card in its hand.
         """
 
         human = True
         self._playersDrawPahse(human) # Draw before you choose to enter a trick
 
-        for oPlayer in self.playerList[:]: # Players choose which card to enter a trick with
+        # Players choose which card to enter a trick with
+        for oPlayer in self.playerList[:]: 
 
             # Is current player AI or human?
 
@@ -195,11 +208,14 @@ class Game():
             elif oPlayer.isObjHumanOrRobot() != human and oPlayer.getTurnPlayer() == True:
                 self._AIHandleEvents(oPlayer)
 
-        # Should I update UI here?
-        # NO, just create a method helper and have Mian call Game.UIUpdate()
+        # Update human player's points on his screen
         self.pointsUIUpdate()
-   
-    
+
+        # Is it game over?
+        self._checkForGameOver()
+
+        
+
 
 # ----------------------- UI Events -------------------------------
     def _updateUI(self):
@@ -253,7 +269,7 @@ class Game():
             self.enterTrick(oPlayer)
         
         elif len(aIHasCardsLeft) == 0:
-            print("No cards on hand.\nGame Over!")
+            pass # No cards on hand
         
         # If cards are less then MAX and there are no more cards to draw
         elif len(aIHasCardsLeft) < Game.HAND_LIMIT and self.trumpCard == None:
@@ -568,14 +584,58 @@ class Game():
         if turnPlayer.isObjHumanOrRobot():
             print(f"Your points total to {turnPlayer.getPoints()}")
 
-
+    
     # ---------------------------- Working on it ----------------------------
-    def checkForGameOver(self):
+
+    def check4Winner(self):
+
+        playerAndPoints = {}
+        players = []
+
+        for oPlayer in self.playerList:
+            playerAndPoints = {}
+            playerAndPoints['isPlayerRobot'] = oPlayer.isObjHumanOrRobot()
+            playerAndPoints['maxPoints'] = oPlayer.getPoints()
+            players.append(playerAndPoints)
+        
+        trunPlayerPoints = players[0]['maxPoints']
+        followOnPlayerPoints = players[1]['maxPoints']
+
+        # Compare's player's points
+        if trunPlayerPoints > followOnPlayerPoints:
+            if players[0]['isPlayerRobot']:
+                print(f"Human Player is the WINNER with {trunPlayerPoints} points!") 
+        
+            else:
+                print(f"Robot player is the WINNER with {trunPlayerPoints} points!")
+
+        else:
+            if players[0]['isPlayerRobot']:
+                print(f"Human Player is the WINNER with {followOnPlayerPoints} points!") 
+        
+            else:
+                print(f"Robot player is the WINNER with {followOnPlayerPoints} points!!")
+
+        
+
+            
+    # ---------------------------- Working on it ----------------------------
+    def _checkForGameOver(self):
         """Verify that players have played their last card:
         1) Print each player's score
         2) Print the winner
         3) Whatever else lol.
         """
-        pass
+        
+        for oPlayer in self.playerList:
+            # Iterrate and check if hands are empty
+            cardsOnHand = oPlayer.getCardsOnHand()
+            self.areHandsEmpty.append(cardsOnHand)
+        
+        # If both hands have zero cards on hand then trigger game over.
+        if len(self.areHandsEmpty[0]) == 0 and len(self.areHandsEmpty[1]) == 0:
+            print("Game over")
+            self.isGameOver = True
+            self.check4Winner()
 
     # ---------------------------- Working on it ----------------------------
