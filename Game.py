@@ -102,6 +102,7 @@ class Game():
 
         if self.isGameOver:
             self.gameOverDisplay.draw()
+            self.winnerScoreDisplay.draw()
 
     def drawCard(self, oPlayer):
         """Player draws a card."""
@@ -231,6 +232,14 @@ class Game():
                                                                 width=None, height=None, 
                                                                 textColor=(255, 215, 0), # Gold color
                                                                 backgroundColor=None, justified='center', 
+                                                                nickname=None)
+        # Winner Score Display 
+        self.winnerScoreDisplay = pygwidgets.DisplayText(window, loc=(300, 460), 
+                                                                value=self.check4Winner(), 
+                                                                fontName=None, fontSize=48, 
+                                                                width=None, height=None, 
+                                                                textColor=(255, 215, 0), # Gold color
+                                                                backgroundColor=None, justified='left', 
                                                                 nickname=None)
 
 # ----------------------- AI Player handleEvent stuff -------------------------------
@@ -589,7 +598,7 @@ class Game():
     
     # ---------------------------- Working on it ----------------------------
 
-    # ADD text display for winner and loser show their points
+    # ADD text display for winner and update its score on the screen
 
     def check4Winner(self):
 
@@ -608,28 +617,20 @@ class Game():
         # Compare's player's points
         if trunPlayerPoints > followOnPlayerPoints:
             if players[0]['isPlayerRobot']:
-                print(f"Human Player is the WINNER with {trunPlayerPoints} points!") 
+                return f"Human Player is the WINNER with {trunPlayerPoints} points!"
         
             else:
-                print(f"Robot player is the WINNER with {trunPlayerPoints} points!")
+                return f"Robot player is the WINNER with {trunPlayerPoints} points!"
 
         else:
             if players[0]['isPlayerRobot']:
-                print(f"Human Player is the WINNER with {followOnPlayerPoints} points!") 
+                return f"Human Player is the WINNER with {followOnPlayerPoints} points!"
         
             else:
-                print(f"Robot player is the WINNER with {followOnPlayerPoints} points!!")
-
+                return (f"Robot player is the WINNER with {followOnPlayerPoints} points!!")
         
-
-            
-    # ---------------------------- Working on it ----------------------------
     def _checkForGameOver(self):
-        """Verify that players have played their last card:
-        1) Print each player's score
-        2) Print the winner
-        3) Whatever else lol.
-        """
+        """Verify that players have played their last card."""
         
         for oPlayer in self.playerList:
             # Iterrate and check if hands are empty
@@ -640,6 +641,3 @@ class Game():
         if len(self.areHandsEmpty[0]) == 0 and len(self.areHandsEmpty[1]) == 0:
             print("Game over")
             self.isGameOver = True
-            self.check4Winner()
-
-    # ---------------------------- Working on it ----------------------------
