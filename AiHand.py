@@ -83,4 +83,4 @@ class AIHand(ABC_Hand):
         selectedghostCard = self.ghostHandList.pop(0) # ---- AI pops after no more cards on hand. ISSUE!
         self.retriveCardId(selectedghostCard) # Obtain selected card's iD; Id is reassiged to a drawn or swaped card.
         selectedCard = self.cardList.pop(0) # Use index to pop oCard from the hand
-        return selectedCard # selectedCard left the hand; (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ peace the fuck out!
+        return selectedCard # selectedCard left the hand; (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ peace out!
