@@ -12,12 +12,11 @@ class Game():
     TRICK_LOCATION_LIST = [(250, TRICK_CARDS_LOC_Y), 
                            (500, TRICK_CARDS_LOC_Y)]
 
-    def __init__(self, window, players, SUIT, BRISCA_DICT):
+    def __init__(self, window, players):
         """Initializing attributes."""
         
         self.window = window
-        self.oDeck = BriscaDeck(self.window, Game.DECK_LOC, 
-                                SUIT, RANK_VALUE_DICT=BRISCA_DICT)
+        self.oDeck = BriscaDeck(self.window, Game.DECK_LOC)
         
         self.playerList = players
         self.trumpCard = self.oDeck.drawCard()
@@ -180,7 +179,7 @@ class Game():
                 self._humanHandleEvents(oPlayer, event)
 
             # AI actions only!
-            elif oPlayer.isObjHumanOrRobot() != human and oPlayer.getTurnPlayer() == True:
+            else:
                 self._AIHandleEvents(oPlayer)
 
         # Update human player's points on his screen
@@ -235,12 +234,66 @@ class Game():
                                                                 nickname=None)
         # Winner Score Display 
         self.winnerScoreDisplay = pygwidgets.DisplayText(window, loc=(300, 460), 
-                                                                value=self.check4Winner(), 
+                                                                value='', 
                                                                 fontName=None, fontSize=48, 
                                                                 width=None, height=None, 
                                                                 textColor=(255, 215, 0), # Gold color
                                                                 backgroundColor=None, justified='left', 
                                                                 nickname=None)
+
+# ----------------------- Game Over stuff -------------------------------
+
+# Have to disable setting turn player at the last trick of the game
+
+    def check4Winner(self):
+
+        playerAndPoints = {}
+        players = []
+
+        for oPlayer in self.playerList:
+            playerAndPoints = {}
+            playerAndPoints['isPlayerHuman'] = oPlayer.isObjHumanOrRobot()
+            playerAndPoints['maxPoints'] = oPlayer.getPoints()
+            players.append(playerAndPoints)
+        
+        trunPlayerPoints = players[0]['maxPoints']
+        followOnPlayerPoints = players[1]['maxPoints']
+
+        # Compare's player's points
+        if trunPlayerPoints > followOnPlayerPoints:
+            if players[0]['isPlayerHuman']:
+                print(f"The turn player is {players[0]['isPlayerHuman']}")
+                return f"Human Player is the WINNER with {trunPlayerPoints} points!"
+        
+            else:
+                print(f"The turn player is {players[1]['isPlayerHuman']}")
+                return f"Robot player is the WINNER with {trunPlayerPoints} points!"
+
+        else:
+            if players[0]['isPlayerHuman']:
+                print(f"The follow on player is {players[0]['isPlayerHuman']}")
+                return f"Human Player is the WINNER with {followOnPlayerPoints} points!"
+        
+            else:
+                print(f"The follow on player is {players[1]['isPlayerHuman']}")
+                return f"Robot player is the WINNER with {followOnPlayerPoints} points!!"
+        
+    def _checkForGameOver(self):
+        """Verify that players have played their last card.
+        And check who is the winner.
+        """
+        
+        for oPlayer in self.playerList:
+            # Iterrate and check if hands are empty
+            cardsOnHand = oPlayer.getCardsOnHand()
+            self.areHandsEmpty.append(cardsOnHand)
+        
+        # If both hands have zero cards on hand then trigger game over.
+        if len(self.areHandsEmpty[0]) == 0 and len(self.areHandsEmpty[1]) == 0:
+            print("Game over")
+            self.isGameOver = True # set other elemnets to be drawn on screen
+            self.winnerScoreDisplay.setValue(self.check4Winner()) # Sets the winner to be displayed on screen.
+
 
 # ----------------------- AI Player handleEvent stuff -------------------------------
     def _AIHandleEvents(self, oPlayer):
@@ -571,10 +624,14 @@ class Game():
         if player1CardValue > player2CardValue:
             print(f"{self.trickList[0]['oPlayer']} with {self.trickList[0]['oCard'].getName()} WINs with a value of {player1CardValue}!")
             print(f"{self.trickList[1]['oPlayer']} with {self.trickList[1]['oCard'].getName()} LOST with a value of {player2CardValue}!\n")
+            # If last trick don't make new turn player
+            
             player1.setTurnPlayerTrue() # Player1 will have the bool to draw firs
             player2.setTurnPlayerFalse()
                 
         else:
+            # If last trick don't make new turn player
+
             print(f"{self.trickList[1]['oPlayer']} with {self.trickList[1]['oCard'].getName()} WINs with a value of {player2CardValue}!")
             print(f"{self.trickList[0]['oPlayer']} with {self.trickList[0]['oCard'].getName()} LOST with a value of {player1CardValue}!\n")
             player2.setTurnPlayerTrue() # Player2 will have the bool to draw first
@@ -594,50 +651,3 @@ class Game():
 
         if turnPlayer.isObjHumanOrRobot():
             print(f"Your points total to {turnPlayer.getPoints()}")
-
-    
-    # ---------------------------- Working on it ----------------------------
-
-    # ADD text display for winner and update its score on the screen
-
-    def check4Winner(self):
-
-        playerAndPoints = {}
-        players = []
-
-        for oPlayer in self.playerList:
-            playerAndPoints = {}
-            playerAndPoints['isPlayerRobot'] = oPlayer.isObjHumanOrRobot()
-            playerAndPoints['maxPoints'] = oPlayer.getPoints()
-            players.append(playerAndPoints)
-        
-        trunPlayerPoints = players[0]['maxPoints']
-        followOnPlayerPoints = players[1]['maxPoints']
-
-        # Compare's player's points
-        if trunPlayerPoints > followOnPlayerPoints:
-            if players[0]['isPlayerRobot']:
-                return f"Human Player is the WINNER with {trunPlayerPoints} points!"
-        
-            else:
-                return f"Robot player is the WINNER with {trunPlayerPoints} points!"
-
-        else:
-            if players[0]['isPlayerRobot']:
-                return f"Human Player is the WINNER with {followOnPlayerPoints} points!"
-        
-            else:
-                return (f"Robot player is the WINNER with {followOnPlayerPoints} points!!")
-        
-    def _checkForGameOver(self):
-        """Verify that players have played their last card."""
-        
-        for oPlayer in self.playerList:
-            # Iterrate and check if hands are empty
-            cardsOnHand = oPlayer.getCardsOnHand()
-            self.areHandsEmpty.append(cardsOnHand)
-        
-        # If both hands have zero cards on hand then trigger game over.
-        if len(self.areHandsEmpty[0]) == 0 and len(self.areHandsEmpty[1]) == 0:
-            print("Game over")
-            self.isGameOver = True

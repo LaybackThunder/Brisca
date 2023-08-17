@@ -15,17 +15,6 @@ WINDOW_WIDTH = 1100
 WINDOW_HEIGHT = 680
 FRAMES_PER_SECOND = 30 
 
-# Brisca Deck Constants
-SUIT_TUPLE = ('Swords', 'Coins', 'Cups', 'Clubs')
-# Deck example: '2' is rank, value is list [rankValue, rankPoints] of rank
-BRISCA_DICT = {
-    '2':[2, 0], '3':[13, 10], 
-    '4':[4, 0], '5':[5, 0], 
-    '6':[6, 0], '7':[7, 0],
-    'Jack':[10, 2], 'Knight':[11, 3], 
-    'King':[12, 10], 'Ace':[14, 11]
-    }
-
 # 3 - Initialize the world
 pygame.init()
 clock = pygame.time.Clock()
@@ -47,7 +36,7 @@ quitButton = pygwidgets.TextButton(window, (990, 630),
 oAiPlayer = PlayerAi(window, isTurnPlayer=False, isPlayerHuman=False)
 oPlayer = Player(window, isTurnPlayer=True, isPlayerHuman=True) 
 oPlayers = [oPlayer, oAiPlayer]
-oGame = Game(window, oPlayers, SUIT=SUIT_TUPLE, BRISCA_DICT=BRISCA_DICT)
+oGame = Game(window, oPlayers)
 
 # ---------------------------------------------------------------------------
 # 6 - Loop forever 
@@ -67,7 +56,7 @@ while True:
             oAiPlayer = PlayerAi(window, isTurnPlayer=False, isPlayerHuman=False)
             oPlayer = Player(window, isTurnPlayer=True, isPlayerHuman=True)
             oPlayers = [oPlayer, oAiPlayer]
-            oGame = Game(window, oPlayers, SUIT=SUIT_TUPLE, BRISCA_DICT=BRISCA_DICT)
+            oGame = Game(window, oPlayers)
         
         # Check events to play game
         oGame.handleEvent(event)

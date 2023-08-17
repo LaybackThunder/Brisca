@@ -4,15 +4,26 @@ from ABC_Deck import Deck
 from BriscaCard import *
 
 class BriscaDeck(Deck):
+
+    # Brisca Deck Constants
+    SUIT_TUPLE = ('Swords', 'Coins', 'Cups', 'Clubs')
+    # Deck example: '2' is rank, value is list [rankValue, rankPoints] of rank
+    BRISCA_DICT = {
+        '2':[2, 0], '3':[13, 10], 
+        '4':[4, 0], '5':[5, 0], 
+        '6':[6, 0], '7':[7, 0],
+        'Jack':[10, 2], 'Knight':[11, 3], 
+        'King':[12, 10], 'Ace':[14, 11]
+        }
         
-    def __init__(self, window, loc, SUIT, RANK_VALUE_DICT):
+    def __init__(self, window, loc):
 
         self.startingDeckList = []
         self.playingDeckList = []
     
         # Create a deck
-        for suit in SUIT:
-            for rank, value in RANK_VALUE_DICT.items():
+        for suit in BriscaDeck.SUIT_TUPLE:
+            for rank, value in BriscaDeck.BRISCA_DICT.items():
                 oCard = BriscaCard(window, suit, rank, rankValue=value[0], rankPoints=value[1])
                 self.startingDeckList.append(oCard)
 
@@ -61,24 +72,3 @@ class BriscaDeck(Deck):
         """Display every card on screen"""
         for oCard in self.playingDeckList:
             oCard.draw()
-
-# Print Test BriscaDeck
-if __name__ == "__main__":
-
-    WINDOW_WIDTH = 500
-    WINDOW_HEIGHT = 500
-
-    SUIT_TUPLE = ('Swords',)
-    # Example: '2' is rank, value is list [pointsValue, trcikValue]
-    BRISCA_DICT = {'2':[0, 2], '3':[0, 13], '4':[0, 4], '5':[0, 5],
-                        '6':[0, 6], '7':[0, 7], 'Jack':[2, 10],
-                        'Knight':[3, 11], 'King':[4, 12], 'Ace':[11, 14]}
-
-    pygame.init()
-    window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-
-    oDeck = BriscaDeck(window, (0,0), SUIT_TUPLE, BRISCA_DICT)
-
-    for i in range(1, 10):
-        oCard = oDeck.drawCard()
-        print(f"Name: {oCard.getName()}, Rank: {oCard.getRankValue()}, Rank Points: {oCard.getRankPoints()}")
