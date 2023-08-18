@@ -17,7 +17,9 @@ class ABC_Player(ABC):
         return self.isPlayerHuman
 
     def getTurnPlayer(self):
-        """Return player ID"""
+        """Return player bool; 
+        True for turnplayer, False for follow on player.
+        """
         #print(f"Turn player's iD is {self.turnPlayerId}.") # testing
         return self.turnPlayer
 

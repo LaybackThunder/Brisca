@@ -26,6 +26,9 @@ class Game():
         self.isPlayer1Trump = False
         self.isPlayer2Trump = False
         self.enterBattleStep = False
+
+        self.humanPlayersTurn = True # I don't know how to apply this. lol
+
         self.trickCount = 0
         self.penultimate_trick = 16 # It takes 16 tricks to disable the swap feature
         self.trickList = [] # Where cards battle
@@ -126,7 +129,8 @@ class Game():
         Repeat till all players have 3 cards.
         """
 
-        #  Create a local var to feed it a copy of playerList who should draw first.
+        #  Create a local var to feed it a copy of playerList, 
+        #  to indicate who should draw first.
         drewPlayers = []
         
         # Draw untill all player have drawn
@@ -142,8 +146,8 @@ class Game():
                 self._checkIfPlayerCanDraw(oPlayer) 
 
             # AI actions only!
-            elif oPlayer.isObjHumanOrRobot() != human:
-                
+            else:
+
                 # AI can draw a card if possible
                 self._checkIfAIPlayerCanDraw(oPlayer) 
             
@@ -171,7 +175,6 @@ class Game():
 
         # Players choose which card to enter a trick with
         for oPlayer in self.playerList[:]: 
-
             # Is current player AI or human?
 
             # Human actions only!
@@ -179,17 +182,16 @@ class Game():
                 self._humanHandleEvents(oPlayer, event)
 
             # AI actions only!
-            else:
-                self._AIHandleEvents(oPlayer)
+            else: # Irv, else works, but I have to add the if at the bottom.
+                # Doing so will control when the AI can Draw.
+                if oPlayer.getTurnPlayer():
+                    self._AIHandleEvents(oPlayer)
 
         # Update human player's points on his screen
         self.pointsUIUpdate()
 
         # Is it game over?
         self._checkForGameOver()
-
-        
-
 
 # ----------------------- UI Events -------------------------------
     def _updateUI(self):
@@ -225,7 +227,7 @@ class Game():
                                                                 backgroundColor=None, justified='left', 
                                                                 nickname=None)
         # Game Over display
-        self.gameOverDisplay = pygwidgets.DisplayText(window, loc=(500, 360), 
+        self.gameOverDisplay = pygwidgets.DisplayText(window, loc=(450, 360), 
                                                                 value='Game Over', 
                                                                 fontName=None, fontSize=48, 
                                                                 width=None, height=None, 
@@ -233,7 +235,7 @@ class Game():
                                                                 backgroundColor=None, justified='center', 
                                                                 nickname=None)
         # Winner Score Display 
-        self.winnerScoreDisplay = pygwidgets.DisplayText(window, loc=(300, 460), 
+        self.winnerScoreDisplay = pygwidgets.DisplayText(window, loc=(210, 460), 
                                                                 value='', 
                                                                 fontName=None, fontSize=48, 
                                                                 width=None, height=None, 
@@ -262,20 +264,20 @@ class Game():
         # Compare's player's points
         if trunPlayerPoints > followOnPlayerPoints:
             if players[0]['isPlayerHuman']:
-                print(f"The turn player is {players[0]['isPlayerHuman']}")
+                print(f"The turn player is Human")
                 return f"Human Player is the WINNER with {trunPlayerPoints} points!"
         
             else:
-                print(f"The turn player is {players[1]['isPlayerHuman']}")
+                print(f"The turn player is Robot")
                 return f"Robot player is the WINNER with {trunPlayerPoints} points!"
 
         else:
-            if players[0]['isPlayerHuman']:
-                print(f"The follow on player is {players[0]['isPlayerHuman']}")
+            if players[1]['isPlayerHuman']:
+                print(f"The follow on player is Human")
                 return f"Human Player is the WINNER with {followOnPlayerPoints} points!"
         
             else:
-                print(f"The follow on player is {players[1]['isPlayerHuman']}")
+                print(f"The follow on player is Robot")
                 return f"Robot player is the WINNER with {followOnPlayerPoints} points!!"
         
     def _checkForGameOver(self):
@@ -535,7 +537,7 @@ class Game():
 
 # ------------------------ _battlePhase methods ------------------
     def _battlePhase(self):
-            """This method identifies who is the winner of the trick"""
+            """This method calculates battle points in the trick."""
 
             # Retrive trumnp values per player
             self.compareTrumpCard() 
@@ -552,7 +554,7 @@ class Game():
             self.isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == self.trumpCard.getSuit()
             self.isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == self.trumpCard.getSuit()
 
-            print("Player's trump:")
+            print("----------------------Player's trump:----------------------")
             print(f"The player 1's {self.trickList[0]['oCard'].getName()} its trump is set to {self.isPlayer1Trump}.")
             print(f"The player 2's {self.trickList[1]['oCard'].getName()} its trump is set to {self.isPlayer2Trump}\n.")
 
@@ -566,8 +568,9 @@ class Game():
     
     def leadingTrumpCard(self):
         """First card in the trickList becomes trump card."""
+        
         trumpCard = self.trickList[0]['oCard']
-        print("Not trump card in trick!")
+        print("----------------------Not trump card in trick!----------------------")
         print(f"The leading trump card instead is {trumpCard.getName()}\n")
         self.isPlayer1Trump = self.trickList[0]['oCard'].getSuit() == trumpCard.getSuit()
         self.isPlayer2Trump = self.trickList[1]['oCard'].getSuit() == trumpCard.getSuit()
@@ -626,7 +629,7 @@ class Game():
             print(f"{self.trickList[1]['oPlayer']} with {self.trickList[1]['oCard'].getName()} LOST with a value of {player2CardValue}!\n")
             # If last trick don't make new turn player
             
-            player1.setTurnPlayerTrue() # Player1 will have the bool to draw firs
+            player1.setTurnPlayerTrue() # Player1 will have the bool to draw first
             player2.setTurnPlayerFalse()
                 
         else:
