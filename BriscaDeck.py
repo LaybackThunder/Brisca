@@ -1,6 +1,5 @@
-import pygame
 import random
-from ABC_Deck import Deck
+from ABC_Deck import Deck # Module
 from BriscaCard import *
 
 class BriscaDeck(Deck):

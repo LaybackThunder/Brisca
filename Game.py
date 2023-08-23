@@ -1,9 +1,11 @@
 import pygwidgets
+import pyghelpers
 from BriscaDeck import *
 
-class Game():
+class Game(): # Object Manager
 
     # Class variables
+    TIMER_LENGTH = 2
     HAND_LIMIT = 3
     DECK_LOC = (860, 220)
     TRUMP_LOC = (750, 220)
@@ -26,9 +28,6 @@ class Game():
         self.isPlayer1Trump = False
         self.isPlayer2Trump = False
         self.enterBattleStep = False
-
-        self.humanPlayersTurn = True # I don't know how to apply this. lol
-
         self.trickCount = 0
         self.penultimate_trick = 16 # It takes 16 tricks to disable the swap feature
         self.trickList = [] # Where cards battle
@@ -36,7 +35,9 @@ class Game():
         self.isGameOver = False
         self.areHandsEmpty = []
         self._initUIElements(self.window)
-            
+
+        self.oCountDownTimer = pyghelpers.CountDownTimer(Game.TIMER_LENGTH)
+        self.timerRunning = False   
 
     def getPotList(self):
         """Prints the name of every card in the turnPlayer's potList."""
@@ -74,37 +75,6 @@ class Game():
 
         # New card on hand
         oPlayer._trumpSwap(swapTrump2Hand)
-
-    def draw(self):
-        """Display elements to screen."""
-
-        # GUI components
-        self.swapButton.draw()
-        self.trickButton.draw()
-        self.humanPlayerPointsDisplay.draw()
-
-        # Display the game's cards
-        if self.trumpCard == None:
-            pass
-        else:
-            self.trumpCard.draw()
-        
-        if self.trickList: # Player's can see their cards in the trick zone.
-            for cardAndOwner in self.trickList:
-                # Without line of code below the player's can see their hands when in a trick
-                cardAndOwner['oPlayer'].draw()
-                # Player's can see their trick card
-                cardAndOwner['oCard'].draw()
-
-        # Players can see their cards while waiting to enter a trick.
-        for oPlayer in self.playerList:
-            oPlayer.draw()
-
-        self.oDeck.draw()
-
-        if self.isGameOver:
-            self.gameOverDisplay.draw()
-            self.winnerScoreDisplay.draw()
 
     def drawCard(self, oPlayer):
         """Player draws a card."""
@@ -175,23 +145,65 @@ class Game():
 
         # Players choose which card to enter a trick with
         for oPlayer in self.playerList[:]: 
-            # Is current player AI or human?
 
             # Human actions only!
             if oPlayer.isObjHumanOrRobot() == human and oPlayer.getTurnPlayer():
                 self._humanHandleEvents(oPlayer, event)
 
             # AI actions only!
-            else: # Irv, else works, but I have to add the if at the bottom.
-                # Doing so will control when the AI can Draw.
-                if oPlayer.getTurnPlayer():
+            else:
+                if oPlayer.getTurnPlayer(): # If AI is turn player then it can play.
                     self._AIHandleEvents(oPlayer)
+
+        if len(self.trickList) == 2: # Are all players ready?
+            if not self.timerRunning:
+                self.oCountDownTimer.start() # Start cool down to see cards on the table
+                self.timerRunning = True
+
+        else:
+            print("Waiting other player.")
+        
+        if self.oCountDownTimer.ended(): # When time is up, functionality runs as normal
+            self.timerRunning = False
+            self.enterTrick() # We stop the game to be able to see cards on the board.     
 
         # Update human player's points on his screen
         self.pointsUIUpdate()
-
+        
         # Is it game over?
         self._checkForGameOver()
+
+
+    def draw(self):
+        """Display elements to screen."""
+
+        # GUI components
+        self.swapButton.draw()
+        self.trickButton.draw()
+        self.humanPlayerPointsDisplay.draw()
+
+        # Display the game's cards
+        if self.trumpCard == None:
+            pass
+        else:
+            self.trumpCard.draw()
+        
+        if self.trickList: # Player's can see their cards in the trick zone.
+            for cardAndOwner in self.trickList:
+                # Without line of code below the player's can see their hands when in a trick
+                cardAndOwner['oPlayer'].draw()
+                # Player's can see their trick card
+                cardAndOwner['oCard'].draw()
+
+        # Players can see their cards while waiting to enter a trick.
+        for oPlayer in self.playerList:
+            oPlayer.draw()
+
+        self.oDeck.draw()
+
+        if self.isGameOver:
+            self.gameOverDisplay.draw()
+            self.winnerScoreDisplay.draw()
 
 # ----------------------- UI Events -------------------------------
     def _updateUI(self):
@@ -244,9 +256,6 @@ class Game():
                                                                 nickname=None)
 
 # ----------------------- Game Over stuff -------------------------------
-
-# Have to disable setting turn player at the last trick of the game
-
     def check4Winner(self):
 
         playerAndPoints = {}
@@ -296,7 +305,6 @@ class Game():
             self.isGameOver = True # set other elemnets to be drawn on screen
             self.winnerScoreDisplay.setValue(self.check4Winner()) # Sets the winner to be displayed on screen.
 
-
 # ----------------------- AI Player handleEvent stuff -------------------------------
     def _AIHandleEvents(self, oPlayer):
             """Method helper to give Ai instructions to do specific actions."""
@@ -332,14 +340,16 @@ class Game():
         
         if len(aIHasCardsLeft) == Game.HAND_LIMIT:
             # AI has enter the battle arena of death! Muahahaha!
-            self.enterTrick(oPlayer)
-        
+            self._preEnterTrick(oPlayer)
+            
         elif len(aIHasCardsLeft) == 0:
             pass # No cards on hand
         
         # If cards are less then MAX and there are no more cards to draw
         elif len(aIHasCardsLeft) < Game.HAND_LIMIT and self.trumpCard == None:
-            self.enterTrick(oPlayer)
+            self._preEnterTrick(oPlayer)
+            
+            
         
 # ----------------------- Human Player handleEvent stuff -------------------------------
     def _humanHandleEvents(self, oPlayer, event):
@@ -404,7 +414,7 @@ class Game():
             self.swapButton.disable()
 
     def _checkForButtonClick(self, oPlayer, event):
-        """Checks for what buttons got click."""
+        """Checks which buttons got click by the player."""
 
         # Check for swap button
         if self.swapButton.handleEvent(event):
@@ -412,37 +422,32 @@ class Game():
             
         # Check for trick button
         if self.trickButton.handleEvent(event): 
-            self.enterTrick(oPlayer) # Enter the battle arena of death! Muahahaha!
-            self.trickCount += 1 # -------------------------TEST for single player
+            self._preEnterTrick(oPlayer) # Enter the battle arena of death! Muahahaha!
+            self.trickCount += 1 # Need it to track trump swap feature
 
 # ---------------------------- Enter Trick for battle (Main Trick Methods) -----------------------------------
-    def enterTrick(self, oPlayer):
+    def enterTrick(self):
         """Place card in the middle of the board and battle."""
 
-        # Player and card set-up into the trickList
-        self._preEnterTrick(oPlayer) 
+        # Player and card set-up into the trickList in the self._preEnterTrick(oPlayer)
+        # Then they enter the trick if there are two players in the trickList
 
-        # Enter battle phase if there are two players in the trickList
-        if len(self.trickList) == 2:
-            print("Beginning of Trick!")
-            self._battlePhase()
-            print("End of Trick!")
+        print("Beginning of Trick!")
+        self._battlePhase()
+        print("End of Trick!")
 
-            # Dealer obtains trick cards
-            self.dealerGetWinnings()
+        # Dealer obtains trick cards
+        self.dealerGetWinnings()
 
-            # Add players back to playerList
-            self.reAddPlayerstoPlayerList()
+        # Add players back to playerList
+        self.reAddPlayerstoPlayerList()
 
-            # CHECKING WHO IS TURN PLAYER AFTER A ROUND
-            print(self.playerList) 
+        # CHECKING WHO IS TURN PLAYER AFTER A ROUND
+        print(self.playerList) 
 
-            # Dealer(Game class) gives cards and calculates turnPlayer's turn
-            self.setPotList()
+        # Dealer(Game class) gives cards and calculates turnPlayer's turn
+        self.setPotList()
  
-        else:
-            print("Waiting other player.")
-
     def _preEnterTrick(self, oPlayer):
         """Prepare player's card to enter battle"""
 
