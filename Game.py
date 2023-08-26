@@ -5,7 +5,7 @@ from BriscaDeck import *
 class Game(): # Object Manager
 
     # Class variables
-    TIMER_LENGTH = 2
+    TIMER_LENGTH = 1
     HAND_LIMIT = 3
     DECK_LOC = (860, 220)
     TRUMP_LOC = (750, 220)
@@ -19,7 +19,6 @@ class Game(): # Object Manager
         
         self.window = window
         self.oDeck = BriscaDeck(self.window, Game.DECK_LOC)
-        
         self.playerList = players
         self.trumpCard = self.oDeck.drawCard()
         self.trumpCard.reveal() 
@@ -34,11 +33,10 @@ class Game(): # Object Manager
         self.dealerPot = [] # Dealer transfers trick cards to the trick winner
         self.isGameOver = False
         self.areHandsEmpty = []
-        self._initUIElements(self.window)
-
         self.oCountDownTimer = pyghelpers.CountDownTimer(Game.TIMER_LENGTH)
-        self.timerRunning = False   
-
+        self.timerRunning = False 
+        self._initUIElements(self.window)
+  
     def getPotList(self):
         """Prints the name of every card in the turnPlayer's potList."""
         potList = self.playerList[0].getPotList()
@@ -133,11 +131,11 @@ class Game(): # Object Manager
         # All player have drawn
 
     def handleEvent(self, event):
-        """ Draw event, players' events & update points event
-        Human & AI behavior behavior.
+        """ Draw event, players' events & update points event, enter trick
+        Human & AI behavior.
         Player draw automaticaly.
-        For humans: method handles mouse and keyboard events when triggering card behavior.
-        Fo AI: It checks if it has cards on hand and directly plays the most left card in its hand.
+        For humans: method handles mouse events when triggering card behavior.
+        For AI: It checks if it has cards on hand and directly plays the most left card in its hand.
         """
 
         human = True
@@ -155,24 +153,23 @@ class Game(): # Object Manager
                 if oPlayer.getTurnPlayer(): # If AI is turn player then it can play.
                     self._AIHandleEvents(oPlayer)
 
-        if len(self.trickList) == 2: # Are all players ready?
+        # Are all players ready?
+        if len(self.trickList) == 2: 
+            
             if not self.timerRunning:
-                self.oCountDownTimer.start() # Start cool down to see cards on the table
+                # Start cool down to see cards on the table
+                self.oCountDownTimer.start() 
                 self.timerRunning = True
-
-        else:
-            print("Waiting other player.")
         
         if self.oCountDownTimer.ended(): # When time is up, functionality runs as normal
             self.timerRunning = False
-            self.enterTrick() # We stop the game to be able to see cards on the board.     
+            self.enterTrick() # We stop the game to be able to see cards on the board.  
 
         # Update human player's points on his screen
-        self.pointsUIUpdate()
+        self.pointsUIUpdate() 
         
         # Is it game over?
         self._checkForGameOver()
-
 
     def draw(self):
         """Display elements to screen."""
@@ -205,14 +202,14 @@ class Game(): # Object Manager
             self.gameOverDisplay.draw()
             self.winnerScoreDisplay.draw()
 
-# ----------------------- UI Events -------------------------------
+# ----------------------- UI -------------------------------
     def _updateUI(self):
         """Update Player's game UI elemnets."""
 
         self.pointsUIUpdate()
 
     def pointsUIUpdate(self):
-        """Method tells 'self.humanPlayerPointsDisplay' to update the human points in the window."""
+        """Method tells 'self.humanPlayerPointsDisplay' to update the human points in the window."""           
 
         for player in self.playerList:
 
@@ -257,16 +254,29 @@ class Game(): # Object Manager
 
 # ----------------------- Game Over stuff -------------------------------
     def check4Winner(self):
+        """Returns in a string of the one player that won the game.
+        trickList vs playerList, this two list need to be here.
+        The reason being that after the game is over for some reason the...
+        player are placed in a trick list when they should not be.
+        After the game over screen and a few itteration has finilized in...
+        the trickList, the player are now moved to the playerList. ODD!"""
 
         playerAndPoints = {}
         players = []
 
-        for oPlayer in self.playerList:
-            playerAndPoints = {}
-            playerAndPoints['isPlayerHuman'] = oPlayer.isObjHumanOrRobot()
-            playerAndPoints['maxPoints'] = oPlayer.getPoints()
-            players.append(playerAndPoints)
-        
+        if self.trickList:
+            for oPlayer in self.trickList:
+                playerAndPoints = {}
+                playerAndPoints['isPlayerHuman'] = oPlayer['oPlayer'].isObjHumanOrRobot()
+                playerAndPoints['maxPoints'] = oPlayer['oPlayer'].getPoints()
+                players.append(playerAndPoints)
+        else:
+            for oPlayer in self.playerList:
+                playerAndPoints = {}
+                playerAndPoints['isPlayerHuman'] = oPlayer.isObjHumanOrRobot()
+                playerAndPoints['maxPoints'] = oPlayer.getPoints()
+                players.append(playerAndPoints)
+               
         trunPlayerPoints = players[0]['maxPoints']
         followOnPlayerPoints = players[1]['maxPoints']
 
@@ -293,17 +303,23 @@ class Game(): # Object Manager
         """Verify that players have played their last card.
         And check who is the winner.
         """
-        
-        for oPlayer in self.playerList:
-            # Iterrate and check if hands are empty
+
+        for oPlayer in self.playerList: # LEFT OOOOOOOOOOOOOOOOOOOFFFF!
+
+            # Iterrate and check if hands are empty 
             cardsOnHand = oPlayer.getCardsOnHand()
             self.areHandsEmpty.append(cardsOnHand)
-        
+                
         # If both hands have zero cards on hand then trigger game over.
-        if len(self.areHandsEmpty[0]) == 0 and len(self.areHandsEmpty[1]) == 0:
+        if not self.areHandsEmpty[0] and not self.areHandsEmpty[1]:  
+
+            # print(self.areHandsEmpty) Empty-ish; just a bunch of empty lists
+
             print("Game over")
             self.isGameOver = True # set other elemnets to be drawn on screen
             self.winnerScoreDisplay.setValue(self.check4Winner()) # Sets the winner to be displayed on screen.
+
+
 
 # ----------------------- AI Player handleEvent stuff -------------------------------
     def _AIHandleEvents(self, oPlayer):
@@ -349,8 +365,6 @@ class Game(): # Object Manager
         elif len(aIHasCardsLeft) < Game.HAND_LIMIT and self.trumpCard == None:
             self._preEnterTrick(oPlayer)
             
-            
-        
 # ----------------------- Human Player handleEvent stuff -------------------------------
     def _humanHandleEvents(self, oPlayer, event):
         """Method helper to house human actions."""
@@ -442,12 +456,46 @@ class Game(): # Object Manager
         # Add players back to playerList
         self.reAddPlayerstoPlayerList()
 
-        # CHECKING WHO IS TURN PLAYER AFTER A ROUND
-        print(self.playerList) 
-
         # Dealer(Game class) gives cards and calculates turnPlayer's turn
         self.setPotList()
- 
+
+    def dealerGetWinnings(self):
+        """Dealer obtains players trick cards.
+        refPlayerAndCard means that we are referencing to the object(dict)
+        """
+
+        for i in self.trickList[:]:
+            # the i is a dict ['oPlayer': oPlayer, 'oCard': oBriscaCard]
+            trickCardTransfer = i.pop('oCard')
+            self.dealerPot.append(trickCardTransfer)
+
+    def reAddPlayerstoPlayerList(self):
+        """Add playesr back to the playerList to starts a new round""" 
+
+        # Loop till there are no more trickPlayers in the trickList.
+        while self.trickList:
+            trickPlayerTransfer = self.trickList.pop(0)
+            oPlayer = trickPlayerTransfer['oPlayer']
+            self.playerList.append(oPlayer)
+        
+    def setPotList(self):
+        """Gives turnPlayer the spoils of war, as in the winner gets the cards."""       
+
+        oCards = []
+        turnPlayer = self.playerList[0]
+
+        while self.dealerPot:
+            oCard = self.dealerPot.pop(0)
+
+            # oCard is inside a dictionary
+            oCards.append(oCard) 
+    
+        # Turn player adds their winnings from the last trick they played.
+        turnPlayer.setPotList(oCards)
+        # Calculate turnPlayer's points
+        self.updatePlayerScore(turnPlayer)
+
+# ------------------------ _preEnterTrick methods ----------------
     def _preEnterTrick(self, oPlayer):
         """Prepare player's card to enter battle"""
 
@@ -468,43 +516,6 @@ class Game(): # Object Manager
         self.setNewTurnPlayer()                     # Pending player can now play their turn
         # Players fight in the battlePhase()
 
-    def dealerGetWinnings(self):
-        """Dealer obtains players trick cards.
-        refPlayerAndCard means that we are referencing to the object(dict)
-        """
-
-        for i in self.trickList[:]:
-            # the i is a dict ['oPlayer': oPlayer, 'oCard': oBriscaCard]
-            trickCardTransfer = i.pop('oCard')
-            self.dealerPot.append(trickCardTransfer)
-
-    def reAddPlayerstoPlayerList(self):
-        """Add playesr back to the playerList to starts a new round"""
-
-        # Loop till there are no more trickPlayers in the trickList.
-        while self.trickList:
-            trickPlayerTransfer = self.trickList.pop(0)
-            oPlayer = trickPlayerTransfer['oPlayer']
-            self.playerList.append(oPlayer)
-
-    def setPotList(self):
-        """Gives turnPlayer the spoils of war, as in the winner gets the cards."""
-
-        oCards = []
-        turnPlayer = self.playerList[0]
-
-        while self.dealerPot:
-            oCard = self.dealerPot.pop(0)
-            # print(f"The {oCard.getName()} is in the {self.playerList[0]} pot.")
-            # oCard is inside a dictionary
-            oCards.append(oCard) 
-    
-        # Turn player adds their winnings from the last trick they played.
-        turnPlayer.setPotList(oCards)
-        # Calculate turnPlayer's points
-        self.updatePlayerScore(turnPlayer)
-
-# ------------------------ _preEnterTrick methods ----------------
     def popPlayerFromPlayerList(self, playerAndCard):
         """We pop the player. Then return the parameter as it came."""
 
@@ -587,6 +598,7 @@ class Game(): # Object Manager
         if self.enterBattleStep: # Both players have a trump
             print("Entered battle step")
             self.battleStep()
+            print("Exit battle step")
 
     def caluculateTrump(self):
         """Check if a player can win using a trump card or enter battleStep()"""

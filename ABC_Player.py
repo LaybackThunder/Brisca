@@ -20,7 +20,6 @@ class ABC_Player(ABC):
         """Return player bool; 
         True for turnplayer, False for follow on player.
         """
-        #print(f"Turn player's iD is {self.turnPlayerId}.") # testing
         return self.turnPlayer
 
     def setTurnPlayerTrue(self):
@@ -35,7 +34,7 @@ class ABC_Player(ABC):
         else:
             self.turnPlayer = False 
 
-    def setPotList(self, oCards): # Does not print
+    def setPotList(self, oCards):
         """Retrive oCard from trickList and add them to the player's potList."""
 
         while oCards:
@@ -54,7 +53,7 @@ class ABC_Player(ABC):
 
             point = oCard.getRankPoints()
             self.points = self.points + point
-            print(f"The {oCard.getName()} point value is {point}")
+            #print(f"The {oCard.getName()} point value is {point}")
 
     def getPoints(self):
         """Return the total amount of points."""
