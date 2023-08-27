@@ -130,7 +130,7 @@ class Game(): # Object Manager
         
         # All player have drawn
 
-    def handleEvent(self, event):
+    def handleEvent(self, event): 
         """ Draw event, players' events & update points event, enter trick
         Human & AI behavior.
         Player draw automaticaly.
@@ -318,8 +318,6 @@ class Game(): # Object Manager
             print("Game over")
             self.isGameOver = True # set other elemnets to be drawn on screen
             self.winnerScoreDisplay.setValue(self.check4Winner()) # Sets the winner to be displayed on screen.
-
-
 
 # ----------------------- AI Player handleEvent stuff -------------------------------
     def _AIHandleEvents(self, oPlayer):
