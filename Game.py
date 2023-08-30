@@ -143,14 +143,16 @@ class Game(): # Object Manager
 
         # Players choose which card to enter a trick with
         for oPlayer in self.playerList[:]: 
+            humanPlayer = oPlayer.isObjHumanOrRobot()
+            turnPlayer = oPlayer.getTurnPlayer()
 
             # Human actions only!
-            if oPlayer.isObjHumanOrRobot() == human and oPlayer.getTurnPlayer():
+            if humanPlayer == human and turnPlayer:
                 self._humanHandleEvents(oPlayer, event)
 
             # AI actions only!
             else:
-                if oPlayer.getTurnPlayer(): # If AI is turn player then it can play.
+                if turnPlayer: # If AI is turn player then it can play.
                     self._AIHandleEvents(oPlayer)
 
         # Are all players ready?
@@ -304,7 +306,7 @@ class Game(): # Object Manager
         And check who is the winner.
         """
 
-        for oPlayer in self.playerList: # LEFT OOOOOOOOOOOOOOOOOOOFFFF!
+        for oPlayer in self.playerList:
 
             # Iterrate and check if hands are empty 
             cardsOnHand = oPlayer.getCardsOnHand()
